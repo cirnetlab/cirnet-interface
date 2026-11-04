@@ -1,5 +1,42 @@
 # Interface verification and external evidence
 
+## 2026-11-04 initial 0.1.3 artifact builds (superseded candidate)
+
+Two independent local builds from clean Interface commit
+`2fe7cba5252087af033202183ef242a4be5152cc` produced byte-identical source and
+static archives with Node 22.23.3 and Python 3.14.6. Each invocation of the
+committed `scripts/build_release.py` used a separate fresh Git export,
+digest-verified Contracts 0.1.1/DEV archives, a clean locked `npm ci` and the
+three-entrypoint production build. Existing checkout dependencies, ignored
+bundles and the earlier source overlays were not build inputs.
+
+| Superseded candidate archive | Bytes | SHA256 |
+| --- | ---: | --- |
+| `cirnet-interface-0.1.3-source.tar.gz` | 2,421,634 | `b46cb91aca33f38a3c355ba5074fb2673a822e936e7a7ec5ca2dbcc9f9029dee` |
+| `cirnet-interface-0.1.3-static.tar.gz` | 2,193,267 | `5d9e4f12302d6205c794741d86a49080e33b6b08472550db3c994f9532ccfc7a` |
+
+Both archives identify Interface 0.1.3 and Contracts 0.1.1, with source
+fingerprint
+`08e30b6d5afffadc9f26d9eaf1e49b7b7caeb59b9e62f2870c60030e4722d27d`.
+Inspection verifies 580 source and 35 static regular, root-safe members. The
+579 source payload files match the exact committed Git archive; the additional
+file is generated provenance metadata. All three HTML entrypoints are present.
+The clean checkout and three read-only SDK input digests remain unchanged.
+The deterministic-build receipt SHA256 is
+`a618dad644240e1841228658651b70dfd3bbefd24c9dc6b64bde9d63a4b0dd0e`;
+the first local artifact-manifest SHA256 is
+`a1061346e4d0c259e18c1bdc81bc1e80e45fb4c9032c1a2d947672cef05911b6`.
+Raw build logs and both artifact sets started in the shared external session
+owned by `cirnet-browser-actions-20261104`.
+
+A subsequent metadata audit found that this commit's product compatibility
+self-descriptor and CI artifact label still identify 0.1.2. These local bytes
+are therefore superseded; the descriptor/label correction requires a new clean
+committed build before the complete 58-case Ubuntu gate. The hashes above do
+not identify that replacement candidate. Complete committed-artifact browser
+acceptance and publication remain pending. Existing published 0.1.2 assets and
+tags retain their original bytes and provenance.
+
 ## 2026-11-04 browser CI responsiveness candidate
 
 Remote [browser job 126472787919](https://github.com/CIRNETLAB/CIRNET-Remote/actions/runs/41799887701/job/126472787919)
