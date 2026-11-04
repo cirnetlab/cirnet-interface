@@ -1,5 +1,26 @@
 # Interface verification and external evidence
 
+## 2026-11-04 published-API cookie compatibility
+
+The complete-suite attempt on committed candidate `595d25f` exposed an additional
+auth assertion error: login and explicit guest transfer succeed, but the test
+looks only for `cirnet_session`. The immutable selected API 0.1.1 wheel emits
+`netcircuit_session`; current Remote source emits both aliases with the same
+credential. The trace confirms the legacy cookie is HttpOnly, SameSite=Lax and
+Path=/, and its successful administrator screenshot was inspected. The failed
+candidate was stopped through normal Playwright teardown rather than promoted;
+its full gate is NOT_COMPLETED, not PASS.
+
+The test now selects every reviewed alias without changing cookies or their
+attributes. It rejects absent/unrelated-only, duplicate, empty and mismatched
+dual credentials. Every selected cookie still receives the original HttpOnly,
+Lax, root-path, no-JavaScript-exposure and no-storage-credential assertions.
+The selector regression was RED (one PASS/eight FAIL against the canonical-only
+predicate), then all nine cases and two existing namespace tests pass, together
+with ten Contracts prechecks and E2E types. Weak attributes remain visible to the
+real assertions. This changes the supported cookie-name boundary only; no API,
+backend, timeout, DPR, retry, rendering assertion or baseline changes.
+
 ## 2026-11-04 initial 0.1.3 artifact builds (superseded candidate)
 
 Two independent local builds from clean Interface commit

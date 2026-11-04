@@ -1,6 +1,7 @@
 import { expectEventConnection } from './workbench-ui'
 import { test,expect,type Page } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
+import { sessionCookies } from './session-cookies'
 
 const password=()=>`test-${randomUUID()}`
 async function account(page:Page) {await page.getByRole('button',{name:'Open account',exact:true}).click()}
@@ -42,12 +43,15 @@ test('real login, explicit guest claim, logout and account controls preserve the
   await expect(page.getByLabel('Guest data transfer',{exact:true})).toBeHidden()
   const after=await (await context.request.get('/api/experiments')).json()
   expect(after.some((record:{experiment_id:string})=>record.experiment_id===experiment.experiment_id)).toBe(true)
-  const cookie=(await context.cookies()).find(cookie=>cookie.name==='cirnet_session')!
-  expect(cookie.httpOnly).toBe(true);expect(cookie.sameSite).toBe('Lax');expect(cookie.path).toBe('/')
-  expect(await page.evaluate(()=>document.cookie)).not.toContain('cirnet_session')
+  const cookies=sessionCookies(await context.cookies()),visibleCookies=await page.evaluate(()=>document.cookie)
+  for(const cookie of cookies){
+    expect(cookie.httpOnly).toBe(true);expect(cookie.sameSite).toBe('Lax');expect(cookie.path).toBe('/')
+    expect(visibleCookies).not.toContain(cookie.name)
+  }
   const active=await (await context.request.get('/api/auth/session')).json()
   const stored=await page.evaluate(()=>JSON.stringify({local:{...localStorage},session:{...sessionStorage}}))
-  expect(stored).not.toContain(active.csrf_token);expect(stored).not.toContain(cookie.value)
+  expect(stored).not.toContain(active.csrf_token)
+  for(const cookie of cookies)expect(stored).not.toContain(cookie.value)
   await page.getByRole('button',{name:'Sign out',exact:true}).click()
   await expect(page.getByRole('button',{name:'Sign in',exact:true})).toBeVisible()
   await page.getByRole('button',{name:'Close account',exact:true}).click()
