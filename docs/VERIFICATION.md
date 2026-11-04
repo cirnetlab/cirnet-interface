@@ -1,5 +1,62 @@
 # Interface verification and external evidence
 
+## 2026-11-04 complete committed-artifact Ubuntu acceptance
+
+The frozen functional source is `6c150f34193bb3b009046cbaa586fae0260560f4`.
+Two independent official clean Git-export/bootstrap/locked-install/production
+builds produce the same 0.1.3 source/static bytes. Source SHA256 is
+`41273280dfc3934c33f7d6ae7fb5c0d4f76d92a9e8b31dd4b6c50c164449b2e3`
+(2,425,434 bytes); static SHA256 is
+`5a4e53f118a9195fae27f55bb9a886fef229991cff835699aaf6e257c1341089`
+(2,193,267 bytes). Fingerprint:
+`b7d0c0e4485a4b8906377d920c6850b820aae063abbba07cb98c301bb2848a3a`.
+All 581 committed payload files plus generated source metadata match Git; the
+582 source/35 static members are regular and root-safe, with three entrypoints.
+Build receipt SHA256:
+`333a1da7bbdb665e53cabf07a9ca183f793bb65bba6e183c19a9cd94037a609c`.
+
+The complete fresh Node 22.23.3 suite passes **1,497/1,497** runtime tests, ten
+Contracts prechecks, unit types and 184 freshly compiled bundles, with zero
+failures/skips. All 517 compiler/source inputs remain unchanged. The focused
+cookie regressions, E2E types, prior 27 script checks, 229-module boundaries and
+production builds pass. Final unit receipt SHA256:
+`39ba8d0ba2b0ba7c3043b31063106e6f6de68085fc5ec61f25ee33e24419d531`.
+
+Remote's standard browser group uses these exact committed archives with exact
+published API/Contracts/Simulator/Hardware 0.1.1 wheels on Ubuntu 24.04.5,
+Python 3.12.3, Node 22.23.4, four CPUs and pinned Playwright 1.64.1 / Chromium
+1248. All three commands pass, exit zero, in 2,415.2 seconds. JUnit reports
+**57 PASS, 0 FAIL/ERROR, 1 original optional historical capture SKIP**, 58 tests
+total. The interval is 2026-11-04 12:14:55–12:55:10 UTC
+(19:14:55–19:55:10 UTC+07), within the original 90-minute job envelope.
+
+Both current depth matrices execute all 30 poses with zero pixel changes:
+2,349,652 tested positions at DPR 1 and 9,399,115 at DPR 2. All five formerly
+failing cases pass in the same full run: DPR 2 202.094 s / 360 s, multiview
+130.932 s, component closeups 110.195 s, Cancel 10.929 s and release 11.327 s.
+The corrected authentication case passes against the immutable legacy API.
+Workers, retries, deadlines, DPR, rendering assertions, tracing, assets and
+baselines are unchanged; the explicit cookie-name boundary correction below
+retains every original privacy/security assertion for every recognized alias.
+
+All source/static/Remote/API payloads and selected archive hashes are unchanged
+afterward. API shutdown exits zero; no active owned services or test listeners
+remain. JUnit SHA256:
+`38db5ac27ebdf66f5f526fda92c4fabc21026759deaaa4080f3e4b836c658909`.
+Log SHA256:
+`7e0351b2005a081e4be0c7fbdd31e5eca552d671c0641b77eda5c9fdaf00dad5`.
+These completed local software results do not claim a later hosted Actions
+outcome, physical hardware capability or deployment acceptance.
+
+Six representative success visuals were inspected and final acceptance receipt
+SHA256 is `ba6f5958951219c7c8fcfd85a7e790a6a9e71bd82fa6f8a97f4e267c31f90ba2`.
+[Interface v0.1.3](https://github.com/CIRNETLAB/CIRNET-Interface/releases/tag/v0.1.3)
+is published at the frozen functional source; source/static asset IDs are
+`709523575` / `709523651`. Anonymous re-downloads match both sizes/digests and
+pass Remote's strict source/static provenance and extraction checks. Existing
+0.1.1/0.1.2 assets remain immutable. This documentation continuation preserves
+the tested source commit and archive bytes.
+
 ## 2026-11-04 published-API cookie compatibility
 
 The complete-suite attempt on committed candidate `595d25f` exposed an additional
