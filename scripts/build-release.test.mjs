@@ -11,7 +11,7 @@ const product=resolve(dirname(fileURLToPath(import.meta.url)),'..')
 const python=process.env.CIRNET_RELEASE_PYTHON??'python'
 const pages=['index.html','oscilloscope-preview.html','function-generator-preview.html']
 
-function fixture({omitPage,productVersion='0.1.2',contractsVersion='0.1.1'}={}){
+function fixture({omitPage,productVersion='0.1.3',contractsVersion='0.1.1'}={}){
   const owned=mkdtempSync(resolve(getArtifactDirectory('interface-export-regression'),'case-')),source=resolve(owned,'source')
   const sdkRoot=resolve(owned,'sdk','package'),sdistRoot=resolve(owned,'sdist','netcircuit_contracts-0.1.1')
   for(const directory of [resolve(source,'scripts'),resolve(source,'integration'),resolve(source,'dist'),sdkRoot,sdistRoot])mkdirSync(directory,{recursive:true})
@@ -62,14 +62,14 @@ test('release builds the exact committed export with locked SDK installation, ig
   assert.equal(a.status,0,a.stderr);assert.equal(b.status,0,b.stderr)
   const first=JSON.parse(a.stdout),second=JSON.parse(b.stdout)
   for(const kind of ['source','static'])assert.equal(first.artifacts[kind].sha256,second.artifacts[kind].sha256)
-  assert.equal(first.version,'0.1.2');assert.equal(first.contractsVersion,'0.1.1')
+  assert.equal(first.version,'0.1.3');assert.equal(first.contractsVersion,'0.1.1')
   const archive=first.artifacts.source.path
   const metadata=JSON.parse(execFileSync('tar',['-xzOf',archive,'interface-artifact.json'],{encoding:'utf8',windowsHide:true}))
   assert.equal(metadata.source.revision,git('rev-parse','HEAD').trim())
   assert.equal(metadata.source.uncommittedMigration,false)
-  assert.equal(metadata.version,'0.1.2');assert.equal(metadata.contractsVersion,'0.1.1')
+  assert.equal(metadata.version,'0.1.3');assert.equal(metadata.contractsVersion,'0.1.1')
   const staticMetadata=JSON.parse(execFileSync('tar',['-xzOf',first.artifacts.static.path,'interface-artifact.json'],{encoding:'utf8',windowsHide:true}))
-  assert.equal(staticMetadata.version,'0.1.2');assert.equal(staticMetadata.contractsVersion,'0.1.1')
+  assert.equal(staticMetadata.version,'0.1.3');assert.equal(staticMetadata.contractsVersion,'0.1.1')
   assert.equal(execFileSync('tar',['-xzOf',archive,'source.txt'],{encoding:'utf8',windowsHide:true}),'committed source\n')
   for(const page of pages)assert.equal(execFileSync('tar',['-xzOf',first.artifacts.static.path,page],{encoding:'utf8',windowsHide:true}),`<title>${page}</title>\ncommitted source\nreviewed SDK 0.1.1\n`)
   const builds=readFileSync(receipt,'utf8').trim().split('\n').map(line=>JSON.parse(line))
@@ -103,11 +103,11 @@ test('release rejects a stale Interface product without advancing its Contracts 
   const {owned,invoke}=fixture({productVersion:'0.1.1'})
   const result=invoke(resolve(owned,'output'))
   assert.notEqual(result.status,0)
-  assert.match(result.stderr,/Committed Interface product metadata must be @cirnet\/web==0\.1\.2/)
+  assert.match(result.stderr,/Committed Interface product metadata must be @cirnet\/web==0\.1\.3/)
 })
 
 test('release rejects a bootstrap that reports the Interface patch as its Contracts version',()=>{
-  const {owned,invoke}=fixture({contractsVersion:'0.1.2'})
+  const {owned,invoke}=fixture({contractsVersion:'0.1.3'})
   const result=invoke(resolve(owned,'output'))
   assert.notEqual(result.status,0)
   assert.match(result.stderr,/Committed bootstrap must select the exact Contracts version/)

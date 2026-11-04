@@ -67,7 +67,9 @@ function updateGizmoObstacles() {
     })
   }
 }
-function invalidateObstacles() { obstaclesDirty = true; manager?.requestRender() }
+// Post-commit watchers and the drawer observer already see the current DOM.
+// Refresh navigation/layout data without repainting the unchanged 3D scene.
+function invalidateObstacles() { obstaclesDirty = true; updateGizmoObstacles() }
 function navigate(action: (controller: ReturnType<typeof createSceneManager>) => void) {
   if (!manager) return
   updateGizmoObstacles()

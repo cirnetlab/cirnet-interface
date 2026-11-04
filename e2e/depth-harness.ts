@@ -2,6 +2,7 @@ import {WebGLRenderer,PCFSoftShadowMap,Vector3,Vector4,Mesh,Box3,REVISION,Raycas
 import {createSceneManager} from '../src/three/SceneManager'
 import {getPartForType,historicalPartCatalog,physicalDescriptorForPart,getPartForModule} from '../src/data/partCatalog'
 import type {CircuitGraph,CircuitModule} from '../src/types/circuit'
+import {createDepthRaycast} from './depth-raycast'
 const canvas=document.querySelector('canvas')!,renderer=new WebGLRenderer({canvas,antialias:true,alpha:false,preserveDrawingBuffer:true})
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=PCFSoftShadowMap
 let frames=0,trustedRightDrags=0
@@ -38,7 +39,7 @@ function analysisSnapshot(bounds:{minX:number;minY:number;maxX:number;maxY:numbe
   return snapshot()
  }finally{renderer.setScissor(previous);renderer.setScissorTest(enabled)}
 }
-async function leaks(id=selected,glyphs=false,images?:LeakImages,fullAnalysis=false){
+async function leaks(id=selected,glyphs=false,images?:LeakImages,fullAnalysis=false,rayProof?:{checked:number}){
  const model=manager.models.get(id)!,names=id==='SCOPE'?['horizontal_panel','trigger_panel','vertical_panel','screen']:id==='GEN'?['function_panel','screen']:id==='PSU'?['supply-front','control-strip','supply-display']:id==='BOARD'?['breadboard-artwork']:['package-display-face']
  const fronts:Mesh[]=[];if(glyphs)model.traverse(o=>{if(o instanceof Mesh&&o.userData.segment)fronts.push(o)});else fronts.push(...names.map(name=>model.getObjectByName(name)).filter((v):v is Mesh=>v instanceof Mesh))
  if(!fronts.length)return{tested:0,changed:0,regions:[]}
@@ -55,13 +56,17 @@ async function leaks(id=selected,glyphs=false,images?:LeakImages,fullAnalysis=fa
  const colored=analysisSnapshot(bounds,fullAnalysis),raycaster=new Raycaster(),ndc=new Vector2(),opaque:Mesh[]=[]
  if(images)images.colored=colored
  model.traverse(o=>{if(!(o instanceof Mesh)||!o.visible)return;for(let p=o.parent;p;p=p.parent)if(!p.visible)return;const mats=Array.isArray(o.material)?o.material:[o.material];if(mats.some(m=>m.visible&&m.depthTest&&m.depthWrite&&(!m.transparent||m.opacity>=.99)))opaque.push(o)})
+ const firstHit=fullAnalysis?(ray:Raycaster)=>ray.intersectObjects(opaque,false)[0]:createDepthRaycast(opaque,rayProof?(actual,reference)=>{
+  if(!!actual!==!!reference||actual&&reference&&(actual.object!==reference.object||actual.distance!==reference.distance||!actual.point.equals(reference.point)||actual.faceIndex!==reference.faceIndex))throw Error('Depth observer changed an exact native first hit.')
+  rayProof.checked++
+ }:undefined)
  let tested=0,changed=0
  for(let y=minY;y<maxY;y++)for(let x=minX;x<maxX;x++){if(!regions.some(poly=>inside(x+.5,y+.5,poly)))continue;tested++;const i=(y*gl.drawingBufferWidth+x)*4;if(Math.max(Math.abs(original[i]-colored[i]),Math.abs(original[i+1]-colored[i+1]),Math.abs(original[i+2]-colored[i+2]))>35){
  // CPU rays only mask legitimate foreground controls; evidence remains actual GPU pixels.
  ndc.set((x+.5)/gl.drawingBufferWidth*2-1,(y+.5)/gl.drawingBufferHeight*2-1);raycaster.setFromCamera(ndc,manager.camera)
- const hit=raycaster.intersectObjects(opaque,false)[0]
+ const hit=firstHit(raycaster)
  // Erode foreground edges by two physical pixels to exclude MSAA sample coverage.
- if(hit&&fronts.includes(hit.object as Mesh)&&(id==='BOARD'?[[-2,0],[2,0],[0,-2],[0,2],[-.125,-.375],[.375,-.125],[-.375,.125],[.125,.375],[-.49,-.49],[.49,-.49],[-.49,.49],[.49,.49]]:[[-2,0],[2,0],[0,-2],[0,2]]).every(([dx,dy])=>{ndc.set((x+.5+dx)/gl.drawingBufferWidth*2-1,(y+.5+dy)/gl.drawingBufferHeight*2-1);raycaster.setFromCamera(ndc,manager.camera);return raycaster.intersectObjects(opaque,false)[0]?.object===hit.object}))changed++
+ if(hit&&fronts.includes(hit.object as Mesh)&&(id==='BOARD'?[[-2,0],[2,0],[0,-2],[0,2],[-.125,-.375],[.375,-.125],[-.375,.125],[.125,.375],[-.49,-.49],[.49,-.49],[-.49,.49],[.49,.49]]:[[-2,0],[2,0],[0,-2],[0,2]]).every(([dx,dy])=>{ndc.set((x+.5+dx)/gl.drawingBufferWidth*2-1,(y+.5+dy)/gl.drawingBufferHeight*2-1);raycaster.setFromCamera(ndc,manager.camera);return firstHit(raycaster)?.object===hit.object}))changed++
  }}
  return{tested,changed,regions}
  }finally{
@@ -85,7 +90,7 @@ async function proveLeakAnalysis(id=selected,glyphs=false,positiveControl=false)
  }
  try{
   const referenceImages:LeakImages={},optimizedImages:LeakImages={}
-  const reference=await leaks(id,glyphs,referenceImages,true),optimized=await leaks(id,glyphs,optimizedImages)
+  const rayProof={checked:0},reference=await leaks(id,glyphs,referenceImages,true),optimized=await leaks(id,glyphs,optimizedImages,false,rayProof)
   const a=referenceImages,b=optimizedImages
   if(!a.original||!a.colored||!a.restored||!b.original||!b.colored||!b.restored)throw Error('Missing actual pixel captures.')
   let originalDifferingBytes=0,coloredDifferingBytes=0,restoredDifferingBytes=0,comparedPixels=0
@@ -95,7 +100,7 @@ async function proveLeakAnalysis(id=selected,glyphs=false,positiveControl=false)
    for(let k=0;k<4;k++)if(a.restored[i+k]!==b.restored[i+k])restoredDifferingBytes++
   }
   if(comparedPixels!==reference.tested)throw Error('Proof did not compare every tested pixel.')
-  const result={reference,optimized,comparedPixels,originalDifferingBytes,coloredDifferingBytes,restoredDifferingBytes,
+  const result={reference,optimized,comparedPixels,originalDifferingBytes,coloredDifferingBytes,restoredDifferingBytes,raycastChecks:rayProof.checked,
    scissorRestored:previousTest===renderer.getScissorTest()&&previousScissor.every((v,i)=>v===renderer.getScissor(new Vector4()).toArray()[i]),
    controlStateRestored:!positiveControl}
   proof=result;return result

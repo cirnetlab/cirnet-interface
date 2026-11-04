@@ -1,5 +1,117 @@
 # Interface verification and external evidence
 
+## 2026-11-04 browser CI responsiveness candidate
+
+Remote [browser job 126472787919](https://github.com/CIRNETLAB/CIRNET-Remote/actions/runs/41799887701/job/126472787919)
+used Remote `685c365770b9831f3f0fd24cc7bae6496a79bae4` and the immutable
+Interface 0.1.2 source at `a14d0950e71a997e2219a32f7268fd0e9d6502b3`.
+It completed with 52 PASS, 5 FAIL and 1 SKIP. The downloaded failure artifact's
+SHA256 is `e8cadc965011e6b70dbc1954dfb71ff09b16b708b1c7d22a4e5748b71bd50bab`.
+Its traces, error contexts and failure screenshots were inspected outside Git.
+These are historical hosted results, not results for Remote `a46db65`.
+
+Both ribbon cases initially reach Cancel. Their held physical-preview request
+then aborts after 12,088.8 ms while native Run-tab interactions take 3.95–7.92 s.
+The unchanged API timeout is 10 s; the delayed timer clears `preparing`, so the
+second loop finds Run and the existing timeout alert instead of Cancel. The
+expanded failure drawer rules out lost toolbar ownership. Both placement cases
+also show render backpressure: their inspected final snapshots contain the
+correct TOP/isometric orientation, after the 10 s assertion budget expired.
+
+The candidate removes native redraws for DOM-only drawer obstacle/reserve
+changes. Post-commit watches and the drawer observer refresh layout data
+immediately. Navigation still receives its current reserve and report; actual
+graph/camera frames, camera/projection, pivot-anchored gizmos and disposal are
+preserved. Independent source review found no actionable issue.
+
+The new scene regression was RED before the fix (one unexpected queued draw).
+Focused verification passes 78 cases. The complete compiled runtime suite then
+passes all 1,477 tests with no failures/skips, using verified Node 22.23.3 and
+the unchanged 182 bundles and `--test --test-concurrency=2` command. A preceding
+restricted run remains recorded as FAIL (1,470 PASS, six loopback failures,
+one privilege skip); native execution resolves those host restrictions without
+changing tests. Types, AST boundaries and all three production entrypoints pass.
+
+A separate physical copy of the reviewed product received only the recorded
+source overlays and truthful `uncommittedMigration=true` candidate metadata.
+Its original four UI cases pass through the standard Remote integrated runner:
+multiview 96.526 s, closeups 70.803 s, Cancel 7.929 s and release 8.192 s; zero
+failures/errors/skips. This run used Windows, Python 3.14.6, Node 22.23.3 and the
+exact Playwright 1.64.1 Chromium 1248 runtime. The complete owned browser copy's
+ten executable hashes match its input, with a maximum path of 222 UTF-16 units.
+The 1920-wide multiview and standing-resistor screenshots were inspected.
+All 572 baseline source members and all 26 E2E/config payloads remain unchanged.
+The owned backend/browser/helper processes exited and all three test ports were
+free afterwards. This is unpublished functional-candidate evidence; it does not
+change the selected release or establish hosted/physical hardware acceptance.
+
+The API timeout, original E2E assertions, viewport/DPR matrices, deadlines,
+workers, retries, tracing, render quality, source assets and baselines remain
+unchanged. Raw diagnostics use the shared external session owned by
+`cirnet-browser-actions-20261104`, protecting Remote and Interface. Only this
+canonical Markdown evidence belongs in source.
+
+The depth observer's PSU closeup also spends most CPU time in native triangle
+intersections. A mesh-world-box spike preserved all 172,706 first hits but saved
+only 4.2%, so it was not adopted. The retained optimization uses conservative
+contiguous 64-triangle blocks, calls Three's unchanged native raycast kernel in
+original order, and restores each original geometry draw range in `finally`.
+Custom/deformed/instanced/skinned/material-array/unsafe inputs retain the native
+fallback. Bounds are observer-owned; null shared geometry bounds and later
+prototype overrides have explicit regressions. Independent review identified
+those two edge cases before adoption; both were reproduced RED and corrected.
+The focused real-geometry suite passes all 11 tests.
+
+The full-analysis reference, GPU captures, all pixel positions, foreground rays,
+edge erosion and full-framebuffer restoration remain authoritative. The native
+proof passes all 78 cases: 11,850,288 tested pixel positions match exactly,
+every full restored framebuffer is identical, and 194,249 first hits match the
+native object, distance, point and face index. Both positive controls still
+detect the original 11/328 leaks. All four exception/scissor/material/callback
+restoration guards pass; restored DPR 1/2 screenshots were inspected. The proof
+receipt SHA256 is
+`948652299e96a371ea405953e016f7912657475d93f7f13d791c74899acb4834`.
+An independent six-pose PSU oracle measured 40.39% / 41.27% less ray CPU time at
+DPR 1/2, with 172,706 exact native hit comparisons. This is bounded diagnostic
+performance evidence, not a substitute for the original 360 s DPR 2 gate.
+
+Patch packaging advances only Interface to 0.1.3; Contracts remains 0.1.1.
+The clean-export builder regression was RED (four failures/one pass), then
+passes all five cases, including deterministic source/static archives, stale
+output exclusion, clean committed provenance and all three entrypoints. The
+published 0.1.2 bytes/tag remain immutable. The user's prior post-Ubuntu
+promotion/publication authorization applies to a new patch, never replacement
+of an existing asset; final promotion remains gated on actual Ubuntu acceptance.
+
+The unchanged original native DPR 2 regression also passes independently:
+30 poses, zero leaks, one PASS/no FAIL or SKIP in 209.772 s within 360 s. Its
+standard real-service runner exits zero and closes all owned processes/ports.
+JUnit SHA256:
+`f9d8266952308ebe1576759308621b2fcf302700251f57850417cd19a1366c02`.
+
+The full current 0.1.3 working tree then passes the five original failing cases
+on genuine Ubuntu 24.04.5, Python 3.12.3, Node 22.23.4 and exactly four CPUs
+(0–3), using the selected published API/Contracts/Simulator/Hardware wheels and
+owned Playwright 1.64.1/Chromium 1248 copies. The original settings/assertions
+are unchanged: five PASS, no failures, runner exit zero, clean API shutdown;
+wall interval 2026-11-04 11:30:05–11:39:07 UTC (18:30:05–18:39:07 UTC+07).
+This is explicit unpublished-candidate verification. The separate complete
+browser gate on the exact committed source archive remains a promotion check.
+
+Final combined Node 22.23.3 verification passes the complete fresh `npm test`:
+unit types, ten Contracts prechecks, 183 rebuilt bundles and all 1,488 runtime
+cases (zero failures/skips). All 27 script tests, 229-module AST boundaries,
+E2E types and the three-entrypoint production build also pass. An initial
+unit-type TS2352 failure in the new private-kernel regression remains recorded;
+only its explicit type assertion was corrected before the full successful
+rerun. The final receipt SHA256 is
+`e3c2e6c48f48e52e3d2a6484641a023824ece1a2126213fb604d5a9eef0dd230`.
+
+Ubuntu JUnit confirms five tests, zero failures/errors/skips: DPR 2 246.198 s
+within 360 s, multiview 138.317 s, closeups 125.094 s, Cancel 10.908 s and release
+10.827 s. JUnit SHA256:
+`b0680a0071c571b61f139472a4ecccf07b8a89e3d2451ae7b8769fe5c5e4d501`.
+
 ## 2026-10-29 wire-edit hover continuation
 
 `hoverWireEdit(null)` still scheduled a draw on every canvas leave, including

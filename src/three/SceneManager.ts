@@ -445,7 +445,8 @@ export function createSceneManager({ renderer, canvas, onBeforeRender, onRender,
         }
       }); contentChanged()
     },
-    setGizmoObstacles(areas: GizmoObstacle[]) { if (!disposed && JSON.stringify(areas) !== JSON.stringify(gizmoObstacles)) { gizmoObstacles = areas.map((area) => ({ ...area })); schedule() } },
+    // Layout bookkeeping does not change the pivot-anchored gizmo's pixels.
+    setGizmoObstacles(areas: GizmoObstacle[]) { if (!disposed && JSON.stringify(areas) !== JSON.stringify(gizmoObstacles)) gizmoObstacles = areas.map((area) => ({ ...area })) },
     gizmoHandlePosition(handle: TransformHandle) { if (disposed) return null; updateGizmo(); return gizmo.position(handle) },
     gizmoOrigin() { if (disposed) return null; updateGizmo(); return gizmo.origin() },
     pickGizmo(x: number, y: number) { if (!validPointer(x, y)) return null; updateGizmo(); ray(x, y); const hit = gizmo.pick(raycaster); return ghost && hit?.handle === 'xz' && !gizmo.placementFollowBlocked() ? null : hit },
@@ -787,7 +788,9 @@ export function createSceneManager({ renderer, canvas, onBeforeRender, onRender,
       if(right-left<1||bottom-top<1)return
       const next={left:left/width*2-1,right:right/width*2-1,top:1-top/height*2,bottom:1-bottom/height*2}
       if(JSON.stringify(next)===JSON.stringify(usableRect))return
-      usableRect=next;navigation.setRect(next);notifyZoom();schedule()
+      // Fit/Home and navigation reports need the new reserve immediately. The
+      // camera and canvas stay unchanged until an actual navigation command.
+      usableRect=next;navigation.setRect(next);notifyZoom()
     },
     setZoom: navigateZoom,
     zoomToArea(x1: number, y1: number, x2: number, y2: number) {

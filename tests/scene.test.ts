@@ -473,6 +473,61 @@ test('scene coalesces renders, ignores zero sizes and disposes all owned resourc
   assert.equal(frames.size, 0)
 })
 
+test('drawer layout updates framing immediately without repainting the unchanged scene or pivot gizmo', () => {
+  let nextId = 0, renders = 0
+  const frames = new Map<number, FrameRequestCallback>()
+  const manager = createSceneManager({ renderer: { setSize() {}, render() { renders++ }, dispose() {} },
+    requestFrame(callback) { frames.set(++nextId, callback); return nextId }, cancelFrame(id) { frames.delete(id) },
+  })
+  const flush = () => { const pending = [...frames.values()]; frames.clear(); pending.forEach(callback => callback(0)) }
+  try {
+    manager.resize(1000, 700)
+    manager.syncGraph({ schema_version: '1.0', circuit_id: 'drawer-layout', modules: [{ id: 'A', type: 'CLOCK' }], connections: [] })
+    manager.highlight('A'); flush()
+    const camera = [manager.camera.position.toArray(), manager.camera.quaternion.toArray(), [...manager.camera.projectionMatrix.elements]]
+    const pivot = manager.gizmoOrigin()!.toArray(), grip = manager.gizmoHandlePosition('rotate-y')!.toArray()
+    const before = manager.navigationSnapshot()
+    manager.setGizmoObstacles([{ left: 0, top: 0, right: 1000, bottom: 96 }])
+    manager.setUsableViewport({ left: 66, top: 96, right: 1000, bottom: 700 })
+    const reserved = manager.navigationSnapshot()
+    assert.notDeepEqual(reserved.overviewTarget, before.overviewTarget, 'the next navigation command sees the drawer reserve before any canvas frame')
+    assert.equal(reserved.zoom, before.zoom)
+    assert.equal(frames.size, 0, 'DOM-only drawer changes must not schedule a native canvas draw')
+    assert.equal(renders, 1)
+    assert.deepEqual([manager.camera.position.toArray(), manager.camera.quaternion.toArray(), [...manager.camera.projectionMatrix.elements]], camera)
+    assert.deepEqual(manager.gizmoOrigin()!.toArray(), pivot)
+    assert.deepEqual(manager.gizmoHandlePosition('rotate-y')!.toArray(), grip)
+    manager.setGizmoObstacles([])
+    manager.setUsableViewport({ left: 0, top: 0, right: 1000, bottom: 700 })
+    assert.deepEqual(manager.navigationSnapshot(), before)
+    assert.equal(frames.size, 0)
+  } finally { manager.dispose() }
+})
+
+test('drawer bookkeeping preserves a genuine queued scene frame and disposal cancels only that frame', () => {
+  let nextId = 0, renders = 0
+  const frames = new Map<number, FrameRequestCallback>()
+  const manager = createSceneManager({ renderer: { setSize() {}, render() { renders++ }, dispose() {} },
+    requestFrame(callback) { frames.set(++nextId, callback); return nextId }, cancelFrame(id) { frames.delete(id) },
+  })
+  const flush = () => { const pending = [...frames.values()]; frames.clear(); pending.forEach(callback => callback(0)) }
+  try {
+    manager.resize(1000, 700); flush()
+    manager.setZoom(150)
+    const pending = [...frames.keys()]
+    assert.equal(pending.length, 1)
+    manager.setGizmoObstacles([{ left: 0, top: 0, right: 1000, bottom: 96 }])
+    manager.setUsableViewport({ left: 66, top: 96, right: 1000, bottom: 700 })
+    assert.deepEqual([...frames.keys()], pending, 'layout updates neither replace nor cancel the camera frame')
+    flush(); assert.equal(renders, 2)
+    manager.setZoom(200); assert.equal(frames.size, 1)
+    manager.dispose(); assert.equal(frames.size, 0)
+    manager.setGizmoObstacles([])
+    manager.setUsableViewport({ left: 0, top: 0, right: 1000, bottom: 700 })
+    assert.equal(frames.size, 0)
+  } finally { manager.dispose() }
+})
+
 test('keyboard view controls orbit and pan without touching graph; reset restores camera', () => {
   const manager = createSceneManager({ renderer: { setSize() {}, render() {}, dispose() {} }, requestFrame: () => 1, cancelFrame() {} })
   const initial = manager.camera.position.clone()
