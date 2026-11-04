@@ -10,6 +10,11 @@ This repository is the standalone Interface product extracted at Remote revision
 
 Before `npm ci`, materialize the three reviewed artifacts from an explicit local release manifest or configured immutable HTTPS URLs. Bootstrap verifies the DEV archive and canonical allocator before creating diagnostic output; package caches live only in ignored `.artifacts` and are not source dependencies. Missing or mismatched releases fail rather than falling back to a sibling checkout or latest version.
 
+Interface uses `@tinihi-labs/contracts@0.1.1` for browser runtime and the exact
+published `netcircuit_contracts-0.1.1.tar.gz` archive for supplemental test
+resources. The Python distribution `cirnet-contracts` is selected by Python
+consumers through their own artifact manifests.
+
 Use a fresh shell without an inherited `NETCIRCUIT_ARTIFACTS_SESSION`. The examples below prepare integration across three existing Git checkouts; replace the absolute paths. Set their context **before** bootstrap allocates the session and keep it unchanged through child processes and cleanup. For standalone Interface unit/build work, use only this Interface Git checkout in `roots`; other source checkouts are not required. An exported source product inside an owned session inherits the context of the actual Git checkouts rather than becoming another Git root.
 
 Bootstrap prints JSON from its child process; it cannot set the parent shell's environment. Adopt the returned `environment` before invoking npm so cache, temporary files and diagnostics use the selected session.
