@@ -23,7 +23,7 @@ test('two same-origin tabs serialize pending observations through real Web Locks
  await expect.poll(()=>page.evaluate(async name=>(await navigator.locks.query()).pending?.filter(item=>item.name===name).length,lock)).toBe(2)
  await page.evaluate(()=>(globalThis as typeof globalThis&{releaseObservationLock?:()=>void}).releaseObservationLock!())
  await Promise.all([firstWrite,secondWrite])
- const localKeys=()=>page.evaluate(id=>JSON.parse(localStorage.getItem('netcircuit.pending-observations.v1')??'[]').filter((row:{principalId:string})=>row.principalId===id).map((row:{key:string})=>row.key),principalId)
+ const localKeys=()=>page.evaluate(id=>JSON.parse(localStorage.getItem('cirnet.pending-observations.v1')??'[]').filter((row:{principalId:string})=>row.principalId===id).map((row:{key:string})=>row.key),principalId)
  expect(await localKeys()).toEqual(expect.arrayContaining(keys))
  await mutate(page,keys[0],'complete');await mutate(second,keys[0],'unknown')
  expect(await localKeys()).not.toContain(keys[0]);expect(await localKeys()).toContain(keys[1])

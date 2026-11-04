@@ -1,12 +1,14 @@
 # CIRNET Interface — Interactive Single Workspace
 
-Current repository: [CIRNETLAB/CIRNET-Interface](https://github.com/CIRNETLAB/CIRNET-Interface). The six repositories use the `CIRNETLAB/CIRNET-*` namespace. Local checkout directories may retain `net-Circuit-*`; package names, imports, `NETCIRCUIT_*`, protocol identifiers and artifact filenames remain compatible. Pinned commit links retain their source revisions. Historical reports, original model artwork and provenance snapshots keep their recorded names.
+Current repository: [CIRNETLAB/CIRNET-Interface](https://github.com/CIRNETLAB/CIRNET-Interface). The six repositories use the `CIRNETLAB/CIRNET-*` namespace. Active source, package and environment identities use CIRNET. Legacy NETCIRCUIT settings and persisted browser data remain readable; canonical settings win and subprocess aliases are synchronized. Published artifact names and digests stay immutable. Pinned commit links retain their source revisions. Historical reports, original model artwork and provenance snapshots keep their recorded names.
 
 Current authority: [Lab-First v3.1](https://github.com/CIRNETLAB/CIRNET-Remote/blob/745077403f233790bdb6781c36d6502feca01642/docs/ARCHITECTURE.md). Vue 3, TypeScript, Pinia and Three.js share one mounted workbench and one mutable circuit document. Public REST/WebSocket boundaries use generated DTOs and runtime validators. Authentication, private projects/recovery, assignment authoring/publication, execution history/queues and virtual digital captures use the real application services. Graph 1.2 flexible assemblies and pinned free physical descriptors use additive versioned operations; legacy Graph 1.0/1.1 files retain their meaning. Historical source reports remain useful for editor interaction details; they do not override the current architecture or capability declarations.
 
+See [source-name compatibility](docs/NAMESPACE.md) for legacy environment, browser data and published artifact handling.
+
 ## Run and verify
 
-This repository is the standalone Interface product extracted at Remote revision `745077403f233790bdb6781c36d6502feca01642`. Node 22 is the CI toolchain. Production uses immutable `@tinihi-labs/contracts@0.1.1`; independent DEV allocator `@tinihi-labs/artifact-paths@1.0.0-m1.0` is not a browser runtime dependency. The next approved product release version is `0.1.2`, with Contracts remaining `0.1.1`; the application identity, existing third-party dependency locks and model artwork are preserved. The exact integration set is recorded in `integration/compatibility.json`. Generic Contracts generation and Python/API implementation are owned elsewhere.
+This repository is the standalone Interface product extracted at Remote revision `745077403f233790bdb6781c36d6502feca01642`. Node 22 is the CI toolchain. Production uses immutable `@tinihi-labs/contracts@0.1.1`; independent DEV allocator `@tinihi-labs/artifact-paths@1.0.0-m1.0` is not a browser runtime dependency. The next approved product release version is `0.1.2`, with Contracts remaining `0.1.1`; the existing third-party dependency locks and model artwork are preserved. The current source package identity is `@cirnet/web`. The exact integration set is recorded in `integration/compatibility.json`. Generic Contracts generation and Python/API implementation are owned elsewhere.
 
 Before `npm ci`, materialize the three reviewed artifacts from an explicit local release manifest or configured immutable HTTPS URLs. Bootstrap verifies the DEV archive and canonical allocator before creating diagnostic output; package caches live only in ignored `.artifacts` and are not source dependencies. Missing or mismatched releases fail rather than falling back to a sibling checkout or latest version.
 
@@ -15,24 +17,24 @@ published `netcircuit_contracts-0.1.1.tar.gz` archive for supplemental test
 resources. The Python distribution `cirnet-contracts` is selected by Python
 consumers through their own artifact manifests.
 
-Use a fresh shell without an inherited `NETCIRCUIT_ARTIFACTS_SESSION`. The examples below prepare integration across three existing Git checkouts; replace the absolute paths. Set their context **before** bootstrap allocates the session and keep it unchanged through child processes and cleanup. For standalone Interface unit/build work, use only this Interface Git checkout in `roots`; other source checkouts are not required. An exported source product inside an owned session inherits the context of the actual Git checkouts rather than becoming another Git root.
+Use a fresh shell without an inherited `CIRNET_ARTIFACTS_SESSION`. The examples below prepare integration across three existing Git checkouts; replace the absolute paths. Set their context **before** bootstrap allocates the session and keep it unchanged through child processes and cleanup. For standalone Interface unit/build work, use only this Interface Git checkout in `roots`; other source checkouts are not required. An exported source product inside an owned session inherits the context of the actual Git checkouts rather than becoming another Git root.
 
 Bootstrap prints JSON from its child process; it cannot set the parent shell's environment. Adopt the returned `environment` before invoking npm so cache, temporary files and diagnostics use the selected session.
 
 ### PowerShell
 
 ```powershell
-$interfaceRoot = 'C:\path\net-Circuit-Interface'
-$remoteRoot = 'C:\path\net-Circuit-Remote'
-$contractsRoot = 'C:\path\net-Circuit-Contracts'
+$interfaceRoot = 'C:\path\CIRNET-Interface'
+$remoteRoot = 'C:\path\CIRNET-Remote'
+$contractsRoot = 'C:\path\CIRNET-Contracts'
 $manifest = 'C:\absolute\reviewed\artifacts.json'
-if ($env:NETCIRCUIT_ARTIFACTS_SESSION) { throw 'Use a fresh shell without an inherited artifact session.' }
-$env:NETCIRCUIT_ARTIFACTS_CONTEXT = (@{
-    owner = 'netcircuit-interface-dev'
+if ($env:CIRNET_ARTIFACTS_SESSION) { throw 'Use a fresh shell without an inherited artifact session.' }
+$env:CIRNET_ARTIFACTS_CONTEXT = (@{
+    owner = 'cirnet-interface-dev'
     roots = @($remoteRoot, $interfaceRoot, $contractsRoot)
 } | ConvertTo-Json -Compress)
-$env:NETCIRCUIT_ARTIFACTS_DIR = [IO.Path]::GetTempPath()
-$env:NETCIRCUIT_CONTRACTS_ARTIFACT_MANIFEST = $manifest
+$env:CIRNET_ARTIFACTS_DIR = [IO.Path]::GetTempPath()
+$env:CIRNET_CONTRACTS_ARTIFACT_MANIFEST = $manifest
 Set-Location -LiteralPath $interfaceRoot
 $bootstrapJson = & node scripts/bootstrap-contracts.mjs --manifest $manifest
 if ($LASTEXITCODE -ne 0) { throw 'Reviewed artifact bootstrap failed.' }
@@ -47,18 +49,18 @@ if ($LASTEXITCODE -ne 0) { throw 'Locked Interface install failed.' }
 ### Bash
 
 ```bash
-interface_root=/absolute/net-Circuit-Interface
-remote_root=/absolute/net-Circuit-Remote
-contracts_root=/absolute/net-Circuit-Contracts
+interface_root=/absolute/CIRNET-Interface
+remote_root=/absolute/CIRNET-Remote
+contracts_root=/absolute/CIRNET-Contracts
 manifest=/absolute/reviewed/artifacts.json
-if [ -n "${NETCIRCUIT_ARTIFACTS_SESSION:-}" ]; then
+if [ -n "${CIRNET_ARTIFACTS_SESSION:-}" ]; then
   printf '%s\n' 'Use a fresh shell without an inherited artifact session.' >&2
   exit 1
 fi
-NETCIRCUIT_ARTIFACTS_CONTEXT="$(node -e 'process.stdout.write(JSON.stringify({owner:"netcircuit-interface-dev",roots:process.argv.slice(1)}))' "$remote_root" "$interface_root" "$contracts_root")" || exit 1
-export NETCIRCUIT_ARTIFACTS_CONTEXT
-export NETCIRCUIT_ARTIFACTS_DIR="${TMPDIR:-/tmp}"
-export NETCIRCUIT_CONTRACTS_ARTIFACT_MANIFEST="$manifest"
+CIRNET_ARTIFACTS_CONTEXT="$(node -e 'process.stdout.write(JSON.stringify({owner:"cirnet-interface-dev",roots:process.argv.slice(1)}))' "$remote_root" "$interface_root" "$contracts_root")" || exit 1
+export CIRNET_ARTIFACTS_CONTEXT
+export CIRNET_ARTIFACTS_DIR="${TMPDIR:-/tmp}"
+export CIRNET_CONTRACTS_ARTIFACT_MANIFEST="$manifest"
 cd "$interface_root" || exit 1
 bootstrap_json="$(node scripts/bootstrap-contracts.mjs --manifest "$manifest")" || exit 1
 environment_lines="$(printf '%s' "$bootstrap_json" | node -e 'let input="";process.stdin.on("data",chunk=>input+=chunk);process.stdin.on("end",()=>{for(const [name,value] of Object.entries(JSON.parse(input).environment)){if(/[\r\n]/.test(value))throw Error("Multiline bootstrap environment value");console.log(name+"="+value)}})')" || exit 1
@@ -82,7 +84,7 @@ The product's semantic validation/normalization, renderers, commands/history, hi
 
 `npm run dev` starts the frontend only. Vite proxies `/api` and `/ws` to `127.0.0.1:8000`; keep FastAPI running using the [API startup instructions](https://github.com/CIRNETLAB/CIRNET-Remote/blob/745077403f233790bdb6781c36d6502feca01642/services/api/README.md#local-run). `ECONNREFUSED 127.0.0.1:8000` means that API target is unavailable. Local graph editing remains available; remote validation, discovery and execution require the backend. `VITE_API_BASE_URL` / `VITE_WS_URL` configure explicit deployed endpoints.
 
-On Windows, closing or reloading a page can interrupt a pending proxy write with `write ECONNABORTED`. The development-only diagnostics plugin reports this specific browser-side interruption as a short warning. It preserves Vite's socket cleanup and log-level settings; upstream errors, refused connections, read failures and unknown errors retain their original diagnostics. If the open page remains disconnected or the warning repeats without navigation, inspect the browser's Network → WS panel and API logs. `NETCIRCUIT_DEV_API_TARGET` overrides the development proxy target for both `/api` and `/ws`; restart Vite after changing its configuration.
+On Windows, closing or reloading a page can interrupt a pending proxy write with `write ECONNABORTED`. The development-only diagnostics plugin reports this specific browser-side interruption as a short warning. It preserves Vite's socket cleanup and log-level settings; upstream errors, refused connections, read failures and unknown errors retain their original diagnostics. If the open page remains disconnected or the warning repeats without navigation, inspect the browser's Network → WS panel and API logs. `CIRNET_DEV_API_TARGET` overrides the development proxy target for both `/api` and `/ws`; restart Vite after changing its configuration.
 
 The complete real-browser release gate uses Playwright **1.64.1** from `package-lock.json` and its exact Chromium revision. Interface owns Vite and browser runtime copying; Remote owns API/RPC/Simulator startup, persistent test state and controlled restarts. Keep the parent environment adopted above, including the three-checkout context. Install Chromium from Interface, then run the gate from Remote with this product and a prepared backend interpreter explicitly selected.
 
@@ -92,7 +94,7 @@ PowerShell, continuing with the variables above:
 Set-Location -LiteralPath $interfaceRoot
 npm run test:e2e:install
 if ($LASTEXITCODE -ne 0) { throw 'Pinned Chromium installation failed.' }
-$env:NETCIRCUIT_E2E_PYTHON = Join-Path $remoteRoot 'services/api/.venv/Scripts/python.exe'
+$env:CIRNET_E2E_PYTHON = Join-Path $remoteRoot 'services/api/.venv/Scripts/python.exe'
 Set-Location -LiteralPath $remoteRoot
 node scripts/e2e-interface.mjs --interface-root $interfaceRoot --forbid-only
 ```
@@ -102,7 +104,7 @@ Bash, with the prepared Linux/macOS API environment:
 ```bash
 (cd "$interface_root" && npm run test:e2e:install) || exit 1
 # Linux CI installs system libraries with: npm run test:e2e:install -- --with-deps
-export NETCIRCUIT_E2E_PYTHON="$remote_root/services/api/.venv/bin/python"
+export CIRNET_E2E_PYTHON="$remote_root/services/api/.venv/bin/python"
 (cd "$remote_root" && node scripts/e2e-interface.mjs --interface-root "$interface_root" --forbid-only)
 ```
 
@@ -113,7 +115,7 @@ from a fresh complete copy in a unique `br-<8hex>` child of the same shared
 allocator session, selected through the public `PLAYWRIGHT_BROWSERS_PATH`.
 Before copying, the launcher checks that every copied Windows `.exe` destination
 path is at most **259 UTF-16 characters**. Overlong paths fail with instructions
-to set a shorter absolute external `NETCIRCUIT_ARTIFACTS_DIR` parent and allocate
+to set a shorter absolute external `CIRNET_ARTIFACTS_DIR` parent and allocate
 a fresh session, without falling back to the installation cache. Copy the exact
 installed cache with its binaries,
 resources, installation markers, FFmpeg and platform helpers, dereferencing
@@ -135,7 +137,7 @@ not proof of containment.
 
 The harness starts the actual API, SQLite database, local gRPC Hardware Service, virtual digital simulator and Vite. It creates temporary accounts with a fresh generated administrator password, keeps one worker and zero retries, and owns orderly API/RPC/simulation-worker shutdown. A shutdown timeout or nonzero API exit fails the runner. The suite in `e2e/` covers imported GLB previews/fallback, native WebGL context loss/restoration with resumed draw calls and preserved canvas/document/history, real login/revocation/guest claim including socket closure before rotation acknowledgement, assignment CAS/publication/privacy, typed pre-run vectors with a real captured rising edge, history reload without Run replay, a lost Create ACK followed by safe Stop, exact project persistence across an actual API process restart, two-tab save conflicts and principal-partitioned IndexedDB recovery. Later editor cases cover physical assemblies, contact/wire tools, ribbon and camera navigation. Fault interception occurs at explicit boundaries after the corresponding real server action; it does not substitute a simulator or physical driver.
 
-The selected Remote interpreter must already contain the exact reviewed Contracts wheel and API/Hardware Service/simulator consumer set. Direct Node execution needs explicit `NETCIRCUIT_E2E_PYTHON`; its legacy `.audit-runtime` default is not provisioned by this Interface checkout. Reserve loopback ports 14173, 15151 and 18181. Production credentials and physical equipment are not used. The [shared verification policy](docs/VERIFICATION.md) requires Playwright output, failure screenshots/traces and harness scratch outside every repository. Only Markdown verification evidence is retained in the checkout.
+The selected Remote interpreter must already contain the exact reviewed Contracts wheel and API/Hardware Service/simulator consumer set. Direct Node execution needs explicit `CIRNET_E2E_PYTHON`; its legacy `.audit-runtime` default is not provisioned by this Interface checkout. Reserve loopback ports 14173, 15151 and 18181. Production credentials and physical equipment are not used. The [shared verification policy](docs/VERIFICATION.md) requires Playwright output, failure screenshots/traces and harness scratch outside every repository. Only Markdown verification evidence is retained in the checkout.
 
 [Interface CI](.github/workflows/frontend.yml) uses Node 22 and Python 3.12 (standard-library archive export only): reviewed artifact bootstrap, locked npm installation, script and typed runtime tests, AST boundaries, E2E typechecking, multipage build and versioned source/static artifact export. It does not install Python application dependencies or start backend services. Remote owns integrated browser CI: select a reviewed Interface source artifact by version/digest, bootstrap its pinned resources, install the real Python consumers and exact Chromium, then run the complete real-process suite with focused tests forbidden. Remote also owns PostgreSQL and installed backend-package gates. These are the current M2 ownership boundaries; links to pre-M2 workflow snapshots elsewhere describe their recorded revision. The harness exercises real SQLite and IndexedDB. [M2 verification](migration/verification.md) distinguishes local results, final browser disposition and hosted CI/publication status; a local pass does not claim a hosted run.
 
@@ -245,6 +247,6 @@ Typed API/WebSocket layers use generated contracts and runtime parsing. API requ
 
 ## Committed release artifact export
 
-After committing the reviewed source, run `python -B scripts/build_release.py --output-directory ABSOLUTE_OWNED_SESSION/interface-release`. Keep the reviewed `NETCIRCUIT_CONTRACTS_ARTIFACT_MANIFEST` or immutable artifact URL configuration available to its child processes. The standard-library builder requires a clean Git checkout, obtains bytes from the exact committed revision with checkout newline conversion disabled, and creates a fresh source export through the canonical Node DEV allocator. In that export it runs the committed SDK bootstrap, adopts the owned environment, runs locked `npm ci --no-audit --no-fund`, then `npm run build`. A previous CI/checkout build is not a release input; caller `dist` and arbitrary `--static-root` folders cannot establish static provenance.
+After committing the reviewed source, run `python -B scripts/build_release.py --output-directory ABSOLUTE_OWNED_SESSION/interface-release`. Keep the reviewed `CIRNET_CONTRACTS_ARTIFACT_MANIFEST` or immutable artifact URL configuration available to its child processes. The standard-library builder requires a clean Git checkout, obtains bytes from the exact committed revision with checkout newline conversion disabled, and creates a fresh source export through the canonical Node DEV allocator. In that export it runs the committed SDK bootstrap, adopts the owned environment, runs locked `npm ci --no-audit --no-fund`, then `npm run build`. A previous CI/checkout build is not a release input; caller `dist` and arbitrary `--static-root` folders cannot establish static provenance.
 
-Only the newly built export's three production pages and other regular static files enter the static archive. The builder rejects source/static aliases and existing output archives. It emits deterministic source/static archives, embedded exact revision/version/compatibility metadata, and an external `artifacts.json` with SHA256. Build staging and child logs remain in the owning external session for inspection and guarded cleanup. Python does not enter the browser runtime or Node dependency closure. Standalone script tests use `NETCIRCUIT_RELEASE_PYTHON` when an explicit interpreter is required. See the [build provenance verification](migration/interface-build-provenance.md).
+Only the newly built export's three production pages and other regular static files enter the static archive. The builder rejects source/static aliases and existing output archives. It emits deterministic source/static archives, embedded exact revision/version/compatibility metadata, and an external `artifacts.json` with SHA256. Build staging and child logs remain in the owning external session for inspection and guarded cleanup. Python does not enter the browser runtime or Node dependency closure. Standalone script tests use `CIRNET_RELEASE_PYTHON` when an explicit interpreter is required. See the [build provenance verification](migration/interface-build-provenance.md).

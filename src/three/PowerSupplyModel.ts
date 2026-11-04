@@ -103,20 +103,20 @@ function legendsTexture(w: number, h: number) {
     text('Vcc', -w * 0.02, h * 0.222, 42, 'bold'); text('Gnd', w * 0.31, h * 0.222, 42, 'bold')
     text('POWER', -w * 0.35, h * 0.237, 22, 'bold')
 
-    // Header labels: 'Power Bench Supply' aligned horizontally with 'net*CIRCUIT'
+    // Header labels: 'Power Bench Supply' aligned horizontally with 'CIRNET'
     const textY = py(h * 0.932)
     ctx.font = 'bold 36px Segoe UI'
     ctx.fillStyle = '#dae3e7'
     ctx.fillText('Power Bench Supply', px(-w * 0.135), textY)
 
     ctx.font = '600 48px Segoe UI'
-    const netWidth = (ctx.measureText ? ctx.measureText('net').width : 0) || 68
-    const circuitWidth = (ctx.measureText ? ctx.measureText('*CIRCUIT').width : 0) || 178
-    const totalWidth = netWidth + circuitWidth
+    const prefixWidth = (ctx.measureText ? ctx.measureText('CIR').width : 0) || 90
+    const suffixWidth = (ctx.measureText ? ctx.measureText('NET').width : 0) || 90
+    const totalWidth = prefixWidth + suffixWidth
     const startX = px(w * 0.335) - totalWidth / 2
     ctx.textAlign = 'left'
-    ctx.fillStyle = '#e6eff3'; ctx.fillText('net', startX, textY)
-    ctx.fillStyle = '#20d4ee'; ctx.fillText('*CIRCUIT', startX + netWidth, textY)
+    ctx.fillStyle = '#e6eff3'; ctx.fillText('CIR', startX, textY)
+    ctx.fillStyle = '#20d4ee'; ctx.fillText('NET', startX + prefixWidth, textY)
   })
 }
 

@@ -20,7 +20,7 @@ function canvasTexture(artwork: InstrumentArtwork) {
 // scale. The encoder and keys are interaction-ready geometry; no DDS output or
 // physical ratings are implied by the preview artwork or the visual BNCs.
 export function addFunctionGeneratorModel(group: Group) {
-  group.name = 'net_circuit_function_generator_2ch'
+  group.name = 'cirnet_function_generator_2ch'
   const chassis = createInstrumentChassis()
   const standard = (name: string, color: string, metalness = 0, roughness = 0.5) => {
     const material = metalness >= .65 ? new MeshStandardMaterial({ color, metalness, roughness }) : createCoatingMaterial({ color, roughness })

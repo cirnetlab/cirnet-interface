@@ -350,7 +350,7 @@ test('native held tactile input stays out of checkpoint, Export and server Save'
   // Read the real storage adapter's persisted row after its 350 ms debounce.
   // This observer has no document/controller mutation path.
   await expect.poll(()=>page.evaluate(async({name,holdStarted})=>{
-    const database=await new Promise<IDBDatabase>((resolve,reject)=>{const open=indexedDB.open('netcircuit-document-recovery');open.onsuccess=()=>resolve(open.result);open.onerror=()=>reject(open.error)})
+    const database=await new Promise<IDBDatabase>((resolve,reject)=>{const open=indexedDB.open('cirnet-document-recovery');open.onsuccess=()=>resolve(open.result);open.onerror=()=>reject(open.error)})
     try{return await new Promise<unknown>((resolve,reject)=>{const request=database.transaction('drafts','readonly').objectStore('drafts').getAll();request.onsuccess=()=>{const row=request.result.find((row:{value:{name:string}})=>row.value.name===name);resolve(row?{pressed:row.value.graph.modules[0].properties.pressed,fresh:row.value.updatedAt>=holdStarted+350}:null)};request.onerror=()=>reject(request.error)})}
     finally{database.close()}
   },{name,holdStarted})).toEqual({pressed:false,fresh:true})

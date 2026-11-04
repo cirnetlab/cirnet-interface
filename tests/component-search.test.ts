@@ -99,6 +99,7 @@ test('palette Search belongs only to Logic and Arithmetic and never searches out
     const type = result[0]!.props['data-component-type'] as string
     const transfer = new Map<string, string>()
     ;(result[0]!.props.onDragstart as (e: unknown) => void)({ dataTransfer: { setData: (key: string, value: string) => transfer.set(key, value), effectAllowed: '' }, preventDefault() {} })
+    assert.equal(transfer.get('application/x-cirnet-component'), type)
     assert.equal(transfer.get('application/x-netcircuit-component'), type)
     assert.equal(workspace.placementType, type)
     ;(view.find('input', 'aria-label', 'Search components').props.onKeydown as (e: unknown) => void)({ key: 'Enter', preventDefault() {}, stopPropagation() {} })

@@ -13,7 +13,7 @@ for (let index = 0; index < process.argv.length; index++) {
   if (!output) continue
   const directory = output[2] ?? process.argv[++index]
   if (!directory || validateArtifactDirectory(resolve(directory)) !== outputDirectory) {
-    throw new Error('Select the external artifact parent with NETCIRCUIT_ARTIFACTS_DIR or use scripts/e2e.mjs to allocate an owned --output directory.')
+    throw new Error('Select the external artifact parent with CIRNET_ARTIFACTS_DIR or use scripts/e2e.mjs to allocate an owned --output directory.')
   }
 }
 const reporterDirectory = getArtifactDirectory('playwright-reporters')

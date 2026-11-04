@@ -51,6 +51,7 @@ function choose(card: PaletteCard) {
 function drag(event: DragEvent, card: PaletteCard) {
   const { item } = card
   if (!visible.value || !card.placeable || !event.dataTransfer) { event.preventDefault(); return }
+  event.dataTransfer.setData('application/x-cirnet-component', item.type)
   event.dataTransfer.setData('application/x-netcircuit-component', item.type)
   event.dataTransfer.effectAllowed = 'copy'
   workspace.armPlacement(item.type)

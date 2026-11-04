@@ -7,7 +7,7 @@ import type { CircuitGraph } from '../src/types/circuit'
 import { exportedNativeGraph, observeNativeScene, sceneReady, workspaceCanvas } from './native-scene'
 
 type ProbedCanvas = HTMLCanvasElement & { nativeSceneProbe?: { scene: Object3D; camera: PerspectiveCamera; frames: number; target?: number[] }; nativeNavigation?: { target: number[]; reference: number; percent: number } }
-const directory = getArtifactDirectory(`unified-camera/${process.env.NETCIRCUIT_CAMERA_BASELINE ? 'before' : 'anchored-after'}`)
+const directory = getArtifactDirectory(`unified-camera/${process.env.CIRNET_CAMERA_BASELINE ? 'before' : 'anchored-after'}`)
 
 async function settled(page: Page) {
   let previous = '', stable = 0
@@ -70,7 +70,7 @@ async function measure(page: Page) {
       coverage: { left: Math.min(...xs), right: Math.max(...xs), bottom: Math.min(...ys), top: Math.max(...ys), minDepth: Math.min(...zs), maxDepth: Math.max(...zs) }, usable, modules, worldMin, worldMax, resources,
       graphics: { cssSize: [canvas.clientWidth, canvas.clientHeight], drawingBuffer: [canvas.width, canvas.height], dpr: devicePixelRatio, backend: debug ? gl?.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl?.getParameter(gl.RENDERER), depthBits: gl?.getParameter(gl.DEPTH_BITS) } }
   }, percent)
-  if (!process.env.NETCIRCUIT_CAMERA_BASELINE) {
+  if (!process.env.CIRNET_CAMERA_BASELINE) {
     expect(state.navigation, 'read the live controller snapshot through the native Vue component').toBeDefined()
     expect(Math.abs(state.percent - state.navigation!.zoom), 'UI matches actual camera readback without a feedback command').toBeLessThanOrEqual(.0051)
   }

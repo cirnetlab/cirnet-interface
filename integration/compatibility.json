@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "status": "PINNED_ARTIFACT_INPUTS",
   "interface": {
-    "name": "@net-circuit/web",
+    "name": "@cirnet/web",
     "version": "0.1.2",
-    "artifactName": "netcircuit-interface"
+    "artifactName": "cirnet-interface"
   },
   "contracts": {
     "npm": "0.1.1",

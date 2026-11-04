@@ -3,11 +3,11 @@ import {mkdir,writeFile} from 'node:fs/promises'
 import {resolve} from 'node:path'
 import {getArtifactDirectory} from '../scripts/artifact-paths.mjs'
 test.setTimeout(360000)
-const directory=process.env.NETCIRCUIT_DEPTH_OUTPUT?getArtifactDirectory('',{directory:process.env.NETCIRCUIT_DEPTH_OUTPUT}):getArtifactDirectory('depth-artifacts/final'),matrixSubject=process.env.NETCIRCUIT_DEPTH_SUBJECT
+const directory=process.env.CIRNET_DEPTH_OUTPUT?getArtifactDirectory('',{directory:process.env.CIRNET_DEPTH_OUTPUT}):getArtifactDirectory('depth-artifacts/final'),matrixSubject=process.env.CIRNET_DEPTH_SUBJECT
 async function open(page:Page,before=false){await mkdir(directory,{recursive:true});await page.route('**/@vite/client',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text()).replace('transport.connect(createHMRHandler(handleMessage));','')})});const errors:string[]=[];page.on('pageerror',e=>{errors.push(e.message);console.log(e.message)});await page.goto(`/e2e/depth-harness.html${before?'?before':''}`);await expect(page.locator('body')).toHaveAttribute('data-ready','true',{timeout:45000});expect(errors).toEqual([])}
 async function measure(page:Page,id:string,distance:number,azimuth=20,elevation=35){return page.evaluate(async({id,distance,azimuth,elevation})=>{const h=(window as any).depthHarness;h.pose(id,distance,azimuth,elevation);await h.frame();return{metadata:h.metadata(),leaks:await h.leaks(id)}},{id,distance,azimuth,elevation})}
 test('retained pre-fix native WebGL evidence',async({page})=>{
- test.skip(!process.env.NETCIRCUIT_DEPTH_BASELINE,'Optional retained-source capture; clean checkout regression uses current source below')
+ test.skip(!process.env.CIRNET_DEPTH_BASELINE,'Optional retained-source capture; clean checkout regression uses current source below')
  await open(page,true);await mkdir(directory,{recursive:true});const results=[]
  for(const id of ['DISPLAY','SCOPE','GEN']){const before=await measure(page,id,30);await page.screenshot({path:resolve(directory,`before-${id}.png`)});await page.evaluate(()=>{(window as any).depthHarness.setNear(.1)});const reference=await page.evaluate(async()=>{const h=(window as any).depthHarness;return{metadata:h.metadata(),leaks:await h.leaks()}});await page.screenshot({path:resolve(directory,`reference-near-${id}.png`)});results.push({id,before,reference});console.log(JSON.stringify({id,before:before.leaks,reference:reference.leaks}));expect.soft(before.leaks.changed).toBeGreaterThan(0);expect.soft(reference.leaks.changed).toBe(0)}
  await writeFile(resolve(directory,'before.json'),JSON.stringify(results,null,2))

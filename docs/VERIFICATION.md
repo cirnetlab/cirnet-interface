@@ -102,3 +102,51 @@ The clean committed-export regression was RED against the old builder: its requi
 Fresh verification used a physical export of reviewed uncommitted changes based on `a7de79a938a0df910641421e97607d71bcefcb8c`, Node 24.20.0 and Python 3.14.4 standard-library release-fixture tooling. Exact published Contracts/SDK/DEV archives were selected explicitly and digest-verified; no retained installation or sibling source supplied dependencies. Bootstrap and clean npm ci PASS; all 24 script checks, 10 Contracts checks and 1467 TypeScript/unit tests PASS with 0 FAIL/0 SKIP. AST boundaries, E2E TypeScript, all three production entrypoints and actionlint 1.7.12 PASS. Complete dependency and compatibility comparisons confirm that only the Interface product version changed. The existing native browser assertions, renderer behavior, DPR, deadlines, retries, traces and baselines are unchanged by this preparation.
 
 Raw outputs started outside Git in the shared session owned by `m6-v012-20261029-a83f41d6`, child `interface-v012-prep`; inspected gate receipt SHA256 `580b9f7960e6291a5a1b9d6e39951fb2edf4b720197cc3ff86f0dcac6de25567`. This verifies the reviewed candidate and packaging logic. The new release still requires a clean committed-source build, exact selected artifact installation and actual integrated/hosted browser acceptance; the earlier 57-pass local browser result retains its original source/version scope. Existing immutable 0.1.1 assets and tags are untouched.
+
+
+## 2026-11-04 canonical source names
+
+The uncommitted candidate based on `9853814a103638e3130b58b740c8789582b8ef40`
+uses `@cirnet/web`, `cirnet-interface` and canonical environment settings with
+legacy compatibility. See [the migration boundaries](NAMESPACE.md). Published
+artifact locks, original artwork, historical fixtures and baselines are intact.
+
+Verification used a fresh physical export outside all six Git roots, a clean
+locked npm installation, Node 24.20.0 and the exact pinned SDK/DEV/Chromium.
+All 25 script tests pass. The complete typed unit collection reports 1,475
+cases: 1,468 pass, six loopback fixtures fail with sandbox `EACCES`, and the
+existing directory-link fixture skips for host privilege. A native rerun of
+those files plus the current namespace/recovery/pending/capture/drag-and-drop
+regressions passes all 50 cases with zero failures or skips. Together the
+invocations cover the full collection; the restricted run remains recorded as
+failed. Final unit types, E2E types, AST boundaries and all production entrypoints
+pass. Actionlint 1.7.12 validates both Interface and FPGA workflows.
+
+A separate native Chromium 156.0.8078.4 check uses the application's real
+recovery code and IndexedDB. It reads an old-format draft, preserves its graph,
+returns the canonical format, removes the migrated draft without resurrection
+on reopening, and verifies the original legacy database remains intact. The
+browser runs from a complete fresh owned runtime copy and closes afterward.
+This focused browser check does not claim the integrated application browser
+release gate, hosted CI or publication.
+
+Raw evidence starts in the shared external session owned by
+`cirnet-six-repo-name-migration-20261104`, under its `interface` child.
+Script log SHA256 `4061672c06d2e407cbc2383356725f369cdb7a1a310ce5aa68a3cc997567b0ad`;
+restricted unit log `c54afdd74373205a908bb9b15187e4389505e74310ef489dd1a348184566020b`;
+native regression log `51166168a81e9c3037796525d2137e602406afe6f2cff02d6d6a8ff7d112ce4e`;
+final build `1c6c857ce11a50436651ae5bc4eb573a1d7324124818dfd8208d748107324ae1`;
+real IndexedDB browser check `28ad8b8a39851ed0b2c62e5698ba02b944c85c986fe6e46412f766f390a364f6`.
+No rendering baseline, worker, retry, timeout or electrical capability changed.
+
+
+The final active-brand audit also canonicalizes metadata in both model exporter
+sources and the live PSU/Function Generator/Oscilloscope printed text. The live
+branding intentionally changes to CIRNET, retaining the existing two-tone layout,
+fonts, colors and anchors. All 57 focused scene/model/chassis/supply regressions
+pass; the final typed multipage build passes. Delivered model/artwork files,
+their revision pins, loaded-old-root assertions and every visual baseline remain
+unchanged; no exporter or baseline generator writes into the asset tree.
+Brand regression log SHA256
+`f55f32b9bb1481e5390a15d8d47084110bc94ca3276c79c9bcbc78ee8198c51a`;
+final brand build `a58ec78b9ec803f0fda43434b046d1ed9d82f66e0bcb8baf994405e974160f7c`.

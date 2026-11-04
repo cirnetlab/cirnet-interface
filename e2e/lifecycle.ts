@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { expect } from '@playwright/test'
 export async function restartApiProcess() {
-  const directory=process.env.NETCIRCUIT_E2E_DATA_DIR
+  const directory=process.env.CIRNET_E2E_DATA_DIR
   if(!directory) throw new Error('The owned real API harness is required for process restart.')
   const before=JSON.parse(await readFile(resolve(directory,'backend.json'),'utf8')) as {pid:number;generation:number}
   const id=randomUUID()

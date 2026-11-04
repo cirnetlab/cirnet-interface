@@ -3,6 +3,7 @@ import { BoundedRecoveryRepository, type RecoveryLimits, type RecoveryStorage } 
 interface StoredRow { key:string; value:unknown }
 const STORE='drafts'
 const VERSION=1
+const MIGRATION='migration:netcircuit-document-recovery:v1'
 const rowKey=(value:unknown,index:number)=>{
   const row=value as {principalId?:unknown;draftId?:unknown}|null
   return row&&typeof row.principalId==='string'&&typeof row.draftId==='string'
@@ -17,8 +18,11 @@ export class IndexedDbRecoveryStorage implements RecoveryStorage {
   private connection:Promise<IDBDatabase>|null=null
   private readonly factory:()=>IDBFactory|undefined
   private readonly name:string
+  private readonly migrateLegacy:boolean
+  private migration:Promise<void>|null=null
   constructor(options:{databaseName?:string;factory?:()=>IDBFactory|undefined}={}) {
-    this.name=options.databaseName??'netcircuit-document-recovery'
+    this.name=options.databaseName??'cirnet-document-recovery'
+    this.migrateLegacy=options.databaseName===undefined
     this.factory=options.factory??(()=>globalThis.indexedDB)
   }
   private open():Promise<IDBDatabase> {
@@ -57,18 +61,56 @@ export class IndexedDbRecoveryStorage implements RecoveryStorage {
       const store=transaction.objectStore(STORE),request=store.getAll()
       request.onsuccess=()=>{
         try {
-          const rows=(request.result as StoredRow[]).map(row=>row.value)
+          const records=request.result as StoredRow[]
+          const migrated=records.some(row=>row.key===MIGRATION)
+          const rows=records.filter(row=>row.key!==MIGRATION).map(row=>row.value)
           result=change?change(rows):rows
           if(write) {
             store.clear()
+            if(migrated)store.put({key:MIGRATION,value:true})
             result.forEach((value,index)=>store.put({key:rowKey(value,index),value} satisfies StoredRow))
           }
         } catch(error) {failure=error;transaction.abort()}
       }
     })
   }
-  read():Promise<unknown[]> {return this.transaction(false)}
-  async update(change:(rows:unknown[])=>unknown[]):Promise<void> {await this.transaction(true,change)}
+  private async migrate():Promise<void> {
+    if(!this.migrateLegacy)return
+    if(this.migration)return this.migration
+    const migration=(async()=>{
+      const database=await this.open()
+      const already=await new Promise<boolean>((resolve,reject)=>{
+        const transaction=database.transaction(STORE,'readonly'),request=transaction.objectStore(STORE).get(MIGRATION)
+        transaction.oncomplete=()=>resolve(request.result!==undefined)
+        transaction.onabort=()=>reject(transaction.error??new Error('Legacy recovery migration check failed.'))
+      })
+      if(already)return
+      const legacy=new IndexedDbRecoveryStorage({databaseName:'netcircuit-document-recovery',factory:this.factory})
+      let rows:unknown[]
+      try {rows=await legacy.read()} finally {if(legacy.connection)(await legacy.connection).close()}
+      // Copy and marker commit together. A failed transaction leaves both the
+      // original database and the migration retry intact; canonical rows win.
+      await new Promise<void>((resolve,reject)=>{
+        let failure:unknown
+        const transaction=database.transaction(STORE,'readwrite'),store=transaction.objectStore(STORE),request=store.getAll()
+        transaction.oncomplete=()=>resolve()
+        transaction.onabort=()=>reject(failure??transaction.error??new Error('Legacy recovery migration failed.'))
+        request.onsuccess=()=>{
+          try {
+            const records=request.result as StoredRow[]
+            if(records.some(row=>row.key===MIGRATION))return
+            const keys=new Set(records.map(row=>row.key))
+            rows.forEach((value,index)=>{const key=rowKey(value,index);if(!keys.has(key)){store.put({key,value});keys.add(key)}})
+            store.put({key:MIGRATION,value:true})
+          } catch(error) {failure=error;transaction.abort()}
+        }
+      })
+    })()
+    this.migration=migration
+    try {await migration} catch(error) {if(this.migration===migration)this.migration=null;throw error}
+  }
+  async read():Promise<unknown[]> {await this.migrate();return this.transaction(false)}
+  async update(change:(rows:unknown[])=>unknown[]):Promise<void> {await this.migrate();await this.transaction(true,change)}
 }
 
 export function createIndexedDbRecoveryRepository(options:{databaseName?:string;factory?:()=>IDBFactory|undefined;limits?:Partial<RecoveryLimits>}={}) {

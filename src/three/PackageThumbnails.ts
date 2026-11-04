@@ -29,7 +29,7 @@ export interface PackageThumbnailCacheOptions {
   /** Retain the single context across short visibility gaps, then release it. */
   idleDelayMs?: number
 }
-export const packageThumbnailCacheKey = Symbol.for('netcircuit.package-thumbnails')
+export const packageThumbnailCacheKey = Symbol.for('cirnet.package-thumbnails')
 
 interface Entry {
   module?: CircuitModule

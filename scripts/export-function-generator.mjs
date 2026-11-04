@@ -25,8 +25,8 @@ globalThis.FileReader = class {
   readAsArrayBuffer(blob) { blob.arrayBuffer().then((result) => { this.result = result; this.onloadend?.() }) }
   readAsDataURL(blob) { blob.arrayBuffer().then((result) => { this.result = `data:${blob.type};base64,${Buffer.from(result).toString('base64')}`; this.onloadend?.() }) }
 }
-const root = new Group(); root.name = 'net_circuit_function_generator_2ch'
-root.userData = { model: 'net*CIRCUIT L1571979 two-channel function generator', size: FUNCTION_GENERATOR_SIZE, origin: 'center-bottom', up: 'Y', front: '+Z', unit: 'editor-world-unit', visualOnly: true }
+const root = new Group(); root.name = 'cirnet_function_generator_2ch'
+root.userData = { model: 'CIRNET L1571979 two-channel function generator', size: FUNCTION_GENERATOR_SIZE, origin: 'center-bottom', up: 'Y', front: '+Z', unit: 'editor-world-unit', visualOnly: true }
 addFunctionGeneratorModel(root); root.updateMatrixWorld(true)
 const gltf = await new GLTFExporter().parseAsync(root, { binary: false, onlyVisible: true })
 const geometry = Buffer.from(gltf.buffers[0].uri.split(',')[1], 'base64')

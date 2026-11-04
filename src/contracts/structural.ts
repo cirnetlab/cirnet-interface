@@ -51,14 +51,17 @@ export function contractsReady(names:readonly (keyof ContractMap)[],profile:Vali
 const pointer = (part: string) => part.replace(/~/g, '~0').replace(/\//g, '~1')
 const publicNames=new Set<string>(publicContractNames)
 
-/** Generated JSON Schema validation never normalizes, coerces or adds defaults. */
+/** Generated validation preserves caller data. The published SDK's old health
+ * identity remains a narrow compatibility alias until its reviewed pin moves. */
 export function parseStructural<K extends keyof ContractMap>(name: K, value: unknown, profile: ValidationProfile = 'transport'): ContractMap[K] {
   if(!publicNames.has(name))contractIssue('Unknown public contract.','','UNKNOWN_CONTRACT',profile)
   const registry = registries[profile]
   if (!registry) contractIssue('Unknown validation profile.', '', 'UNKNOWN_PROFILE', 'transport')
   const validator: Validator<ContractMap[K]>|undefined = registry[name]
   if (typeof validator !== 'function') contractIssue('Prepare the contract profile before entering this workflow.', '', 'VALIDATOR_NOT_READY', profile)
-  if (!validator(value)) {
+  const candidate=name==='HealthResponse'&&typeof value==='object'&&value!==null&&!Array.isArray(value)
+    &&'service' in value&&value.service==='cirnet-api'?{...value,service:'netcircuit-api'}:value
+  if (!validator(value)&&(candidate===value||!validator(candidate))) {
     const issues = (validator.errors ?? []).map(error => {
       const member = error.params.missingProperty ?? error.params.additionalProperty
       return {
@@ -69,5 +72,5 @@ export function parseStructural<K extends keyof ContractMap>(name: K, value: unk
     })
     throw new ContractValidationError(`Invalid ${name} schema at ${issues[0]?.path || '/'}: ${issues[0]?.message ?? 'contract validation failed.'}`, issues)
   }
-  return value
+  return value as ContractMap[K]
 }

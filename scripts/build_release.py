@@ -86,7 +86,7 @@ def build(output_directory, source_root=ROOT):
         'console.log(JSON.stringify({session,directory,temporary:getArtifactDirectory("tmp"),cache:getArtifactDirectory("npm-cache")}));',
         str(output)], check=True, capture_output=True, text=True)
     owned = json.loads(allocation.stdout)
-    for name in (f'netcircuit-interface-{VERSION}-source.tar.gz', f'netcircuit-interface-{VERSION}-static.tar.gz', 'artifacts.json'):
+    for name in (f'cirnet-interface-{VERSION}-source.tar.gz', f'cirnet-interface-{VERSION}-static.tar.gz', 'artifacts.json'):
         if (output/name).exists():
             raise ValueError('Release output already exists: '+str(output/name))
     source = {}
@@ -103,11 +103,11 @@ def build(output_directory, source_root=ROOT):
                 continue
             source[member.name] = tree.extractfile(member).read()
     product = json.loads(source['package.json'])
-    if product.get('name') != '@net-circuit/web' or product.get('version') != VERSION:
-        raise ValueError('Committed Interface product metadata must be @net-circuit/web=='+VERSION)
+    if product.get('name') != '@cirnet/web' or product.get('version') != VERSION:
+        raise ValueError('Committed Interface product metadata must be @cirnet/web=='+VERSION)
     fingerprint = hashlib.sha256(''.join(hashlib.sha256(value).hexdigest()+'  '+name+'\n'
         for name,value in sorted(source.items()) if name != 'migration/verification.md').encode()).hexdigest()
-    metadata = {'schema':1, 'name':'netcircuit-interface', 'version':VERSION, 'kind':'source',
+    metadata = {'schema':1, 'name':'cirnet-interface', 'version':VERSION, 'kind':'source',
         'source':{'repository':repository, 'revision':revision, 'uncommittedMigration':False},
         'contractsVersion':CONTRACTS_VERSION, 'sourceFingerprint':fingerprint,
         'sourceFingerprintAlgorithm':'sha256-path-lines-v1'}
@@ -119,7 +119,7 @@ def build(output_directory, source_root=ROOT):
         path = exported/name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(value)
-    environment = {**os.environ, 'NETCIRCUIT_ARTIFACTS_SESSION': owned['session'],
+    environment = {**os.environ, 'CIRNET_ARTIFACTS_SESSION': owned['session'], 'NETCIRCUIT_ARTIFACTS_SESSION': owned['session'],
                    'TMP': owned['temporary'], 'TEMP': owned['temporary'], 'TMPDIR': owned['temporary'],
                    'npm_config_cache': owned['cache']}
     bootstrap = json.loads(run_step('bootstrap', ['node', 'scripts/bootstrap-contracts.mjs'], exported, environment, diagnostics))
@@ -139,7 +139,7 @@ def build(output_directory, source_root=ROOT):
     output.mkdir(parents=True, exist_ok=True)
     artifacts = {}
     for kind,payload in [('source',source), ('static',static)]:
-        filename = f'netcircuit-interface-{VERSION}-{kind}.tar.gz'
+        filename = f'cirnet-interface-{VERSION}-{kind}.tar.gz'
         path = output/filename
         with path.open('xb') as stream:
             stream.write(archive_bytes(payload))

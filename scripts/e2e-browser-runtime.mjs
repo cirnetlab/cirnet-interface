@@ -7,7 +7,7 @@ async function checkWindowsLaunchPaths(source,destination) {
     const directory=entry.isDirectory()||entry.isSymbolicLink()&&(await stat(input)).isDirectory()
     if(directory)await checkWindowsLaunchPaths(input,output)
     else if(/\.exe$/i.test(entry.name)&&output.length>259)throw new Error(
-      'Windows cannot launch copied executable paths longer than 259 characters. Choose a shorter external parent with NETCIRCUIT_ARTIFACTS_DIR before running E2E.')
+      'Windows cannot launch copied executable paths longer than 259 characters. Choose a shorter external parent with CIRNET_ARTIFACTS_DIR before running E2E.')
   }
 }
 

@@ -31,7 +31,7 @@ test('real login, explicit guest claim, logout and account controls preserve the
   const created=await context.request.post('/api/experiments',{headers:{Origin:'http://127.0.0.1:14173','X-CSRF-Token':guest.csrf_token},data:{station_id:'virtual-station-01',circuit_graph:{schema_version:'1.0',circuit_id:'guest-created',modules:[],connections:[]}}})
   expect(created.status()).toBe(201)
   const experiment=await created.json()
-  await login(page,'e2e_admin',process.env.NETCIRCUIT_E2E_ADMIN_PASSWORD!)
+  await login(page,'e2e_admin',process.env.CIRNET_E2E_ADMIN_PASSWORD!)
   await expect(page.locator('.project-title')).not.toContainText('Auth draft')
   await expect(page.getByRole('region',{name:'User administration'})).toBeVisible()
   const before=await (await context.request.get('/api/experiments')).json()
@@ -42,9 +42,9 @@ test('real login, explicit guest claim, logout and account controls preserve the
   await expect(page.getByLabel('Guest data transfer',{exact:true})).toBeHidden()
   const after=await (await context.request.get('/api/experiments')).json()
   expect(after.some((record:{experiment_id:string})=>record.experiment_id===experiment.experiment_id)).toBe(true)
-  const cookie=(await context.cookies()).find(cookie=>cookie.name==='netcircuit_session')!
+  const cookie=(await context.cookies()).find(cookie=>cookie.name==='cirnet_session')!
   expect(cookie.httpOnly).toBe(true);expect(cookie.sameSite).toBe('Lax');expect(cookie.path).toBe('/')
-  expect(await page.evaluate(()=>document.cookie)).not.toContain('netcircuit_session')
+  expect(await page.evaluate(()=>document.cookie)).not.toContain('cirnet_session')
   const active=await (await context.request.get('/api/auth/session')).json()
   const stored=await page.evaluate(()=>JSON.stringify({local:{...localStorage},session:{...sessionStorage}}))
   expect(stored).not.toContain(active.csrf_token);expect(stored).not.toContain(cookie.value)
@@ -57,7 +57,7 @@ test('real login, explicit guest claim, logout and account controls preserve the
 
 test('administrator creates users and revocation removes a live student session without remounting its canvas',async({page,browser})=>{
   const suffix=randomUUID().slice(0,8),student=`student_${suffix}`,instructor=`teacher_${suffix}`,secret=password()
-  await page.goto('/');await login(page,'e2e_admin',process.env.NETCIRCUIT_E2E_ADMIN_PASSWORD!)
+  await page.goto('/');await login(page,'e2e_admin',process.env.CIRNET_E2E_ADMIN_PASSWORD!)
   await createUser(page,student,secret,'STUDENT');await createUser(page,instructor,password(),'INSTRUCTOR')
   const studentContext=await browser.newContext({baseURL:'http://127.0.0.1:14173'}),studentPage=await studentContext.newPage()
   try {

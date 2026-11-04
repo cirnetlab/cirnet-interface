@@ -11,7 +11,7 @@ import {copyBrowserRuntime} from '../scripts/e2e-browser-runtime.mjs'
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..'),smoke=process.argv.includes('--smoke'),guardsOnly=process.argv.includes('--guards-only')
 const directory=getArtifactDirectory(`depth-roi-equivalence/${randomUUID()}`)
 await mkdir(directory,{recursive:true})
-const cache=await copyBrowserRuntime(process.env.NETCIRCUIT_ROI_BROWSER_CACHE??resolve(root,'.runtime/playwright'),getArtifactDirectory(`br-${randomUUID().slice(0,8)}`))
+const cache=await copyBrowserRuntime(process.env.CIRNET_ROI_BROWSER_CACHE??resolve(root,'.runtime/playwright'),getArtifactDirectory(`br-${randomUUID().slice(0,8)}`))
 process.env.PLAYWRIGHT_BROWSERS_PATH=cache
 const args=['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-gpu-compositing','--enable-automation',`--log-file=${resolve(directory,'chromium-debug.log')}`]
 const result={kind:'explicit ROI equivalence proof; not release acceptance',smoke,guardsOnly,directory,args,cases:[],startedAt:new Date().toISOString()}

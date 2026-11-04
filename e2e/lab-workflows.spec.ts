@@ -8,7 +8,7 @@ const assignmentPanel=(page:Page)=>page.getByRole('region',{name:'Assignments',e
 const historyPanel=(page:Page)=>page.getByRole('region',{name:'Experiment history and queue',exact:true})
 const graph=(name='AND working circuit')=>({schema_version:'1.0',circuit_id:'w6-and-circuit',modules:[{id:'X',type:'DIGITAL_SWITCH',properties:{state:false}},{id:'Y',type:'DIGITAL_SWITCH',properties:{state:true}},{id:'G',type:'74HC08'},{id:'L',type:'LED'},{id:'BB',type:'BREADBOARD'}],connections:[{source:'X.OUT',destination:'G.A1'},{source:'Y.OUT',destination:'G.B1'},{source:'G.Y1',destination:'L.IN'}],metadata:{name,opaque_extension:{retain:['exact',7]}}})
 const definition=(id:string,title:string)=>({schema_version:'1.0',assignment_id:id,title,assessment_policy:'FUNCTIONAL_ONLY',lab_endpoints:[{endpoint_id:'x',role:'INPUT_SOURCE',design_port:'X.OUT'},{endpoint_id:'y',role:'OUTPUT_SENSE',design_port:'L.IN'}],expected_behavior:{expected_signals:[{signal:'y',time_ns:10,value:0}]},reference_design_graph:graph()})
-async function admin(browser:Browser){const context=await browser.newContext({baseURL:origin}),session=parseStructural('SessionView',await(await context.request.get('/api/auth/session')).json());const response=await context.request.post('/api/auth/login',{headers:{Origin:origin,'X-CSRF-Token':session.csrf_token},data:{username:'e2e_admin',password:process.env.NETCIRCUIT_E2E_ADMIN_PASSWORD!}});expect(response.status()).toBe(200);return {context,session:parseStructural('SessionView',await response.json())}}
+async function admin(browser:Browser){const context=await browser.newContext({baseURL:origin}),session=parseStructural('SessionView',await(await context.request.get('/api/auth/session')).json());const response=await context.request.post('/api/auth/login',{headers:{Origin:origin,'X-CSRF-Token':session.csrf_token},data:{username:'e2e_admin',password:process.env.CIRNET_E2E_ADMIN_PASSWORD!}});expect(response.status()).toBe(200);return {context,session:parseStructural('SessionView',await response.json())}}
 async function createUser(context:BrowserContext,csrf:string,role:'INSTRUCTOR'|'STUDENT'){const username=`w6_${role.toLowerCase()}_${randomUUID().slice(0,8)}`,password=`secret-${randomUUID()}`;expect((await context.request.post('/api/admin/users',{headers:{Origin:origin,'X-CSRF-Token':csrf},data:{username,password,display_name:username,role}})).status()).toBe(201);return {username,password}}
 async function login(page:Page,user:{username:string;password:string}){await page.goto('/');await page.getByRole('button',{name:'Open account',exact:true}).click();await page.getByLabel('Username',{exact:true}).fill(user.username);await page.getByLabel('Password',{exact:true}).fill(user.password);await page.getByRole('button',{name:'Sign in',exact:true}).click();await expect(page.getByRole('button',{name:'Sign out',exact:true})).toBeVisible();await page.getByRole('button',{name:'Close account',exact:true}).click();await expectEventConnection(page)}
 async function openAssignments(page:Page){await fileCommand(page, 'Assignment');await expect(assignmentPanel(page)).toBeVisible()}
@@ -115,11 +115,11 @@ test('hard reload after a committed Create observes its durable key without repl
  })
  await selectRun(page);await page.getByRole('toolbar',{name:'Execution controls',exact:true}).getByRole('button',{name:'Run',exact:true}).click()
  const record=await actualCreate
- const tracked=await page.evaluate(()=>JSON.parse(localStorage.getItem('netcircuit.pending-observations.v1')??'[]') as {key:string;kind:string}[])
+ const tracked=await page.evaluate(()=>JSON.parse(localStorage.getItem('cirnet.pending-observations.v1')??'[]') as {key:string;kind:string}[])
  expect(tracked.some(row=>row.kind==='create')).toBe(true)
  await page.reload();release();await expectEventConnection(page)
  await expect.poll(()=>operationReads).toBeGreaterThan(0)
- await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('netcircuit.pending-observations.v1')??'[]').length)).toBe(0)
+ await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('cirnet.pending-observations.v1')??'[]').length)).toBe(0)
  await history(page);await expect(historyPanel(page).getByRole('region',{name:'Current owned execution',exact:true})).toContainText(record.experiment_id)
  await expect(historyPanel(page).getByLabel('Evidence access',{exact:true})).toContainText('only by an acknowledged Run in this tab')
  expect(creates).toBe(1);expect(runs).toBe(0)

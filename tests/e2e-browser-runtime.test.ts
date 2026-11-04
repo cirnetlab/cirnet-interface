@@ -92,7 +92,7 @@ test('Windows rejects a 260-character copied executable path before publishing r
  await mkdir(runtime);await writeFile(join(runtime,'browser.exe'),'pinned browser')
  const tooLong=boundaryDestination(260)
  assert.ok(join(tooLong,'browser-1','browser.exe').length>259)
- await assert.rejects(copyBrowserRuntime(h.source,tooLong,{platform:'win32'}),/shorter.*NETCIRCUIT_ARTIFACTS_DIR/)
+ await assert.rejects(copyBrowserRuntime(h.source,tooLong,{platform:'win32'}),/shorter.*CIRNET_ARTIFACTS_DIR/)
  assert.deepEqual(await readdir(tooLong),[],'Preflight must fail before copying any installed runtime.')
 })
 

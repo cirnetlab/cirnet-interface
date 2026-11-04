@@ -5,7 +5,7 @@ const configuredLoggers = new WeakSet<Logger>()
 
 export function devProxyDiagnostics(): Plugin {
   return {
-    name: 'netcircuit-dev-proxy-diagnostics',
+    name: 'cirnet-dev-proxy-diagnostics',
     apply: 'serve',
     configureServer({ config: { logger } }) {
       // Keep Vite's resolved log level, state and existing proxy cleanup listeners.

@@ -25,8 +25,8 @@ globalThis.FileReader = class {
   readAsArrayBuffer(blob) { blob.arrayBuffer().then((result) => { this.result = result; this.onloadend?.() }) }
   readAsDataURL(blob) { blob.arrayBuffer().then((result) => { this.result = `data:${blob.type};base64,${Buffer.from(result).toString('base64')}`; this.onloadend?.() }) }
 }
-const root = new Group(); root.name = 'net_circuit_oscilloscope_2ch'
-root.userData = { model: 'net*CIRCUIT two-channel oscilloscope', size: OSCILLOSCOPE_SIZE, origin: 'center-bottom', up: 'Y', front: '+Z', unit: 'editor-world-unit', visualOnly: true }
+const root = new Group(); root.name = 'cirnet_oscilloscope_2ch'
+root.userData = { model: 'CIRNET two-channel oscilloscope', size: OSCILLOSCOPE_SIZE, origin: 'center-bottom', up: 'Y', front: '+Z', unit: 'editor-world-unit', visualOnly: true }
 addOscilloscopeModel(root); root.updateMatrixWorld(true)
 const gltf = await new GLTFExporter().parseAsync(root, { binary: false, onlyVisible: true })
 const geometry = Buffer.from(gltf.buffers[0].uri.split(',')[1], 'base64')

@@ -69,7 +69,7 @@ test('guest transfer requires explicit confirmation and never overwrites a targe
 
 test('IndexedDB is lazy and fails visibly when browser storage is unavailable',async()=>{
   let calls=0
-  const storage=new IndexedDbRecoveryStorage({factory:()=>{calls++;return undefined}})
+  const storage=new IndexedDbRecoveryStorage({databaseName:'test-recovery',factory:()=>{calls++;return undefined}})
   assert.equal(calls,0)
   await assert.rejects(storage.read(),/unavailable/);assert.equal(calls,1)
 })
@@ -82,7 +82,7 @@ test('IndexedDB put acknowledgement waits for transaction completion and propaga
   const database={transaction:()=>{queueMicrotask(()=>{complete=transaction.oncomplete!;abort=transaction.onabort!});return transaction},close:()=>undefined,onversionchange:null}
   const factory={open:()=>{const request={result:database,onsuccess:null as ((event:Event)=>void)|null};
     queueMicrotask(()=>request.onsuccess?.(new Event('success')));return request}}
-  const storage=new IndexedDbRecoveryStorage({factory:()=>factory as unknown as IDBFactory})
+  const storage=new IndexedDbRecoveryStorage({databaseName:'test-recovery',factory:()=>factory as unknown as IDBFactory})
   let settled=false
   const write=storage.update(()=>[{principalId:'alice',draftId:'draft'}]).then(()=>{settled=true})
   for(let tick=0;tick<5;tick++) await Promise.resolve()
@@ -92,4 +92,54 @@ test('IndexedDB put acknowledgement waits for transaction completion and propaga
   for(let tick=0;tick<5;tick++) await Promise.resolve()
   getSuccess(new Event('success'));abort(new Event('abort'))
   await assert.rejects(failure,/quota transaction abort/)
+})
+
+
+test('legacy recovery records remain readable and all new exports use the canonical format',async()=>{
+ const storage=new Storage(),repository=new BoundedRecoveryRepository(storage,{clock:()=>123})
+ await repository.save('alice',[draft()])
+ ;(storage.rows[0] as {format:string}).format='netcircuit.recovery'
+ assert.equal((await repository.load('alice','draft'))?.format,'cirnet.recovery')
+ await repository.save('alice',[draft('fresh')])
+ assert.equal((storage.rows[1] as {format:string}).format,'cirnet.recovery')
+ assert.equal((storage.rows[0] as {format:string}).format,'netcircuit.recovery','reading never rewrites historical records')
+})
+
+function memoryIndexedDb(initial:Map<string,Map<string,unknown>>){
+ return {open(name:string){
+  if(!initial.has(name))initial.set(name,new Map())
+  const database={close(){},onversionchange:null,transaction(){
+   const original=initial.get(name)!,pending=new Map(original)
+   let aborted=false
+   const transaction={error:null,oncomplete:null as null|(()=>void),onabort:null as null|(()=>void),onerror:null,
+    abort(){aborted=true;queueMicrotask(()=>transaction.onabort?.())},
+    objectStore(){return {
+     getAll(){return request([...pending.values()])},get(key:string){return request(pending.get(key))},
+     clear(){pending.clear()},put(row:{key:string}){pending.set(row.key,structuredClone(row))},
+    }},
+   }
+   function request(result:unknown){const request={result,onsuccess:null as null|(()=>void)};queueMicrotask(()=>request.onsuccess?.());return request}
+   setTimeout(()=>{if(!aborted){initial.set(name,pending);transaction.oncomplete?.()}},0)
+   return transaction
+  }}
+  const request={result:database,onsuccess:null as null|(()=>void)};queueMicrotask(()=>request.onsuccess?.());return request
+ }} as unknown as IDBFactory
+}
+
+test('IndexedDB migration copies legacy drafts once, preserves canonical collisions and never resurrects deleted drafts',async()=>{
+ const storage=new Storage(),repository=new BoundedRecoveryRepository(storage,{clock:()=>123})
+ await repository.save('alice',[draft('shared',1),draft('legacy-only',2)])
+ const row=(value:unknown)=>({key:JSON.stringify([(value as {principalId:string}).principalId,(value as {draftId:string}).draftId]),value})
+ const legacy=new Map(storage.rows.map(value=>{const record=row({...value as object,format:'netcircuit.recovery'});return [record.key,record]}))
+ await repository.save('alice',[draft('shared',3)])
+ const current=row(storage.rows.find(value=>(value as {draftId:string}).draftId==='shared'))
+ const databases=new Map<string,Map<string,unknown>>([['netcircuit-document-recovery',legacy],['cirnet-document-recovery',new Map([[current.key,current]])]])
+ const factory=memoryIndexedDb(databases)
+ const migrated=new BoundedRecoveryRepository(new IndexedDbRecoveryStorage({factory:()=>factory}))
+ assert.equal((await migrated.load('alice','shared'))?.graph.metadata?.value,3)
+ assert.equal((await migrated.load('alice','legacy-only'))?.graph.metadata?.value,2)
+ await migrated.remove('alice','legacy-only')
+ const reopened=new BoundedRecoveryRepository(new IndexedDbRecoveryStorage({factory:()=>factory}))
+ assert.equal(await reopened.load('alice','legacy-only'),null)
+ assert.equal(databases.get('netcircuit-document-recovery')?.size,2,'legacy database remains intact')
 })

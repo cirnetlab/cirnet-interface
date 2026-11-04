@@ -16,6 +16,6 @@ const paths=Object.freeze({
 export function readContractsResource(name,{artifactPath=resolve(root,'.artifacts',lock.sdist.filename)}={}){
   if(!Object.hasOwn(paths,name))throw Error('Unknown released Contracts test resource.')
   const bytes=verifyBytes(readFileSync(artifactPath),lock.sdist.sha256)
-  const path=`netcircuit_contracts-${lock.contractsVersion}/${paths[name]}`
+  const path=`${lock.sdist.name.replaceAll('-','_')}-${lock.contractsVersion}/${paths[name]}`
   return JSON.parse(archiveEntry(bytes,path).toString('utf8'))
 }

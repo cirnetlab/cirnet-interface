@@ -77,7 +77,7 @@ test('reference front layout has a silver case, wide screen, complete controls, 
     assert.equal(shell.metalness, 0, 'the powder coating is dielectric even though its substrate is metal')
     assert.ok(shell.roughness >= .8, 'paint has a broad reflection rather than a travelling highlight')
     assert.equal((mesh('front_bezel').material as MeshStandardMaterial).color.getHexString(), '30383e')
-    assert.equal(model.name, 'net_circuit_oscilloscope_2ch')
+    assert.equal(model.name, 'cirnet_oscilloscope_2ch')
     const screen = mesh('screen'), bounds = new Box3().setFromObject(screen)
     assert.ok(bounds.getSize(new Vector3()).x / bounds.getSize(new Vector3()).y > 1.55, 'screen matches the wide reference display')
     assert.ok(bounds.max.x < 0.9, 'display stays left of the control bank')

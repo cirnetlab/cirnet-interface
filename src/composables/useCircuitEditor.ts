@@ -528,7 +528,7 @@ export function useCircuitEditor(canvas: Ref<HTMLCanvasElement | undefined>, man
   }
   function drop(event: DragEvent) {
     event.preventDefault(); cancelPlacement()
-    const type = event.dataTransfer?.getData('application/x-netcircuit-component')
+    const type = event.dataTransfer?.getData('application/x-cirnet-component') || event.dataTransfer?.getData('application/x-netcircuit-component')
     if (!type || !getDefinition(type) || !manager() || !canvas.value) return
     const dropPoint = coordinates(event)
     if(flexible.drop(type, dropPoint.x, dropPoint.y)){ui.activeRibbonGroup=null;ui.openWindow('component-info',{activate:false});canvas.value.focus();return}

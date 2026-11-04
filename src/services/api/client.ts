@@ -35,7 +35,7 @@ export interface ApiClient {
 
 function mediaType(value: string) {
   const [type, ...parts] = value.toLowerCase().split(';')
-  return { type: type.trim(), parameters: new Map(parts.map(part => {
+  return { type: type.trim().replace(/^application\/vnd\.netcircuit\.capture$/, 'application/vnd.cirnet.capture'), parameters: new Map(parts.map(part => {
     const index = part.indexOf('=')
     return [part.slice(0, index).trim(), part.slice(index + 1).trim().replace(/^"|"$/g, '')]
   })) }
@@ -96,7 +96,7 @@ export function createApiClient(options: { baseUrl?: string; timeoutMs?: number;
           ...(request.body===undefined?{}:{'Content-Type':'application/json'}),...request.headers})
         if(method!=='GET'||request.controlContext)headers.set('X-Control-Client',(options.controlClientId??controlClientId)())
         if(method!=='GET') {
-          if(sessionToken) headers.set('X-CSRF-Token',sessionToken)
+          if(sessionToken) { headers.set('X-CIRNET-CSRF',sessionToken); headers.set('X-CSRF-Token',sessionToken) }
         }
         const response = await (options.fetcher ?? globalThis.fetch)(`${baseUrl}${path}`, {
           method, headers,

@@ -20,7 +20,7 @@ interface MutationPort extends document.EditorDocumentState {clearValidation():v
 interface Tracking {batch:number;stop:()=>void}
 // HMR and independently compiled consumers can load this adapter more than once.
 // The observer belongs to the store; this non-state anchor never owns a graph copy.
-const trackingKey=Symbol.for('netcircuit.editorDocument.observer')
+const trackingKey=Symbol.for('cirnet.editorDocument.observer')
 const observerFor=(store:object)=>Reflect.get(toRaw(store),trackingKey) as Tracking|undefined
 function invalidate(store:MutationPort){store.clearValidation();physicalControllers.get(store)?.abort();physicalControllers.delete(store);store.physicalVersion++;store.physicalPreviewBusy=false}
 function mutateDocument<T>(store:MutationPort,call:()=>T):T {

@@ -20,10 +20,10 @@ test('download authentication is confined to the initial GitHub API asset reques
     calls.push({url:String(url),headers:options.headers,redirect:options.redirect})
     return calls.length===1?new Response(null,{status:302,headers:{location:'https://assets.example.com/exact.tgz'}}):new Response(bytes)
   }
-  const before=process.env.NETCIRCUIT_ARTIFACTS_TOKEN
-  process.env.NETCIRCUIT_ARTIFACTS_TOKEN='fixture-token'
+  const before=process.env.CIRNET_ARTIFACTS_TOKEN
+  process.env.CIRNET_ARTIFACTS_TOKEN='fixture-token'
   try{assert.deepEqual(await downloadArtifact('https://api.github.com/repos/o/r/releases/assets/123',digest(bytes),fetcher),bytes)}
-  finally{if(before===undefined)delete process.env.NETCIRCUIT_ARTIFACTS_TOKEN;else process.env.NETCIRCUIT_ARTIFACTS_TOKEN=before}
+  finally{if(before===undefined)delete process.env.CIRNET_ARTIFACTS_TOKEN;else process.env.CIRNET_ARTIFACTS_TOKEN=before}
   assert.equal(calls[0].headers.Authorization,'Bearer fixture-token')
   assert.equal(calls[1].headers.Authorization,undefined)
   assert.ok(calls.every(call=>call.redirect==='manual'))
@@ -42,10 +42,10 @@ test('renamed GitHub API assets retain binary negotiation across API redirects w
     }
     return new Response(bytes)
   }
-  const before=process.env.NETCIRCUIT_ARTIFACTS_TOKEN
-  process.env.NETCIRCUIT_ARTIFACTS_TOKEN='fixture-token'
+  const before=process.env.CIRNET_ARTIFACTS_TOKEN
+  process.env.CIRNET_ARTIFACTS_TOKEN='fixture-token'
   try{assert.deepEqual(await downloadArtifact('https://api.github.com/repos/TINIHI-Labs/net-Circuit-Contracts/releases/assets/682226359',digest(bytes),fetcher),bytes)}
-  finally{if(before===undefined)delete process.env.NETCIRCUIT_ARTIFACTS_TOKEN;else process.env.NETCIRCUIT_ARTIFACTS_TOKEN=before}
+  finally{if(before===undefined)delete process.env.CIRNET_ARTIFACTS_TOKEN;else process.env.CIRNET_ARTIFACTS_TOKEN=before}
   assert.equal(calls[0].headers.Authorization,'Bearer fixture-token')
   assert.equal(calls[1].url,stable)
   assert.equal(calls[1].headers.Accept,'application/octet-stream')
@@ -73,11 +73,12 @@ test('bundled resource readers have no bootstrap CLI side effects',async()=>{
 test('a release failure publishes ownership and supports cleanup before npm installation',()=>{
   const fixture=mkdtempSync(resolve(getArtifactDirectory('bootstrap-failure-regression'),'case-'))
   mkdirSync(resolve(fixture,'scripts'));mkdirSync(resolve(fixture,'integration'))
-  for(const name of ['bootstrap-contracts.mjs','contracts-artifacts.mjs'])writeFileSync(resolve(fixture,'scripts',name),readFileSync(resolve(root,'scripts',name)))
+  for(const name of ['bootstrap-contracts.mjs','contracts-artifacts.mjs','environment.mjs'])writeFileSync(resolve(fixture,'scripts',name),readFileSync(resolve(root,'scripts',name)))
   writeFileSync(resolve(fixture,'integration/contracts-artifacts.json'),JSON.stringify(lock))
   const manifestPath=resolve(fixture,'manifest.json'),githubEnv=resolve(fixture,'github-env')
   writeFileSync(manifestPath,JSON.stringify({dev_npm:{path:resolve(root,'.artifacts',lock.dev_npm.filename),sha256:lock.dev_npm.sha256},npm:{path:resolve(fixture,'missing.tgz'),sha256:'0'.repeat(64)}}))
-  const sessions=resolve(fixture,'sessions'),environment={...process.env,NETCIRCUIT_ARTIFACTS_DIR:sessions}
+  const sessions=resolve(fixture,'sessions'),environment={...process.env,CIRNET_ARTIFACTS_DIR:sessions}
+  delete environment.CIRNET_ARTIFACTS_SESSION
   delete environment.NETCIRCUIT_ARTIFACTS_SESSION
   try{
     const failed=spawnSync(process.execPath,[resolve(fixture,'scripts/bootstrap-contracts.mjs'),'--manifest',manifestPath,'--github-env',githubEnv],{env:environment,encoding:'utf8',windowsHide:true})
@@ -92,7 +93,7 @@ test('a release failure publishes ownership and supports cleanup before npm inst
     assert.equal(existsSync(resolve(fixture,'node_modules')),false)
     const cleanup=spawnSync(process.execPath,[resolve(root,'scripts/cleanup-contracts.mjs')],{env:{...environment,...published},encoding:'utf8',windowsHide:true})
     assert.equal(cleanup.status,0,cleanup.stdout+cleanup.stderr)
-    assert.equal(existsSync(published.NETCIRCUIT_ARTIFACTS_SESSION),false)
+    assert.equal(existsSync(published.CIRNET_ARTIFACTS_SESSION),false)
   }finally{
     if(existsSync(sessions))for(const name of readdirSync(sessions))if(name.startsWith('netcircuit-'))cleanupArtifactSession(resolve(sessions,name))
   }

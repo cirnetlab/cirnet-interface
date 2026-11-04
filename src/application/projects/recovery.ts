@@ -3,7 +3,7 @@ import { parseCircuitFile } from '../../domain/document/circuitFile'
 
 export interface RecoveryBinding { documentId:string; projectId:string; serverRevision:number }
 export interface RecoveryInput { draftId:string; name:string; revision:number; graph:CircuitGraph; binding?:RecoveryBinding }
-export interface RecoveryDraft extends RecoveryInput { format:'netcircuit.recovery'; version:1; principalId:string; updatedAt:number }
+export interface RecoveryDraft extends RecoveryInput { format:'cirnet.recovery'; version:1; principalId:string; updatedAt:number }
 export interface RecoverySummary { draftId:string; name:string; revision:number; updatedAt:number; documentId:string|null }
 /** update must commit the synchronous transform atomically, including failures. */
 export interface RecoveryStorage { read():Promise<unknown[]>; update(change:(rows:unknown[])=>unknown[]):Promise<void> }
@@ -57,10 +57,10 @@ export class BoundedRecoveryRepository implements RecoveryRepository {
     return {draftId:value.draftId,name:value.name,revision:value.revision,graph,...(binding?{binding}:{})}
   }
   private decode(value:unknown):RecoveryDraft {
-    if(!object(value)||value.format!=='netcircuit.recovery'||value.version!==1) throw new RecoveryError('Recovery format/version is unsupported.')
+    if(!object(value)||!['cirnet.recovery','netcircuit.recovery'].includes(String(value.format))||value.version!==1) throw new RecoveryError('Recovery format/version is unsupported.')
     identity(value.principalId)
     if(typeof value.updatedAt!=='number'||!Number.isFinite(value.updatedAt)||value.updatedAt<0) throw new RecoveryError('Recovery timestamp is invalid.')
-    const result={...this.input(value),format:'netcircuit.recovery' as const,version:1 as const,
+    const result={...this.input(value),format:'cirnet.recovery' as const,version:1 as const,
       principalId:value.principalId,updatedAt:value.updatedAt}
     if(size(result)>this.limits.maxDraftBytes) throw new RecoveryError('Recovery document exceeds its byte bound.')
     return result
@@ -83,7 +83,7 @@ export class BoundedRecoveryRepository implements RecoveryRepository {
     if(drafts.length>this.limits.maxTotalDrafts) throw new RecoveryError('Local recovery exceeds its total storage limit.')
     if(drafts.length>this.limits.maxPrincipalDrafts) throw new RecoveryError('Recovery exceeds this account storage limit.')
     const updatedAt=this.limits.clock()
-    const values=drafts.map(value=>this.decode({...this.input(value),format:'netcircuit.recovery',version:1,principalId,updatedAt}))
+    const values=drafts.map(value=>this.decode({...this.input(value),format:'cirnet.recovery',version:1,principalId,updatedAt}))
     if(new Set(values.map(key)).size!==values.length) throw new RecoveryError('Recovery batch contains duplicate drafts.')
     const replacements=new Map(values.map(value=>[key(value),value]))
     await this.storage.update(rows=>{

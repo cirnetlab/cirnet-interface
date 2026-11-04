@@ -1,3 +1,4 @@
+import {environmentValue,synchronizeEnvironment} from './environment.mjs'
 /** Bootstrap immutable DEV tooling before creating any diagnostic output. */
 import {readFileSync,writeFileSync,mkdirSync,existsSync,appendFileSync,realpathSync,lstatSync} from 'node:fs'
 import {createHash} from 'node:crypto'
@@ -13,8 +14,8 @@ export function checkedHttps(value){
   if(url.protocol!=='https:'||url.username||url.password||url.pathname.toLowerCase().split('/').includes('latest'))throw Error('Artifact requests require an immutable HTTPS URL without credentials.')
   return url
 }
-export function requestHeaders(value,token=process.env.NETCIRCUIT_ARTIFACTS_TOKEN){
-  const url=checkedHttps(value),headers={'User-Agent':'netcircuit-interface-consumer'}
+export function requestHeaders(value,token=environmentValue('CIRNET_ARTIFACTS_TOKEN')){
+  const url=checkedHttps(value),headers={'User-Agent':'cirnet-interface-consumer'}
   if(url.hostname==='api.github.com'&&(!url.port||url.port==='443')&&/^\/(?:repos\/[^/]+\/[^/]+|repositories\/[0-9]+)\/releases\/assets\/[0-9]+$/.test(url.pathname)){
     headers.Accept='application/octet-stream'
     if(token)headers.Authorization=`Bearer ${token}`
@@ -69,7 +70,7 @@ async function selectedBytes(key,manifest){
     if(!isAbsolute(selected.path??''))throw Error('Local release manifest requires absolute artifact paths.')
     return verifyBytes(readFileSync(selected.path),entry.sha256)
   }
-  const url=process.env[entry.urlEnvironment]
+  const url=environmentValue(entry.urlEnvironment)
   if(!url)throw Error(`Provide --manifest ABSOLUTE_M1_MANIFEST or ${entry.urlEnvironment}; publication/access has not been established.`)
   return downloadArtifact(url,entry.sha256)
 }
@@ -79,9 +80,10 @@ export async function bootstrap({manifestPath,githubEnv}={}){
   const dev=await selectedBytes('dev_npm',manifest)
   const metadata=JSON.parse(archiveEntry(dev,'package/package.json').toString('utf8'))
   if(metadata.name!==lock.dev_npm.name||metadata.version!==lock.dev_npm.version)throw Error('DEV artifact package identity differs from its lock.')
-  const canonical=verifyBytes(archiveEntry(dev,'package/netcircuit_artifact_paths/artifact-paths.mjs'),lock.dev_npm.nodeSha256)
-  const context=process.env.NETCIRCUIT_ARTIFACTS_CONTEXT??JSON.stringify({owner:`git:${realpathSync(root)}`,roots:[realpathSync(root)]})
-  const allocatorEnvironment={...process.env,NETCIRCUIT_ARTIFACTS_CONTEXT:context}
+  const namespace=metadata.files?.some(path=>path.startsWith('cirnet_artifact_paths/'))?'cirnet_artifact_paths':'netcircuit_artifact_paths'
+  const canonical=verifyBytes(archiveEntry(dev,`package/${namespace}/artifact-paths.mjs`),lock.dev_npm.nodeSha256)
+  const context=process.env.CIRNET_ARTIFACTS_CONTEXT??JSON.stringify({owner:`git:${realpathSync(root)}`,roots:[realpathSync(root)]})
+  const allocatorEnvironment=synchronizeEnvironment({...process.env,CIRNET_ARTIFACTS_CONTEXT:context})
   const allocation=execFileSync(process.execPath,['--input-type=module'],{
     input:Buffer.concat([canonical,Buffer.from('\nconsole.log(JSON.stringify({artifactSession:getArtifactDirectory(),context:getArtifactContext()}))\n')]),
     cwd:root,env:allocatorEnvironment,encoding:'utf8',windowsHide:true,stdio:['pipe','pipe','pipe'],
@@ -92,9 +94,9 @@ export async function bootstrap({manifestPath,githubEnv}={}){
   const bootstrapModule=resolve(bootstrapDirectory,'artifact-paths.mjs')
   if(existsSync(bootstrapModule))verifyBytes(readFileSync(bootstrapModule),lock.dev_npm.nodeSha256)
   else writeFileSync(bootstrapModule,canonical,{flag:'wx'})
-  const environment={NETCIRCUIT_ARTIFACTS_CONTEXT:context,NETCIRCUIT_ARTIFACTS_SESSION:artifactSession,
-    NETCIRCUIT_ARTIFACTS_BOOTSTRAP_MODULE:bootstrapModule,
-    TMP:resolve(artifactSession,'tmp'),TEMP:resolve(artifactSession,'tmp'),TMPDIR:resolve(artifactSession,'tmp'),npm_config_cache:resolve(artifactSession,'npm-cache')}
+  const environment=synchronizeEnvironment({CIRNET_ARTIFACTS_CONTEXT:context,CIRNET_ARTIFACTS_SESSION:artifactSession,
+    CIRNET_ARTIFACTS_BOOTSTRAP_MODULE:bootstrapModule,
+    TMP:resolve(artifactSession,'tmp'),TEMP:resolve(artifactSession,'tmp'),TMPDIR:resolve(artifactSession,'tmp'),npm_config_cache:resolve(artifactSession,'npm-cache')})
   // Publish the owner and verified cleanup tooling before another download or
   // npm installation can fail. Cleanup does not depend on node_modules.
   if(githubEnv)for(const [name,value]of Object.entries(environment)){

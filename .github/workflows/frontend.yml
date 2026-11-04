@@ -22,11 +22,11 @@ jobs:
           python-version: '3.12'
       - name: Bootstrap exact SDK and DEV artifacts before allocation or npm ci
         env:
-          NETCIRCUIT_ARTIFACTS_DIR: ${{ runner.temp }}/netcircuit-interface
-          NETCIRCUIT_CONTRACTS_NPM_URL: ${{ vars.NETCIRCUIT_CONTRACTS_NPM_URL }}
-          NETCIRCUIT_CONTRACTS_SDIST_URL: ${{ vars.NETCIRCUIT_CONTRACTS_SDIST_URL }}
-          NETCIRCUIT_ARTIFACT_PATHS_NPM_URL: ${{ vars.NETCIRCUIT_ARTIFACT_PATHS_NPM_URL }}
-          NETCIRCUIT_ARTIFACTS_TOKEN: ${{ secrets.NETCIRCUIT_ARTIFACTS_READ_TOKEN }}
+          CIRNET_ARTIFACTS_DIR: ${{ runner.temp }}/cirnet-interface
+          CIRNET_CONTRACTS_NPM_URL: ${{ vars.CIRNET_CONTRACTS_NPM_URL || vars.NETCIRCUIT_CONTRACTS_NPM_URL }}
+          CIRNET_CONTRACTS_SDIST_URL: ${{ vars.CIRNET_CONTRACTS_SDIST_URL || vars.NETCIRCUIT_CONTRACTS_SDIST_URL }}
+          CIRNET_ARTIFACT_PATHS_NPM_URL: ${{ vars.CIRNET_ARTIFACT_PATHS_NPM_URL || vars.NETCIRCUIT_ARTIFACT_PATHS_NPM_URL }}
+          CIRNET_ARTIFACTS_TOKEN: ${{ secrets.CIRNET_ARTIFACTS_READ_TOKEN || secrets.NETCIRCUIT_ARTIFACTS_READ_TOKEN }}
         run: node scripts/bootstrap-contracts.mjs --github-env "$GITHUB_ENV"
       - name: Clean locked install without sibling sources
         run: npm ci --no-audit --no-fund
@@ -41,22 +41,22 @@ jobs:
           npm run build
       - name: Export versioned source verification and static bundles externally
         env:
-          NETCIRCUIT_CONTRACTS_NPM_URL: ${{ vars.NETCIRCUIT_CONTRACTS_NPM_URL }}
-          NETCIRCUIT_CONTRACTS_SDIST_URL: ${{ vars.NETCIRCUIT_CONTRACTS_SDIST_URL }}
-          NETCIRCUIT_ARTIFACT_PATHS_NPM_URL: ${{ vars.NETCIRCUIT_ARTIFACT_PATHS_NPM_URL }}
-          NETCIRCUIT_ARTIFACTS_TOKEN: ${{ secrets.NETCIRCUIT_ARTIFACTS_READ_TOKEN }}
+          CIRNET_CONTRACTS_NPM_URL: ${{ vars.CIRNET_CONTRACTS_NPM_URL || vars.NETCIRCUIT_CONTRACTS_NPM_URL }}
+          CIRNET_CONTRACTS_SDIST_URL: ${{ vars.CIRNET_CONTRACTS_SDIST_URL || vars.NETCIRCUIT_CONTRACTS_SDIST_URL }}
+          CIRNET_ARTIFACT_PATHS_NPM_URL: ${{ vars.CIRNET_ARTIFACT_PATHS_NPM_URL || vars.NETCIRCUIT_ARTIFACT_PATHS_NPM_URL }}
+          CIRNET_ARTIFACTS_TOKEN: ${{ secrets.CIRNET_ARTIFACTS_READ_TOKEN || secrets.NETCIRCUIT_ARTIFACTS_READ_TOKEN }}
         run: |
           output="$(node --input-type=module -e "import {getArtifactDirectory} from './scripts/artifact-paths.mjs';console.log(getArtifactDirectory('interface-artifacts'))")"
           python -B scripts/build_release.py --output-directory "$output"
-          echo "NETCIRCUIT_INTERFACE_EXPORT_DIR=$output" >> "$GITHUB_ENV"
+          echo "CIRNET_INTERFACE_EXPORT_DIR=$output" >> "$GITHUB_ENV"
       - name: Retain versioned Interface artifacts for explicit downstream review
         uses: actions/upload-artifact@v4
         with:
-          name: netcircuit-interface-0.1.2
-          path: ${{ env.NETCIRCUIT_INTERFACE_EXPORT_DIR }}
+          name: cirnet-interface-0.1.2
+          path: ${{ env.CIRNET_INTERFACE_EXPORT_DIR }}
           if-no-files-found: error
           retention-days: 7
           include-hidden-files: true
       - name: Clean only this owned external verification session
-        if: always() && env.NETCIRCUIT_ARTIFACTS_SESSION != ''
+        if: always() && env.CIRNET_ARTIFACTS_SESSION != ''
         run: node scripts/cleanup-contracts.mjs

@@ -8,7 +8,7 @@ import {spawnSync,execFileSync} from 'node:child_process'
 import {getArtifactDirectory} from './artifact-paths.mjs'
 
 const product=resolve(dirname(fileURLToPath(import.meta.url)),'..')
-const python=process.env.NETCIRCUIT_RELEASE_PYTHON??'python'
+const python=process.env.CIRNET_RELEASE_PYTHON??'python'
 const pages=['index.html','oscilloscope-preview.html','function-generator-preview.html']
 
 function fixture({omitPage,productVersion='0.1.2',contractsVersion='0.1.1'}={}){
@@ -26,11 +26,11 @@ function fixture({omitPage,productVersion='0.1.2',contractsVersion='0.1.1'}={}){
   lock.npm={...lock.npm,filename:'fixture-contracts.tgz',sha256:createHash('sha256').update(readFileSync(sdk)).digest('hex')}
   lock.sdist={...lock.sdist,filename:'fixture-contracts.tar.gz',sha256:createHash('sha256').update(readFileSync(sdist)).digest('hex')}
   writeFileSync(resolve(source,'integration/contracts-artifacts.json'),JSON.stringify(lock))
-  for(const name of ['bootstrap-contracts.mjs','contracts-artifacts.mjs'])writeFileSync(resolve(source,'scripts',name),readFileSync(resolve(product,'scripts',name)))
+  for(const name of ['bootstrap-contracts.mjs','contracts-artifacts.mjs','environment.mjs'])writeFileSync(resolve(source,'scripts',name),readFileSync(resolve(product,'scripts',name)))
   const dependency='file:.artifacts/fixture-contracts.tgz',integrity='sha512-'+createHash('sha512').update(readFileSync(sdk)).digest('base64')
-  writeFileSync(resolve(source,'package.json'),JSON.stringify({name:'@net-circuit/web',version:productVersion,scripts:{build:'node scripts/build.mjs'},dependencies:{'@tinihi-labs/contracts':dependency}}))
-  writeFileSync(resolve(source,'package-lock.json'),JSON.stringify({name:'@net-circuit/web',version:productVersion,lockfileVersion:3,requires:true,packages:{
-    '':{name:'@net-circuit/web',version:productVersion,dependencies:{'@tinihi-labs/contracts':dependency}},
+  writeFileSync(resolve(source,'package.json'),JSON.stringify({name:'@cirnet/web',version:productVersion,scripts:{build:'node scripts/build.mjs'},dependencies:{'@tinihi-labs/contracts':dependency}}))
+  writeFileSync(resolve(source,'package-lock.json'),JSON.stringify({name:'@cirnet/web',version:productVersion,lockfileVersion:3,requires:true,packages:{
+    '':{name:'@cirnet/web',version:productVersion,dependencies:{'@tinihi-labs/contracts':dependency}},
     'node_modules/@tinihi-labs/contracts':{version:'0.1.1',resolved:dependency,integrity},
   }}))
   writeFileSync(resolve(source,'.gitignore'),'dist/\nnode_modules/\n.artifacts/\n')
@@ -41,7 +41,7 @@ import {marker} from '@tinihi-labs/contracts'
 const text=readFileSync('source.txt','utf8')
 mkdirSync('dist',{recursive:true})
 for(const page of ${JSON.stringify(pages.filter(page=>page!==omitPage))})writeFileSync('dist/'+page,'<title>'+page+'</title>\\n'+text+marker+'\\n')
-appendFileSync(process.env.NETCIRCUIT_RELEASE_TEST_RECEIPT,JSON.stringify({cwd:process.cwd(),text,marker,git:existsSync('.git')})+'\\n')
+appendFileSync(process.env.CIRNET_RELEASE_TEST_RECEIPT,JSON.stringify({cwd:process.cwd(),text,marker,git:existsSync('.git')})+'\\n')
 `)
   for(const page of pages)writeFileSync(resolve(source,'dist',page),'stale ignored bundle')
   const manifest=resolve(owned,'inputs.json'),receipt=resolve(owned,'build-receipt.jsonl')
@@ -51,7 +51,7 @@ appendFileSync(process.env.NETCIRCUIT_RELEASE_TEST_RECEIPT,JSON.stringify({cwd:p
   git('init');git('config','core.autocrlf','true');git('config','user.email','release-test@example.invalid');git('config','user.name','Release fixture')
   git('remote','add','origin','https://github.com/example/fixture.git');git('add','.');git('commit','-m','Synthetic release fixture')
   const invoke=(directory,...args)=>spawnSync(python,['-B',resolve(product,'scripts/build_release.py'),'--source-root',source,'--output-directory',directory,...args],{
-    env:{...process.env,NETCIRCUIT_CONTRACTS_ARTIFACT_MANIFEST:manifest,NETCIRCUIT_RELEASE_TEST_RECEIPT:receipt},encoding:'utf8',windowsHide:true,
+    env:{...process.env,CIRNET_CONTRACTS_ARTIFACT_MANIFEST:manifest,CIRNET_RELEASE_TEST_RECEIPT:receipt},encoding:'utf8',windowsHide:true,
   })
   return {owned,source,git,invoke,receipt}
 }
@@ -103,7 +103,7 @@ test('release rejects a stale Interface product without advancing its Contracts 
   const {owned,invoke}=fixture({productVersion:'0.1.1'})
   const result=invoke(resolve(owned,'output'))
   assert.notEqual(result.status,0)
-  assert.match(result.stderr,/Committed Interface product metadata must be @net-circuit\/web==0\.1\.2/)
+  assert.match(result.stderr,/Committed Interface product metadata must be @cirnet\/web==0\.1\.2/)
 })
 
 test('release rejects a bootstrap that reports the Interface patch as its Contracts version',()=>{

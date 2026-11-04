@@ -25,7 +25,7 @@ function canvasTexture(artwork: ScopeArtwork): CanvasTexture | null {
 // Named pivot groups are interaction-ready; acquisition/control behavior is a
 // separate contract. They deliberately do not masquerade as supply controls.
 export function addOscilloscopeModel(group: Group) {
-  group.name = 'net_circuit_oscilloscope_2ch'
+  group.name = 'cirnet_oscilloscope_2ch'
   const chassis = createInstrumentChassis()
   const standard = (name: string, color: string, metalness = 0, roughness = 0.5) => {
     const material = metalness >= .65 ? new MeshStandardMaterial({ color, metalness, roughness }) : createCoatingMaterial({ color, roughness })

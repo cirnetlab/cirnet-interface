@@ -33,7 +33,7 @@ test('two-channel generator is placeable and uses existing transform history wit
 test('generator preserves reference control layout, independent screen, encoder pivot, stand and realtime budget', () => {
   const model = buildComponent({ id: 'FG', type: 'GENERATOR' })
   try {
-    assert.equal(model.name, 'net_circuit_function_generator_2ch')
+    assert.equal(model.name, 'cirnet_function_generator_2ch')
     for (const name of generatorNodes) assert.ok(model.getObjectByName(name), name)
     const screen = model.getObjectByName('screen') as Mesh
     assert.ok(screen.geometry instanceof PlaneGeometry)

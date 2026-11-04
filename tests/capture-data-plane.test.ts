@@ -112,7 +112,7 @@ test('payload fetch uses the configured API and encoded ID rather than an untrus
   const { binary, metadata } = captureFixture('y', 'capture/id')
   configureApiClient({ baseUrl: '/backend/api', fetcher: async (url, options) => {
     assert.equal(String(url), '/backend/api/captures/capture%2Fid/payload')
-    assert.equal(new Headers(options?.headers).get('Accept'), 'application/vnd.netcircuit.capture; version=1')
+    assert.equal(new Headers(options?.headers).get('Accept'), 'application/vnd.cirnet.capture; version=1')
     return captureResponse(binary)
   } })
   const store = useInstrumentStore(); store.useCapture({ ...metadata, payload_ref: 'https://untrusted.invalid/payload' })

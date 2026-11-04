@@ -42,7 +42,7 @@ export async function callOperation<K extends OperationName>(client: ApiClient, 
       }
       const normalize=(media:string)=>{
         const [type,...parameters]=media.toLowerCase().split(';').map(part=>part.trim())
-        return [type,...parameters.map(parameter=>parameter.replace(/\s*=\s*/, '=').replace(/="([^"]*)"$/, '=$1')).sort()].join(';')
+        return [type.replace(/^application\/vnd\.netcircuit\.capture$/, 'application/vnd.cirnet.capture'),...parameters.map(parameter=>parameter.replace(/\s*=\s*/, '=').replace(/="([^"]*)"$/, '=$1')).sort()].join(';')
       }
       const received=normalize(contentType)
       const expected=Object.keys(bindings).find(media=>normalize(media)===received
@@ -59,7 +59,7 @@ export async function callOperation<K extends OperationName>(client: ApiClient, 
     } }
   if (operation.requestContract) parseLab(operation.requestContract, options.body)
   let result: unknown
-  if (operation.binary) result = await client.request(path, { ...common, responseType: 'arrayBuffer', accept: operation.responseMedia[0] })
+  if (operation.binary) result = await client.request(path, { ...common, responseType: 'arrayBuffer', accept: operation.responseMedia[0].replace('application/vnd.netcircuit.capture','application/vnd.cirnet.capture') })
   else result = await client.request(path, { ...common, parse(value) {
     const contract = operation.responseContract
     if (!contract) throw new ApiError(0, 'INVALID_RESPONSE', 'The generated API operation has no response contract.')

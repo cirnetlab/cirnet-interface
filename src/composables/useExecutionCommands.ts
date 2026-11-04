@@ -61,7 +61,7 @@ function createExecutionCommands(){
   return {preparing,canRun,primaryLabel,primaryDisabled,blockedReason,run,stop,primaryAction}
 }
 export type ExecutionCommands=ReturnType<typeof createExecutionCommands>
-const commandsKey=Symbol.for('netcircuit:workspace-execution') as InjectionKey<ExecutionCommands>
+const commandsKey=Symbol.for('cirnet:workspace-execution') as InjectionKey<ExecutionCommands>
 export function provideExecutionCommands():ExecutionCommands {
   const commands=createExecutionCommands();provide(commandsKey,commands);return commands
 }

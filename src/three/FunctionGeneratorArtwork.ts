@@ -69,7 +69,7 @@ export function generatorLegendsArtwork(): InstrumentArtwork {
   const px = (x: number) => (x / 6 + 0.5) * 1536, py = (y: number) => (1 - y / 3.6) * 922
   const text = (text: string, x: number, y: number, size = 25, color = '#e1e8ec', align: 'left' | 'center' = 'center') => commands.push({ kind: 'text', text, x: px(x), y: py(y), size, color, align })
   const path = (points: [number, number][], color = '#7b919b', width = 2) => commands.push({ kind: 'path', points: points.map(([x, y]) => [px(x), py(y)]), color, width })
-  text('net', -2.39, 3.27, 34, '#e6eff3', 'left'); text('*CIRCUIT', -2.18, 3.27, 34, GENERATOR_CH2, 'left')
+  text('CIR', -2.39, 3.27, 34, '#e6eff3', 'left'); text('NET', -2.18, 3.27, 34, GENERATOR_CH2, 'left')
   path([[-1.39, 3.18], [-1.39, 3.36]], GENERATOR_CH2)
   text('L1571979', -1.18, 3.27, 28, '#e1e8ec', 'left')
   path([[-0.49, 3.18], [-0.49, 3.36]], GENERATOR_CH2)

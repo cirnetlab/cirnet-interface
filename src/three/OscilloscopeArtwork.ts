@@ -94,7 +94,7 @@ export function scopeLegendsArtwork(): ScopeArtwork {
       line([x + Math.sin(angle) * radius, y + Math.cos(angle) * radius], [x + Math.sin(angle) * (radius + 0.025), y + Math.cos(angle) * (radius + 0.025)], color)
     }
   }
-  text('net', -2.36, 3.60, 37, '#e6eff3', 'left'); text('*CIRCUIT', -2.14, 3.60, 37, CH2_COLOR, 'left')
+  text('CIR', -2.36, 3.60, 37, '#e6eff3', 'left'); text('NET', -2.14, 3.60, 37, CH2_COLOR, 'left')
   line([-0.81, 3.49], [-0.81, 3.71], '#869aa4')
   text('HD111977', -0.66, 3.60, 26, '#e2e9ed', 'left')
   line([0.02, 3.49], [0.02, 3.71], '#869aa4')

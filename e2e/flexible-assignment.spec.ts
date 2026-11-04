@@ -14,7 +14,7 @@ test('actual authoring UI creates, reopens, updates and publishes a private Grap
   await page.goto('/')
   await page.getByRole('button', { name: 'Open account', exact: true }).click()
   await page.getByLabel('Username', { exact: true }).fill('e2e_admin')
-  await page.getByLabel('Password', { exact: true }).fill(process.env.NETCIRCUIT_E2E_ADMIN_PASSWORD!)
+  await page.getByLabel('Password', { exact: true }).fill(process.env.CIRNET_E2E_ADMIN_PASSWORD!)
   await page.getByRole('button', { name: 'Sign in', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Close account', exact: true }).click()
