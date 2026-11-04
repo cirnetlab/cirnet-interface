@@ -150,3 +150,7 @@ unchanged; no exporter or baseline generator writes into the asset tree.
 Brand regression log SHA256
 `f55f32b9bb1481e5390a15d8d47084110bc94ca3276c79c9bcbc78ee8198c51a`;
 final brand build `a58ec78b9ec803f0fda43434b046d1ed9d82f66e0bcb8baf994405e974160f7c`.
+
+### Allocator alias follow-up (2026-11-04)
+
+Two native regression tests pass for the pinned DEV allocator adapter. An explicit separate allocation retains the inherited active session; an empty canonical session setting allocates once and synchronizes both output prefixes before reuse. Each fixture cleans only its own children. Frozen artifacts and baselines remain unchanged. The source CI requires both manifest aliases to be cleared when selecting the Interface release SDK.
