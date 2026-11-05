@@ -5,7 +5,7 @@ import { solveMounting, validateMountBindings } from '../src/electrical/mounting
 import { solveFlexibleMount } from '../src/electrical/flexibleGeometry'
 import { fixedPackageLeadPath, packageFeedthroughPoints, rigidPackageLeadSegments, rigidPackageLeadStations } from '../src/electrical/rigidPackageLeads'
 import type { CircuitGraph, CircuitModule } from '../src/types/circuit'
-import rigidParity from '@tinihi-labs/contracts/fixtures/rigid-leads-parity.json' with { type: 'json' }
+import rigidParity from '@cirnet/contracts/fixtures/rigid-leads-parity.json' with { type: 'json' }
 
 type SegmentFixture = { start: number[]; end: number[]; radiusMm: number }
 const parity = rigidParity as unknown as {

@@ -1,5 +1,5 @@
 import { validateLeadProperties } from './leadProperties'
-import { ComponentDesignPropertiesV1 } from '@tinihi-labs/contracts/validators.structural.core'
+import { ComponentDesignPropertiesV1 } from '@cirnet/contracts/validators.structural.core'
 import { getPartForType } from './partCatalog'
 import { validParameterValue } from './componentParameters'
 import { normalizeLabelProperties, validateLabelProperties } from './labelProperties'

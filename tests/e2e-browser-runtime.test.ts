@@ -105,7 +105,7 @@ test('a bundled allocator adapter import cannot execute its command-line entrypo
  const output=join(getArtifactDirectory('adapter-bundle-'+randomBytes(4).toString('hex')),'worker.mjs')
  await build({stdin:{contents:"import './scripts/artifact-paths.mjs'; console.log('adapter-imported')",resolveDir:process.cwd(),loader:'js'},
   outfile:output,bundle:true,platform:'node',format:'esm',packages:'external',plugins:[{name:'installed-dev-tool',setup(context){
-   context.onResolve({filter:/^@tinihi-labs\/artifact-paths$/},()=>({path:import.meta.resolve('@tinihi-labs/artifact-paths'),external:true}))
+   context.onResolve({filter:/^@cirnet\/artifact-paths$/},()=>({path:import.meta.resolve('@cirnet/artifact-paths'),external:true}))
   }}]})
  const result=spawnSync(process.execPath,[output],{env:process.env,encoding:'utf8',windowsHide:true})
  assert.equal(result.status,0,result.stderr)

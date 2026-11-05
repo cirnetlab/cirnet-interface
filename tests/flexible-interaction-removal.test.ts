@@ -1,9 +1,9 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {createSceneManager} from '../src/three/SceneManager'
-import fixtures from '@tinihi-labs/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
+import fixtures from '@cirnet/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
 import type {CircuitGraph} from '../src/types/circuit'
-import legacy from '@tinihi-labs/contracts/fixtures/component-mechanics-legacy.json' with { type: 'json' }
+import legacy from '@cirnet/contracts/fixtures/component-mechanics-legacy.json' with { type: 'json' }
 import * as document from '../src/domain/document/editorDocument'
 import {previewComponentGeometry} from '../src/domain/document/graphCommands'
 import {Box3,Vector3} from 'three'

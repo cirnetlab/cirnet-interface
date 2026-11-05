@@ -1,5 +1,5 @@
-import catalog from '@tinihi-labs/contracts/data/signalPortCatalog.json' with { type: 'json' }
-import type { SignalDomain, SignalPortDefinition, SimulationClassification } from '@tinihi-labs/contracts/dto'
+import catalog from '@cirnet/contracts/data/signalPortCatalog.json' with { type: 'json' }
+import type { SignalDomain, SignalPortDefinition, SimulationClassification } from '@cirnet/contracts/dto'
 import type { CircuitGraph,CircuitModule } from '../types/circuit'
 import { contractIssue, ContractValidationError, parseStructural, type ValidationProfile } from '../contracts/structural'
 import { validateLabelAnnotations } from '../contracts/labelValidation'

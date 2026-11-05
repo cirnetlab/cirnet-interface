@@ -1,7 +1,7 @@
 import { isRecord } from '../../types/api'
 import { isStationDescriptor } from '../../types/station'
 import { parseLab } from '../../contracts/validation'
-import type { LegacyServerEvent, ServerEvent as VersionedServerEvent } from '@tinihi-labs/contracts/dto'
+import type { LegacyServerEvent, ServerEvent as VersionedServerEvent } from '@cirnet/contracts/dto'
 
 export type ServerEvent = VersionedServerEvent | LegacyServerEvent
 export function isVersionedServerEvent(event: ServerEvent): event is VersionedServerEvent {

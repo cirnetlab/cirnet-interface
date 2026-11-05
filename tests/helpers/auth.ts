@@ -1,4 +1,4 @@
-import type { SessionView,UserView } from '@tinihi-labs/contracts/dto'
+import type { SessionView,UserView } from '@cirnet/contracts/dto'
 export function sessionFixture(role:UserView['role']|null=null):SessionView {
   return {schema_version:'1.0',authenticated:role!==null,
     principal:role?{principal_id:'account-user',kind:'USER',role,username:'learner',display_name:'Learner'}:{principal_id:'account-guest',kind:'GUEST',role:'STUDENT'},

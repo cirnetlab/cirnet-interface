@@ -1,4 +1,4 @@
-import type { StationDescriptor } from '@tinihi-labs/contracts/dto'
+import type { StationDescriptor } from '@cirnet/contracts/dto'
 import type { ExperimentRecord } from '../../src/types/lab'
 
 export function stationFixture(station_id='v1',mode:StationDescriptor['mode']='simulation',state:StationDescriptor['state']='ready'): StationDescriptor {

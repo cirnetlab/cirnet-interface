@@ -22,7 +22,7 @@ const require = createRequire(import.meta.url)
 const currentPath = file => {
   const local = file.replace(/^apps\/web\//, '')
   return /^src\/data\/(physicalParts|editorCatalog|editorParts)\.json$/.test(local)
-    ? require.resolve('@tinihi-labs/contracts/data/' + path.basename(local))
+    ? require.resolve('@cirnet/contracts/data/' + path.basename(local))
     : path.resolve(webRoot, local)
 }
 const argv = process.argv.slice(2)

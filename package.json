@@ -5,7 +5,7 @@
   "description": "CIRNET Interface web workbench",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CIRNETLAB/CIRNET-Interface.git"
+    "url": "https://github.com/cirnetlab/cirnet-interface.git"
   },
   "type": "module",
   "scripts": {
@@ -27,7 +27,7 @@
     "three": "^0.171.0",
     "vue": "^3.5.13",
     "vue-router": "^4.6.4",
-    "@tinihi-labs/contracts": "file:.artifacts/tinihi-labs-contracts-0.1.1.tgz"
+    "@cirnet/contracts": "file:.artifacts/tinihi-labs-contracts-0.1.1.tgz"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
@@ -41,6 +41,6 @@
     "typescript": "^5.7.2",
     "vite": "^6.0.5",
     "vue-tsc": "^2.2.0",
-    "@tinihi-labs/artifact-paths": "file:.artifacts/tinihi-labs-artifact-paths-1.0.0-m1.0.tgz"
+    "@cirnet/artifact-paths": "file:.artifacts/tinihi-labs-artifact-paths-1.0.0-m1.0.tgz"
   }
 }

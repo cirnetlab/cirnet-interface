@@ -1,8 +1,8 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import corpus from '@tinihi-labs/contracts/fixtures/assignment-v2-conformance.json' with { type: 'json' }
+import corpus from '@cirnet/contracts/fixtures/assignment-v2-conformance.json' with { type: 'json' }
 import {parseLab,ContractValidationError} from '../src/contracts/validation'
-import type {ContractMap} from '@tinihi-labs/contracts/dto'
+import type {ContractMap} from '@cirnet/contracts/dto'
 
 for(const item of corpus.cases)test(`assignment 2.0 parity: ${item.id}`,()=>{
  if(item.valid)assert.deepEqual(parseLab(item.contract as keyof ContractMap,item.value),item.value)

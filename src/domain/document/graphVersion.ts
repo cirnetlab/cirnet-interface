@@ -1,4 +1,4 @@
-import type {CircuitModule as RigidModule} from '@tinihi-labs/contracts/dto'
+import type {CircuitModule as RigidModule} from '@cirnet/contracts/dto'
 import type {CircuitConnection,CircuitGraph,CircuitModule} from '../../types/circuit'
 import {isFlexibleMount} from '../../electrical/flexibleGeometry'
 

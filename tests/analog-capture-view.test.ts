@@ -1,9 +1,9 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import captureConformance from '@tinihi-labs/contracts/fixtures/capture-conformance.json' with { type: 'json' }
+import captureConformance from '@cirnet/contracts/fixtures/capture-conformance.json' with { type: 'json' }
 import {createPinia,setActivePinia} from 'pinia'
 import {markRaw} from 'vue'
-import type {AnalogCaptureDescriptor} from '@tinihi-labs/contracts/dto'
+import type {AnalogCaptureDescriptor} from '@cirnet/contracts/dto'
 import {decodeAnalogCapture} from '../src/domain/capture/ncap'
 import {loadSfc,mountSfc} from './helpers/vueSfc'
 import {useInstrumentStore} from '../src/stores/instrument'

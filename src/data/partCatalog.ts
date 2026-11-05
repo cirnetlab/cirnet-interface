@@ -1,7 +1,7 @@
-import registry from '@tinihi-labs/contracts/data/editorParts.json' with { type: 'json' }
-import type { SignalDomain } from '@tinihi-labs/contracts/dto'
-import type { PackageShapeV1, BoardInsertionV1 } from '@tinihi-labs/contracts/dto'
-export type { PackageShapeV1, PackageLeadSectionV1, PackageLeadExitV1 } from '@tinihi-labs/contracts/dto'
+import registry from '@cirnet/contracts/data/editorParts.json' with { type: 'json' }
+import type { SignalDomain } from '@cirnet/contracts/dto'
+import type { PackageShapeV1, BoardInsertionV1 } from '@cirnet/contracts/dto'
+export type { PackageShapeV1, PackageLeadSectionV1, PackageLeadExitV1 } from '@cirnet/contracts/dto'
 import type { ComponentParameter } from './componentParameters'
 
 /** The existing board pitch is .13 world units for 2.54 mm. */

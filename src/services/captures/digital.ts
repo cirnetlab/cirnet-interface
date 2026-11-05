@@ -2,7 +2,7 @@ import type { CaptureMetadata, CaptureResult, DigitalObservation } from '../../t
 import { isRecord } from '../../types/api'
 import { ApiError } from '../api/client'
 import { capturesApi } from '../api/captures'
-import { captureLayout } from '@tinihi-labs/contracts/capture-layout'
+import { captureLayout } from '@cirnet/contracts/capture-layout'
 import { parseCaptureHeader } from '../../domain/capture/json'
 
 const MAX_HEADER = captureLayout.max_header_bytes, MAX_EVENTS = captureLayout.digital_v1.max_events, MAX_CHANNELS = captureLayout.digital_v1.max_channels

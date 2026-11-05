@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick,ref,watch } from 'vue'
 import { useAuthStore } from '../../stores/auth'
-import type { UserView } from '@tinihi-labs/contracts/dto'
+import type { UserView } from '@cirnet/contracts/dto'
 const auth=useAuthStore(),open=ref(false),dialog=ref<HTMLElement>(),opener=ref<HTMLButtonElement>()
 const username=ref(''),password=ref(''),confirmed=ref(false)
 const newUsername=ref(''),newPassword=ref(''),displayName=ref(''),newRole=ref<UserView['role']>('STUDENT')

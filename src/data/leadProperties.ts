@@ -1,4 +1,4 @@
-import type { LeadSettings } from '@tinihi-labs/contracts/dto'
+import type { LeadSettings } from '@cirnet/contracts/dto'
 import { ContractValidationError, parseStructural } from '../contracts/structural'
 
 /** Persisted projection settings never change a footprint or net. */

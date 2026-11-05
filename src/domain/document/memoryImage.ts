@@ -1,4 +1,4 @@
-import type { MemoryImage } from '@tinihi-labs/contracts/dto'
+import type { MemoryImage } from '@cirnet/contracts/dto'
 import { contractIssue, ContractValidationError, parseStructural } from '../../contracts/structural'
 import { parseDocumentJson } from './json'
 

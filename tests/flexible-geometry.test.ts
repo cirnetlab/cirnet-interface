@@ -1,6 +1,6 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import fixtures from '@tinihi-labs/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
+import fixtures from '@cirnet/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
 import {getPartForType,MM_TO_WORLD} from '../src/data/partCatalog'
 import {resolveFlexibleGeometry,solveFlexibleMount,rotationMatrix,transformPoint,pointDistance,addPoint,scalePoint} from '../src/electrical/flexibleGeometry'
 import {getBreadboardContact} from '../src/electrical/BreadboardTopology'

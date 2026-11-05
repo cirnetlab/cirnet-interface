@@ -1,6 +1,6 @@
 import {synchronizeEnvironment} from './environment.mjs'
 /** The pinned DEV package owns every path and cleanup rule. */
-import * as allocator from '@tinihi-labs/artifact-paths'
+import * as allocator from '@cirnet/artifact-paths'
 import {realpathSync} from 'node:fs'
 import {resolve,dirname,basename} from 'node:path'
 import {fileURLToPath} from 'node:url'
@@ -10,8 +10,8 @@ export function getArtifactContext(options={}) {synchronizeEnvironment();return 
 export function getArtifactDirectory(subdirectory='',options={}) {
  synchronizeEnvironment()
  const result=allocator.getArtifactDirectory(subdirectory,{...options,context:context(options.context)})
- // The pinned DEV package publishes legacy output names. Its newly selected
- // session owns the result, including when a current empty setting requested it.
+ // Published DEV tooling emits legacy names; current tooling synchronizes both.
+ // The selected session owns the result, even when an empty setting requested it.
  for(const suffix of ['ARTIFACTS_SESSION','ARTIFACTS_CONTEXT']){
   const value=process.env['NETCIRCUIT_'+suffix]
   if(value!==undefined)process.env['CIRNET_'+suffix]=value

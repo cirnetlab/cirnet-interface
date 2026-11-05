@@ -1,8 +1,8 @@
-import * as generatedValidators from '@tinihi-labs/contracts/validators.core'
-import * as editorValidators from '@tinihi-labs/contracts/validators.editor.core'
-import * as structuralValidators from '@tinihi-labs/contracts/validators.structural.core'
-import type { ContractMap } from '@tinihi-labs/contracts/dto'
-import {publicContractNames} from '@tinihi-labs/contracts/public-contract-names'
+import * as generatedValidators from '@cirnet/contracts/validators.core'
+import * as editorValidators from '@cirnet/contracts/validators.editor.core'
+import * as structuralValidators from '@cirnet/contracts/validators.structural.core'
+import type { ContractMap } from '@cirnet/contracts/dto'
+import {publicContractNames} from '@cirnet/contracts/public-contract-names'
 
 export type ValidationProfile = 'structural' | 'editor' | 'transport'
 export interface ContractIssue {
@@ -34,7 +34,7 @@ const loading:Partial<Record<ValidationProfile,Promise<void>>>={}
 /** Explicit workflow loading keeps pointer/document validation synchronous. Failed loads may be retried. */
 export async function prepareContractProfile(profile:ValidationProfile='transport'):Promise<void> {
   if(!loading[profile]) {
-    const task=(profile==='transport'?import('@tinihi-labs/contracts/validators'):profile==='editor'?import('@tinihi-labs/contracts/validators.editor'):import('@tinihi-labs/contracts/validators.structural'))
+    const task=(profile==='transport'?import('@cirnet/contracts/validators'):profile==='editor'?import('@cirnet/contracts/validators.editor'):import('@cirnet/contracts/validators.structural'))
       .then(registry=>{registries[profile]=registry})
     loading[profile]=task
     void task.catch(()=>{if(loading[profile]===task)delete loading[profile]})

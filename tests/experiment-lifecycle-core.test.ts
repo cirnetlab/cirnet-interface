@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { ExperimentLifecycleController,type ExperimentLifecyclePorts } from '../src/application/experimentLifecycle'
-import type { ExperimentRecord,OperationRecord } from '@tinihi-labs/contracts/dto'
+import type { ExperimentRecord,OperationRecord } from '@cirnet/contracts/dto'
 import {PendingObservationLedger} from '../src/application/operations/pendingObservations'
 
 const body={station_id:'v1',circuit_graph:{schema_version:'1.0' as const,circuit_id:'local',modules:[],connections:[]}}

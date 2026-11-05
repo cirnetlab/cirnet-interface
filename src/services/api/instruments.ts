@@ -1,4 +1,4 @@
-import type { GeneratorConfiguration } from '@tinihi-labs/contracts/dto'
+import type { GeneratorConfiguration } from '@cirnet/contracts/dto'
 import { apiClient,type ApiClient } from './client'
 import { callOperation } from './operations'
 

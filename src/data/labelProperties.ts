@@ -1,7 +1,7 @@
-import type { LabelPropertiesV1 } from '@tinihi-labs/contracts/dto'
-import { LabelPropertiesV1 as validLabelProperties } from '@tinihi-labs/contracts/validators.structural.core'
+import type { LabelPropertiesV1 } from '@cirnet/contracts/dto'
+import { LabelPropertiesV1 as validLabelProperties } from '@cirnet/contracts/validators.structural.core'
 
-export type { LabelPropertiesV1 } from '@tinihi-labs/contracts/dto'
+export type { LabelPropertiesV1 } from '@cirnet/contracts/dto'
 export const defaultLabelProperties: Readonly<LabelPropertiesV1> = Object.freeze({ version: 1, text: 'Hello', fontSizeMm: 3, textColor: '#20252A', backgroundColor: '#FAFAF7', paddingMm: 1 })
 
 /** The generated validator counts Unicode codepoints and treats all text as data. */

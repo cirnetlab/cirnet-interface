@@ -1,4 +1,4 @@
-import type { ApiOperations } from '@tinihi-labs/contracts/operations'
+import type { ApiOperations } from '@cirnet/contracts/operations'
 import type { Experiment, ExperimentInput } from '../../types/experiment'
 import type { GeneratorConfiguration } from '../../types/lab'
 import { parseLab } from '../../contracts/validation'

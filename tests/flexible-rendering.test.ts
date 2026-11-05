@@ -1,7 +1,7 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {Vector3,Mesh,TubeGeometry,CurvePath} from 'three'
-import fixtures from '@tinihi-labs/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
+import fixtures from '@cirnet/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
 import {buildComponent,disposeObject} from '../src/three/ComponentModel'
 import {moduleWorldPose,moduleLocalToWorld} from '../src/electrical/modulePose'
 import {getBreadboardContact} from '../src/electrical/BreadboardTopology'

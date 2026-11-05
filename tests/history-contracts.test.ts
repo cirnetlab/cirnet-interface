@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseLab, ContractValidationError } from '../src/contracts/validation'
-import corpus from '@tinihi-labs/contracts/fixtures/history-conformance.json' with { type: 'json' }
+import corpus from '@cirnet/contracts/fixtures/history-conformance.json' with { type: 'json' }
 
 for (const name of ['ExperimentHistoryPage','ExperimentActiveSnapshot'] as const) {
   for (const entry of corpus.cases) test(`${name} shared ${entry.id}`,()=>{

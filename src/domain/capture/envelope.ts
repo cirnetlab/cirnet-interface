@@ -1,4 +1,4 @@
-import type {AnalogCaptureQuality} from '@tinihi-labs/contracts/dto'
+import type {AnalogCaptureQuality} from '@cirnet/contracts/dto'
 import {calibratedValue,frameTimeNs,type DecodedAnalogCapture,type ExactCaptureTime} from './ncap'
 
 export interface DisplayEnvelopeOptions {channelId:string;startFrame?:number;endFrame?:number;pixels:number}

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {createApiClient} from '../src/services/api/client'
 import {createProjectsApi} from '../src/services/api/projects'
 import {createCircuitsApi} from '../src/services/api/circuits'
-import type {CircuitGraphV12} from '@tinihi-labs/contracts/dto'
+import type {CircuitGraphV12} from '@cirnet/contracts/dto'
 import {classifyGraph} from '../src/electrical/signalDomains'
 
 const graph:CircuitGraphV12={schema_version:'1.2',circuit_id:'retained',modules:[],connections:[]}

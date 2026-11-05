@@ -10,7 +10,7 @@ import { createSceneManager } from '../src/three/SceneManager'
 import { solveMounting, validateMountBindings } from '../src/electrical/mounting'
 import { resolveElectricalNets } from '../src/electrical/nets'
 import { moduleLocalToWorld } from '../src/electrical/modulePose'
-import type { CircuitGraph, CircuitModule } from '@tinihi-labs/contracts/dto'
+import type { CircuitGraph, CircuitModule } from '@cirnet/contracts/dto'
 
 test('lead settings have bounded millimetre input, preserve omitted old properties and reject malformed forms', () => {
   assert.deepEqual(readLeadProperties(undefined), defaultLeadProperties)

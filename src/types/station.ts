@@ -1,6 +1,6 @@
 import { isRecord } from './api'
 import type { ExperimentRecord, GeneratorCapability, GeneratorConfiguration } from './lab'
-import type { PublicStationCapabilities, StationDescriptor as PublicStationDescriptor } from '@tinihi-labs/contracts/dto'
+import type { PublicStationCapabilities, StationDescriptor as PublicStationDescriptor } from '@cirnet/contracts/dto'
 import { parseLab } from './labValidation'
 
 export const LAB_STATUSES = ['SIMULATION', 'HARDWARE_AVAILABLE', 'HARDWARE_BUSY', 'HARDWARE_OFFLINE', 'FAULT'] as const

@@ -4,7 +4,7 @@ import { createPinia,setActivePinia } from 'pinia'
 import { useAuthStore } from '../src/stores/auth'
 import { configureApiClient } from '../src/services/api/client'
 import { deferred } from './helpers/capture'
-import type {SessionView} from '@tinihi-labs/contracts/dto'
+import type {SessionView} from '@cirnet/contracts/dto'
 
 const csrf=(token:string)=>token.padEnd(32,'-')
 const session=(authenticated=false,role:'STUDENT'|'INSTRUCTOR'|'ADMIN'='STUDENT',token='guest-csrf'):SessionView=>({schema_version:'1.0',authenticated,

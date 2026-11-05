@@ -1,4 +1,4 @@
-/** AST/import-graph architecture gate. Run from apps/web; optional source root is for fixture tests. */
+/** AST/import-graph architecture gate. Run from the Interface checkout root. The optional source root is for fixture tests. */
 import { existsSync,readFileSync,readdirSync,statSync } from 'node:fs'
 import { dirname,extname,resolve,relative } from 'node:path'
 import ts from 'typescript'
@@ -103,7 +103,8 @@ const sdkEntrypoints=new Set([
   'dto','operations','capture-layout','public-contract-names',
   'validators','validators.core','validators.editor','validators.editor.core','validators.structural','validators.structural.core',
   ...['breadboardMechanics','breadboardTopologies','editorCatalog','editorParts','flexibleMechanics','labContracts','physicalParts','signalPortCatalog'].map(name=>`data/${name}.json`),
-].map(name=>`@tinihi-labs/contracts/${name}`))
+].map(name=>`@cirnet/contracts/${name}`))
+const sdkPackages=['@cirnet/contracts','@tinihi-labs/contracts']
 const corePackages=new Set(['lossless-json',...sdkEntrypoints])
 const coreDependency=(spec,target)=>(!spec.startsWith('.')&&!spec.startsWith('@/')&&!corePackages.has(spec))
   ||!!target&&/^(?:stores|components|composables|three|services\/(?:api|websocket|session|assets))\//.test(label(target))
@@ -128,7 +129,7 @@ for(const [file,item] of files) {
   if(label(file).startsWith('three/'))traverse(file,'renderer',rendererDependency,networkGlobals)
   for(const edge of item.edges){
     if(privateModule(edge.spec)||edge.target&&privateModule(label(edge.target)))report('browser',[file,edge.target??edge.spec],'private hardware/RPC client')
-    if((edge.spec==='@tinihi-labs/contracts'||edge.spec.startsWith('@tinihi-labs/contracts/'))&&!sdkEntrypoints.has(edge.spec))report('browser',[file,edge.spec],'unapproved Contracts package entrypoint')
+    if(sdkPackages.some(name=>edge.spec===name||edge.spec.startsWith(name+'/'))&&!sdkEntrypoints.has(edge.spec))report('browser',[file,edge.spec],'unapproved Contracts package entrypoint')
   }
 }
 for(const start of files.keys())if(label(start).startsWith('stores/')) {

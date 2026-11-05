@@ -1,4 +1,4 @@
-import type {AssignmentAuthoringSaveV2,AssignmentAuthoringPublicationV2} from '@tinihi-labs/contracts/dto'
+import type {AssignmentAuthoringSaveV2,AssignmentAuthoringPublicationV2} from '@cirnet/contracts/dto'
 import type {AssignmentDefinition} from '../../types/assignment'
 import {apiClient,ApiError} from './client'
 import {callOperation} from './operations'

@@ -4,9 +4,9 @@ import {readFileSync,readdirSync} from 'node:fs'
 import {createHash} from 'node:crypto'
 import {dirname,resolve,relative} from 'node:path'
 import {fileURLToPath} from 'node:url'
-import catalog from '@tinihi-labs/contracts/data/editorCatalog.json' with {type:'json'}
-import physical from '@tinihi-labs/contracts/data/physicalParts.json' with {type:'json'}
-import lean from '@tinihi-labs/contracts/data/editorParts.json' with {type:'json'}
+import catalog from '@cirnet/contracts/data/editorCatalog.json' with {type:'json'}
+import physical from '@cirnet/contracts/data/physicalParts.json' with {type:'json'}
+import lean from '@cirnet/contracts/data/editorParts.json' with {type:'json'}
 import {readContractsResource,type ContractsResourceName} from '../scripts/contracts-resources.mjs'
 
 // These assertions preserve the consumer-facing checks previously run by

@@ -1,4 +1,4 @@
-import type { ExperimentCreateV2 as ExperimentCreate,ExperimentRecord,OperationRecord } from '@tinihi-labs/contracts/dto'
+import type { ExperimentCreateV2 as ExperimentCreate,ExperimentRecord,OperationRecord } from '@cirnet/contracts/dto'
 import type {PendingObservationScope} from './operations/pendingObservations'
 
 export const isReleasedExperiment=(record:ExperimentRecord|null)=>!record||(['COMPLETE','FAULT'].includes(record.state)&&record.lease_expires_at===null)

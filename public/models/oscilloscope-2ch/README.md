@@ -83,10 +83,10 @@ the normal Three.js `flipY = true` convention. Neither requires geometry rebuild
 
 The exported GLB/glTF, decals and palette previews are product assets. Screenshots,
 traces or rendered diagnostic comparisons from an inspection follow the repository
-[verification policy](https://github.com/net-Circuit-Remote/net-Circuit-Remote/blob/745077403f233790bdb6781c36d6502feca01642/docs/VERIFICATION.md) and are created outside
+[verification policy](https://github.com/cirnetlab/cirnet-remote/blob/745077403f233790bdb6781c36d6502feca01642/docs/VERIFICATION.md) and are created outside
 the checkout; keep only the Markdown inspection result in the repository.
 
-From `apps/web`, after `npm ci` (`sharp` is a development dependency):
+From the `cirnet-interface` checkout root after `npm ci` (`sharp` is a development dependency):
 
 ```text
 npm run export:oscilloscope

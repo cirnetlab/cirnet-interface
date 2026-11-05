@@ -1,5 +1,5 @@
-import type { AnalogCaptureDescriptor } from '@tinihi-labs/contracts/dto'
-import { captureLayout } from '@tinihi-labs/contracts/capture-layout'
+import type { AnalogCaptureDescriptor } from '@cirnet/contracts/dto'
+import { captureLayout } from '@cirnet/contracts/capture-layout'
 import { parseStructural } from '../../contracts/structural'
 import { parseCaptureHeader } from './json'
 import { validateAnalogCapture } from './validation'

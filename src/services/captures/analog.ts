@@ -1,4 +1,4 @@
-import type { AnalogCaptureDescriptor } from '@tinihi-labs/contracts/dto'
+import type { AnalogCaptureDescriptor } from '@cirnet/contracts/dto'
 import { decodeAnalogCapture, parseAnalogCaptureDescriptor, type DecodedAnalogCapture } from '../../domain/capture/ncap'
 import { ApiError } from '../api/client'
 

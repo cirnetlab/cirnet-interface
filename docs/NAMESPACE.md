@@ -10,8 +10,13 @@ The digest-pinned Contracts/SDK/DEV locks remain unchanged. Their distribution,
 archive member and resource names describe the actual published bytes. Resource
 readers derive the sdist directory from the selected identity; DEV bootstrap
 prefers the canonical resource namespace when the signed package declares it.
-The published npm scopes `@tinihi-labs/contracts` and
-`@tinihi-labs/artifact-paths` remain unchanged.
+Current source imports use `@cirnet/contracts` and `@cirnet/artifact-paths`.
+The default file dependencies install the digest-pinned published tarballs under
+those canonical keys. Their original `@tinihi-labs` package names remain in
+archive metadata and npm's generated lockfile; published bytes are unchanged.
+New producer packs use the canonical scope. Selecting those packs requires an
+explicitly reviewed bootstrap lock, local tarball references and regenerated
+npm lock; it does not change the published 0.1.1–0.1.3 release selection.
 
 New browser recovery records and exported recovery data use `cirnet.recovery`.
 The reader accepts the old format. On first use, a transaction copies missing

@@ -8,7 +8,7 @@ import { partCatalog, physicalDescriptorForPart, type PartDefinition } from '../
 import { createSceneManager } from '../src/three/SceneManager'
 import { solveMounting } from '../src/electrical/mounting'
 import { moduleLocalToWorld } from '../src/electrical/modulePose'
-import type { CircuitModule } from '@tinihi-labs/contracts/dto'
+import type { CircuitModule } from '@cirnet/contracts/dto'
 
 test('SN74HC08N renders fourteen separate metal leads on the physical PDIP rows', () => {
   const model = buildComponent({ id: 'U1', type: 'SN74HC08N' })

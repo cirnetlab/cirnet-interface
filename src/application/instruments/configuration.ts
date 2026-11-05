@@ -1,4 +1,4 @@
-import type {CaptureConfiguration,ClockConfiguration,GeneratorConfiguration,TestVector,PublicStationCapabilities} from '@tinihi-labs/contracts/dto'
+import type {CaptureConfiguration,ClockConfiguration,GeneratorConfiguration,TestVector,PublicStationCapabilities} from '@cirnet/contracts/dto'
 import {parseLab} from '../../contracts/validation'
 import {generatorConfigurationIssue} from '../../types/station'
 

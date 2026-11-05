@@ -1,6 +1,6 @@
 /** Pure bounded authoring geometry. No mesh intersection creates an electrical bond. */
-import catalog from '@tinihi-labs/contracts/data/flexibleMechanics.json' with { type: 'json' }
-import type {FlexibleMountV1,FlexibleMountV2,MechanicalAuthoringProfileV1} from '@tinihi-labs/contracts/dto'
+import catalog from '@cirnet/contracts/data/flexibleMechanics.json' with { type: 'json' }
+import type {FlexibleMountV1,FlexibleMountV2,MechanicalAuthoringProfileV1} from '@cirnet/contracts/dto'
 import type {CircuitModule,Point3} from '../types/circuit'
 import {getPartForType,getPartForModule,MM_TO_WORLD,packageLeadCollisionRadiusMm,type PartDefinition,type PinnedPartDescriptor} from '../data/partCatalog'
 import {getBreadboardContact,getBreadboardTopology} from './BreadboardTopology'

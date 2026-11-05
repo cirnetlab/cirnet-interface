@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import type { CircuitGraph, CircuitDocument } from '@tinihi-labs/contracts/dto'
+import type { CircuitGraph, CircuitDocument } from '@cirnet/contracts/dto'
 import { ProjectSaveController, type DocumentPort, type DocumentSnapshot, type ProjectDocumentRepository } from '../src/application/projects/saveController'
 import { BoundedRecoveryRepository, type RecoveryStorage } from '../src/application/projects/recovery'
 

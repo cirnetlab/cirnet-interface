@@ -1,4 +1,4 @@
-import type { AnySupportedAssignmentDefinition as AssignmentDefinition } from '@tinihi-labs/contracts/dto'
+import type { AnySupportedAssignmentDefinition as AssignmentDefinition } from '@cirnet/contracts/dto'
 import type { CircuitGraph } from '../../types/circuit'
 import { parseLab } from '../../contracts/validation'
 import { parseDocumentJson } from '../../domain/document/json'

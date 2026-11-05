@@ -11,8 +11,8 @@ import {parseCircuitFile} from '../src/domain/document/circuitFile'
 import {withCircuitModules} from '../src/domain/document/graphVersion'
 import {resolveElectricalNets} from '../src/electrical/nets'
 import type {CircuitModule} from '../src/types/circuit'
-import flexibleFixtures from '@tinihi-labs/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
-import legacyOverride from '@tinihi-labs/contracts/fixtures/component-mechanics-legacy.json' with { type: 'json' }
+import flexibleFixtures from '@cirnet/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
+import legacyOverride from '@cirnet/contracts/fixtures/component-mechanics-legacy.json' with { type: 'json' }
 import type {CircuitGraph} from '../src/types/circuit'
 
 const board={id:'BB',type:'BREADBOARD',position:{x:0,y:0,z:0}} satisfies CircuitModule

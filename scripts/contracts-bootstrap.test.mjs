@@ -4,7 +4,7 @@ import {readFileSync,writeFileSync,mkdirSync,existsSync,readdirSync,mkdtempSync}
 import {resolve} from 'node:path'
 import {spawnSync} from 'node:child_process'
 import {build} from 'esbuild'
-import {getArtifactDirectory,cleanupArtifactSession} from '@tinihi-labs/artifact-paths'
+import {getArtifactDirectory,cleanupArtifactSession} from '@cirnet/artifact-paths'
 import {checkedHttps,requestHeaders,downloadArtifact,verifyBytes,archiveEntry,root,lock,digest} from './contracts-artifacts.mjs'
 import {readContractsResource} from './contracts-resources.mjs'
 

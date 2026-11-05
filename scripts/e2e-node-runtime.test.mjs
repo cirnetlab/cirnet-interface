@@ -4,7 +4,7 @@ import {mkdtempSync} from 'node:fs'
 import {resolve,dirname} from 'node:path'
 import {fileURLToPath,pathToFileURL} from 'node:url'
 import {spawnSync} from 'node:child_process'
-import {getArtifactDirectory} from '@tinihi-labs/artifact-paths'
+import {getArtifactDirectory} from '@cirnet/artifact-paths'
 import {loadNodeRuntime} from './build-node-runtime.mjs'
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..')

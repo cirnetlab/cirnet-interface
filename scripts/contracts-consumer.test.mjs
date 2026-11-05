@@ -11,7 +11,7 @@ test('the independent product consumes SDK entrypoints rather than generated sou
   for(const file of sources(resolve(root,'src'))){
     const text=readFileSync(file,'utf8')
     assert.doesNotMatch(text,/["'][^"']*contracts\/generated\//,file)
-    assert.doesNotMatch(text,/["'][^"']*(?:net-Circuit|CIRNET)-(?:Remote|Contracts|Simulator|Hardware|FPGA)[/\\]/,file)
+    assert.doesNotMatch(text,/["'][^"']*(?:net-Circuit|CIRNET)-(?:Remote|Contracts|Simulator|Hardware|FPGA)[/\\]/i,file)
   }
 })
 test('all generic catalog projections come from the pinned public package',()=>{
@@ -19,5 +19,10 @@ test('all generic catalog projections come from the pinned public package',()=>{
     assert.equal(existsSync(resolve(root,`src/data/${name}.json`)),false,name)
   }
   const pkg=JSON.parse(readFileSync(resolve(root,'package.json'),'utf8'))
-  assert.equal(pkg.dependencies['@tinihi-labs/contracts'],'file:.artifacts/tinihi-labs-contracts-0.1.1.tgz')
+  const lock=JSON.parse(readFileSync(resolve(root,'integration/contracts-artifacts.json'),'utf8'))
+  assert.equal(pkg.dependencies['@cirnet/contracts'],`file:.artifacts/${lock.npm.filename}`)
+  assert.equal(pkg.devDependencies['@cirnet/artifact-paths'],`file:.artifacts/${lock.dev_npm.filename}`)
+  for(const file of sources(resolve(root,'src'))){
+    assert.doesNotMatch(readFileSync(file,'utf8'),/@tinihi-labs\//,file)
+  }
 })

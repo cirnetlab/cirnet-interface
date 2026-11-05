@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseBitAssignments,parseAuthoringDefinition,copyReferenceDesign } from '../src/application/assignments/authoring'
-import type { AssignmentDefinition,CircuitGraph } from '@tinihi-labs/contracts/dto'
+import type { AssignmentDefinition,CircuitGraph } from '@cirnet/contracts/dto'
 const definition:AssignmentDefinition={schema_version:'1.0',assignment_id:'and-lab',title:'AND exercise',lab_endpoints:[],assessment_policy:'FUNCTIONAL_ONLY'}
 test('assignment bit fields accept explicit binary values and reject duplicate or ambiguous inputs',()=>{
   assert.deepEqual(parseBitAssignments('x=0, Y.IN=1'),{x:0,'Y.IN':1})

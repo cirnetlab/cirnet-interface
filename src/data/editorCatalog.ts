@@ -1,10 +1,10 @@
-import catalog from '@tinihi-labs/contracts/data/editorCatalog.json' with { type: 'json' }
+import catalog from '@cirnet/contracts/data/editorCatalog.json' with { type: 'json' }
 import type { CircuitModule } from '../types/circuit'
 import { validParameterValue } from './componentParameters'
 import type { ComponentParameter } from './componentParameters'
 export type { ComponentParameter } from './componentParameters'
-export type { SignalDomain } from '@tinihi-labs/contracts/dto'
-export type LogicalPort = import('@tinihi-labs/contracts/dto').SignalPortDefinition
+export type { SignalDomain } from '@cirnet/contracts/dto'
+export type LogicalPort = import('@cirnet/contracts/dto').SignalPortDefinition
 export interface ComponentDefinition {
   type: string; name: string; family: string; visual: string; size: number[]; color: string
   ports: LogicalPort[]; defaults: Record<string, unknown>; parameters: ComponentParameter[]

@@ -6,7 +6,7 @@ import {getPartForModule,getPartForType,historicalPartCatalog,physicalDescriptor
 import {solveMounting} from '../src/electrical/mounting'
 import {resolveElectricalNets} from '../src/electrical/nets'
 import type {CircuitGraph,CircuitModule} from '../src/types/circuit'
-import legacy from '@tinihi-labs/contracts/fixtures/component-mechanics-legacy.json' with { type: 'json' }
+import legacy from '@cirnet/contracts/fixtures/component-mechanics-legacy.json' with { type: 'json' }
 
 test('a free historical package explicitly rebuilds with a pinned current solid, stable data and one Undo',()=>{
  const graph:CircuitGraph={schema_version:'1.1',circuit_id:'free-seal',modules:[{id:'Q',type:'GENERIC_BJT',position:{x:3,y:0,z:4},rotation:37,properties:{transistorType:'NPN',extension:{keep:true}}}],connections:[],metadata:{keep:'free'}}

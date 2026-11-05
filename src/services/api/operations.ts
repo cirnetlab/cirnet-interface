@@ -1,7 +1,7 @@
-import { apiOperations, type ApiOperations, type OperationName } from '@tinihi-labs/contracts/operations'
+import { apiOperations, type ApiOperations, type OperationName } from '@cirnet/contracts/operations'
 import { parseLab } from '../../contracts/validation'
 import { ApiError, type ApiClient } from './client'
-import type { ContractMap } from '@tinihi-labs/contracts/dto'
+import type { ContractMap } from '@cirnet/contracts/dto'
 import {contractsReady,prepareContracts} from '../../contracts/structural'
 
 type CallerParameters<K extends OperationName,P extends 'path'|'query'|'headers'>=P extends 'headers'

@@ -1,7 +1,7 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {parseLab,ContractValidationError} from '../src/contracts/validation'
-import corpus from '@tinihi-labs/contracts/fixtures/instrument-control-conformance.json' with { type: 'json' }
+import corpus from '@cirnet/contracts/fixtures/instrument-control-conformance.json' with { type: 'json' }
 
 for(const entry of corpus.cases)test(`instrument acknowledgement shared ${entry.id}`,()=>{
   const name=entry.contract

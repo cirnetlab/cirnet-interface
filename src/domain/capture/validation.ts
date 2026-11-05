@@ -1,4 +1,4 @@
-import type { AnalogCaptureChannel, AnalogCaptureDescriptor, AnalogCaptureHeader, AnalogCaptureQuality, AnalogCaptureTimeAxis } from '@tinihi-labs/contracts/dto'
+import type { AnalogCaptureChannel, AnalogCaptureDescriptor, AnalogCaptureHeader, AnalogCaptureQuality, AnalogCaptureTimeAxis } from '@cirnet/contracts/dto'
 import { contractIssue, type ValidationProfile } from '../../contracts/structural'
 
 /** Shape is generated. These relationships never infer acquisition success. */

@@ -5,10 +5,10 @@ import { parseCircuitFile } from '../src/services/files/circuitFile'
 import { parseMemoryImage } from '../src/services/files/memoryImage'
 import type { CaptureMetadata } from '../src/types/lab'
 import { ApiError, createApiClient } from '../src/services/api/client'
-import type { ContractMap } from '@tinihi-labs/contracts/dto'
+import type { ContractMap } from '@cirnet/contracts/dto'
 import type { ValidationProfile } from '../src/contracts/validation'
-import conformance from '@tinihi-labs/contracts/fixtures/conformance.json' with { type: 'json' }
-import diagnostics from '@tinihi-labs/contracts/fixtures/diagnostics.json' with { type: 'json' }
+import conformance from '@cirnet/contracts/fixtures/conformance.json' with { type: 'json' }
+import diagnostics from '@cirnet/contracts/fixtures/diagnostics.json' with { type: 'json' }
 
 const graph = (number: string, location = 'metadata') => location === 'metadata'
   ? `{"schema_version":"1.0","circuit_id":"precision","modules":[],"connections":[],"metadata":{"value":${number}}}`

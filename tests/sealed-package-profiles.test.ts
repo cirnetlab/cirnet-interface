@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import corpus from '@tinihi-labs/contracts/fixtures/sealed-package-parity.json' with { type: 'json' }
+import corpus from '@cirnet/contracts/fixtures/sealed-package-parity.json' with { type: 'json' }
 import type { CircuitGraph } from '../src/types/circuit'
 import { validateMountBindings } from '../src/electrical/mounting'
 import { getPartForType, MM_TO_WORLD, packageLeadCollisionRadiusMm } from '../src/data/partCatalog'

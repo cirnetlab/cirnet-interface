@@ -1,7 +1,7 @@
 /** Versioned CAD mechanics. Electrical topology and node/contact positions are
  * deliberately inputs, never rewritten by the socket or conductor geometry. */
-import data from '@tinihi-labs/contracts/data/breadboardMechanics.json' with { type: 'json' }
-import type { BreadboardMechanicalProfileV1 } from '@tinihi-labs/contracts/dto'
+import data from '@cirnet/contracts/data/breadboardMechanics.json' with { type: 'json' }
+import type { BreadboardMechanicalProfileV1 } from '@cirnet/contracts/dto'
 import { MM_TO_WORLD } from '../data/partCatalog'
 import { getBreadboardContact, getBreadboardTopology } from '../electrical/BreadboardTopology'
 import type { Point3 } from '../types/circuit'

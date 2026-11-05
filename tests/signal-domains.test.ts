@@ -1,9 +1,9 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { domainsCompatible, classifyGraph, validateSignalDomains } from '../src/electrical/signalDomains'
-import type { CircuitGraph } from '@tinihi-labs/contracts/dto'
-import type { SignalDomain } from '@tinihi-labs/contracts/dto'
-import corpus from '@tinihi-labs/contracts/fixtures/signal-domains-conformance.json' with { type: 'json' }
+import type { CircuitGraph } from '@cirnet/contracts/dto'
+import type { SignalDomain } from '@cirnet/contracts/dto'
+import corpus from '@cirnet/contracts/fixtures/signal-domains-conformance.json' with { type: 'json' }
 import { parseLab,ContractValidationError } from '../src/contracts/validation'
 
 const graph=(type:string):CircuitGraph=>({schema_version:'1.1',circuit_id:'domains',modules:[{id:'U',type}],connections:[]})

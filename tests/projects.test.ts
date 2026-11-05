@@ -6,7 +6,7 @@ import { useCircuitStore } from '../src/stores/circuit'
 import { useWorkspaceStore } from '../src/stores/workspace'
 import { configureApiClient } from '../src/services/api/client'
 import { deferred } from './helpers/capture'
-import type { Project,CircuitDocument } from '@tinihi-labs/contracts/dto'
+import type { Project,CircuitDocument } from '@cirnet/contracts/dto'
 
 const project:Project={schema_version:'1.0',project_id:'p1',owner_id:'owner',name:'Project',description:'',revision:1,created_at:1,updated_at:1,access_scope:'private'}
 const document=(revision=1,name='Server name'):CircuitDocument=>({schema_version:'1.0',document_id:'doc1',project_id:'p1',owner_id:'owner',name,revision,graph_schema_version:'1.0',created_at:1,updated_at:revision,

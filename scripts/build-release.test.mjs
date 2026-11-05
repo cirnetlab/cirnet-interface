@@ -11,11 +11,11 @@ const product=resolve(dirname(fileURLToPath(import.meta.url)),'..')
 const python=process.env.CIRNET_RELEASE_PYTHON??'python'
 const pages=['index.html','oscilloscope-preview.html','function-generator-preview.html']
 
-function fixture({omitPage,productVersion='0.1.3',contractsVersion='0.1.1'}={}){
+function fixture({omitPage,productVersion='0.1.3',contractsVersion='0.1.1',sdkName='@tinihi-labs/contracts'}={}){
   const owned=mkdtempSync(resolve(getArtifactDirectory('interface-export-regression'),'case-')),source=resolve(owned,'source')
   const sdkRoot=resolve(owned,'sdk','package'),sdistRoot=resolve(owned,'sdist','netcircuit_contracts-0.1.1')
   for(const directory of [resolve(source,'scripts'),resolve(source,'integration'),resolve(source,'dist'),sdkRoot,sdistRoot])mkdirSync(directory,{recursive:true})
-  writeFileSync(resolve(sdkRoot,'package.json'),JSON.stringify({name:'@tinihi-labs/contracts',version:'0.1.1',type:'module',exports:'./index.mjs'}))
+  writeFileSync(resolve(sdkRoot,'package.json'),JSON.stringify({name:sdkName,version:'0.1.1',type:'module',exports:'./index.mjs'}))
   writeFileSync(resolve(sdkRoot,'index.mjs'),"export const marker='reviewed SDK 0.1.1'\n")
   writeFileSync(resolve(sdistRoot,'PKG-INFO'),'Name: netcircuit-contracts\nVersion: 0.1.1\n')
   const sdk=resolve(owned,'sdk.tgz'),sdist=resolve(owned,'sdist.tar.gz')
@@ -23,21 +23,21 @@ function fixture({omitPage,productVersion='0.1.3',contractsVersion='0.1.1'}={}){
   execFileSync('tar',['-czf',sdist,'-C',dirname(sdistRoot),'netcircuit_contracts-0.1.1'],{windowsHide:true})
   const lock=JSON.parse(readFileSync(resolve(product,'integration/contracts-artifacts.json'),'utf8'))
   lock.contractsVersion=contractsVersion
-  lock.npm={...lock.npm,filename:'fixture-contracts.tgz',sha256:createHash('sha256').update(readFileSync(sdk)).digest('hex')}
+  lock.npm={...lock.npm,name:sdkName,filename:'fixture-contracts.tgz',sha256:createHash('sha256').update(readFileSync(sdk)).digest('hex')}
   lock.sdist={...lock.sdist,filename:'fixture-contracts.tar.gz',sha256:createHash('sha256').update(readFileSync(sdist)).digest('hex')}
   writeFileSync(resolve(source,'integration/contracts-artifacts.json'),JSON.stringify(lock))
   for(const name of ['bootstrap-contracts.mjs','contracts-artifacts.mjs','environment.mjs'])writeFileSync(resolve(source,'scripts',name),readFileSync(resolve(product,'scripts',name)))
   const dependency='file:.artifacts/fixture-contracts.tgz',integrity='sha512-'+createHash('sha512').update(readFileSync(sdk)).digest('base64')
-  writeFileSync(resolve(source,'package.json'),JSON.stringify({name:'@cirnet/web',version:productVersion,scripts:{build:'node scripts/build.mjs'},dependencies:{'@tinihi-labs/contracts':dependency}}))
+  writeFileSync(resolve(source,'package.json'),JSON.stringify({name:'@cirnet/web',version:productVersion,scripts:{build:'node scripts/build.mjs'},dependencies:{'@cirnet/contracts':dependency}}))
   writeFileSync(resolve(source,'package-lock.json'),JSON.stringify({name:'@cirnet/web',version:productVersion,lockfileVersion:3,requires:true,packages:{
-    '':{name:'@cirnet/web',version:productVersion,dependencies:{'@tinihi-labs/contracts':dependency}},
-    'node_modules/@tinihi-labs/contracts':{version:'0.1.1',resolved:dependency,integrity},
+    '':{name:'@cirnet/web',version:productVersion,dependencies:{'@cirnet/contracts':dependency}},
+    'node_modules/@cirnet/contracts':{name:sdkName,version:'0.1.1',resolved:dependency,integrity},
   }}))
   writeFileSync(resolve(source,'.gitignore'),'dist/\nnode_modules/\n.artifacts/\n')
   writeFileSync(resolve(source,'source.txt'),'committed source\n')
   writeFileSync(resolve(source,'scripts/build.mjs'),`
 import {readFileSync,writeFileSync,mkdirSync,appendFileSync,existsSync} from 'node:fs'
-import {marker} from '@tinihi-labs/contracts'
+import {marker} from '@cirnet/contracts'
 const text=readFileSync('source.txt','utf8')
 mkdirSync('dist',{recursive:true})
 for(const page of ${JSON.stringify(pages.filter(page=>page!==omitPage))})writeFileSync('dist/'+page,'<title>'+page+'</title>\\n'+text+marker+'\\n')
@@ -111,4 +111,11 @@ test('release rejects a bootstrap that reports the Interface patch as its Contra
   const result=invoke(resolve(owned,'output'))
   assert.notEqual(result.status,0)
   assert.match(result.stderr,/Committed bootstrap must select the exact Contracts version/)
+})
+
+test('release supports an explicitly pinned canonical Contracts candidate without changing the published lock',()=>{
+  const {owned,invoke,receipt}=fixture({sdkName:'@cirnet/contracts'})
+  const result=invoke(resolve(owned,'canonical'))
+  assert.equal(result.status,0,result.stderr)
+  assert.equal(JSON.parse(readFileSync(receipt,'utf8').trim()).marker,'reviewed SDK 0.1.1')
 })

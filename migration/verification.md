@@ -35,9 +35,9 @@ Canonical DEV Node resource: `7c42c4fd171ed861b365f08501f3c765282d6bba2dcd6430c9
 Use a fresh PowerShell process. Choose a reviewed product path and external artifact parent. Set **all three Git roots and ownership before bootstrap/session allocation**. Bootstrap's Node child cannot modify the parent shell: explicitly adopt its returned environment before `npm ci`.
 
 ```powershell
-$remoteRoot = 'E:\ALL_PROJECTS\LUAN_VAN_TOT_NGHIEP\REPO\net-Circuit-Remote'
-$interfaceRoot = 'E:\ALL_PROJECTS\LUAN_VAN_TOT_NGHIEP\REPO\net-Circuit-Interface'
-$contractsRoot = 'E:\ALL_PROJECTS\LUAN_VAN_TOT_NGHIEP\REPO\net-Circuit-Contracts'
+$remoteRoot = 'E:\ALL_PROJECTS\LUAN_VAN_TOT_NGHIEP\REPO\cirnet-remote'
+$interfaceRoot = 'E:\ALL_PROJECTS\LUAN_VAN_TOT_NGHIEP\REPO\cirnet-interface'
+$contractsRoot = 'E:\ALL_PROJECTS\LUAN_VAN_TOT_NGHIEP\REPO\cirnet-contracts'
 $manifest = 'C:\Users\trann\.codex\visualizations\2026\10\24\01a16c1e-02ba-7253-9226-6f4a43582df4\migration-release-artifacts\m1-contracts-1.0.1-20261024-LiyD0Y\artifacts.json'
 if ($env:NETCIRCUIT_ARTIFACTS_SESSION) { throw 'Use a fresh shell without an inherited artifact session.' }
 $env:NETCIRCUIT_ARTIFACTS_CONTEXT = (@{

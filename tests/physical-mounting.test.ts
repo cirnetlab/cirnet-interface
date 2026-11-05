@@ -6,10 +6,10 @@ import { useCircuitStore } from '../src/stores/circuit'
 import { solveMounting, validateMountBindings } from '../src/electrical/mounting'
 import { moduleLocalToWorld, moduleWorldPose } from '../src/electrical/modulePose'
 import { resolveElectricalNets } from '../src/electrical/nets'
-import type { CircuitModule, CircuitGraph } from '@tinihi-labs/contracts/dto'
+import type { CircuitModule, CircuitGraph } from '@cirnet/contracts/dto'
 import { getPartForType, historicalPartCatalog, physicalDescriptorForPart, MM_TO_WORLD } from '../src/data/partCatalog'
 import { getBreadboardContact } from '../src/electrical/BreadboardTopology'
-import parity from '@tinihi-labs/contracts/fixtures/physical-mounting-parity.json' with { type: 'json' }
+import parity from '@cirnet/contracts/fixtures/physical-mounting-parity.json' with { type: 'json' }
 import { createSceneManager } from '../src/three/SceneManager'
 import { endpointLeadPosition } from '../src/wires/wireRouting'
 import { defaultWireVisual } from '../src/wires/wireVisual'

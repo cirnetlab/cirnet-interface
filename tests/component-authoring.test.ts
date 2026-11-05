@@ -12,7 +12,7 @@ import { loadSfc, mountSfc, dispatch } from './helpers/vueSfc'
 import { resolveElectricalNets } from '../src/electrical/nets'
 import { parseCircuitFile } from '../src/services/files/circuitFile'
 import { getPartForType } from '../src/data/partCatalog'
-import flexibleFixtures from '@tinihi-labs/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
+import flexibleFixtures from '@cirnet/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
 import type {CircuitGraph} from '../src/types/circuit'
 
 beforeEach(() => setActivePinia(createPinia()))

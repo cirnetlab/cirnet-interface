@@ -1,7 +1,7 @@
 import { StoreScopeMap } from '../services/session/storeScope'
 import { defineStore } from 'pinia'
 import { effectScope,watch } from 'vue'
-import type { Project } from '@tinihi-labs/contracts/dto'
+import type { Project } from '@cirnet/contracts/dto'
 import type { CircuitSummary } from '../types/projects'
 import { ProjectSaveController,type SaveState } from '../application/projects/saveController'
 import type { RecoverySummary } from '../application/projects/recovery'

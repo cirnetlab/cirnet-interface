@@ -1,4 +1,4 @@
-import data from '@tinihi-labs/contracts/data/breadboardTopologies.json' with { type: 'json' }
+import data from '@cirnet/contracts/data/breadboardTopologies.json' with { type: 'json' }
 
 export interface BreadboardContact {
   readonly contactId: string

@@ -1,7 +1,7 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {InstrumentCommandController,type InstrumentCommandPorts} from '../src/application/instruments/commands'
-import type {InstrumentCommandRecord,InstrumentControlAccess,GeneratorConfiguration} from '@tinihi-labs/contracts/dto'
+import type {InstrumentCommandRecord,InstrumentControlAccess,GeneratorConfiguration} from '@cirnet/contracts/dto'
 import {runningExperiment,stationFixture} from './helpers/station'
 import {PendingObservationLedger} from '../src/application/operations/pendingObservations'
 const configuration=():GeneratorConfiguration=>({channel:1,waveform:'SINE',frequency_hz:1000,amplitude_vpp:1,offset_v:0,enabled:true})

@@ -6,7 +6,7 @@ import { Mesh, type Group } from 'three'
 import { createPackageThumbnailCache, packageThumbnailCacheKey, type PackageThumbnailRenderer } from '../src/three/PackageThumbnails'
 import { buildComponent, disposeObject } from '../src/three/ComponentModel'
 import { loadSfc, mountSfc } from './helpers/vueSfc'
-import fixtures from '@tinihi-labs/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
+import fixtures from '@cirnet/contracts/fixtures/flexible-mounting-parity.json' with { type: 'json' }
 import type { CircuitModule } from '../src/types/circuit'
 
 const flush = async () => { await Promise.resolve(); await Promise.resolve(); await nextTick(); await new Promise(resolve => setTimeout(resolve, 0)); await nextTick() }

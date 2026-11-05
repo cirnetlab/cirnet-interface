@@ -6,7 +6,7 @@ import { useUiStore } from '../../stores/ui'
 import { libraryComponents, iconUrl } from '../../data/ribbon'
 import { getDefinition } from '../../data/editorCatalog'
 import { componentAddType, componentDesignTransition, componentDisplayName, getPartForType, getPartForModule } from '../../data/partCatalog'
-import domains from '@tinihi-labs/contracts/data/signalPortCatalog.json' with { type: 'json' }
+import domains from '@cirnet/contracts/data/signalPortCatalog.json' with { type: 'json' }
 import WorkbenchIcon from '../workbench/WorkbenchIcon.vue'
 import ComponentPropertiesForm from './ComponentPropertiesForm.vue'
 import LabelPropertiesForm from './LabelPropertiesForm.vue'

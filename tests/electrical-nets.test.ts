@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import type { CircuitGraph } from '@tinihi-labs/contracts/dto'
+import type { CircuitGraph } from '@cirnet/contracts/dto'
 import { parseEndpoint, resolveEndpoint } from '../src/electrical/endpoints'
 import { resolveElectricalNets, assertConnectionAllowed } from '../src/electrical/nets'
 

@@ -4,7 +4,7 @@ import {createPinia,setActivePinia} from 'pinia'
 import {configureApiClient} from '../src/services/api/client'
 import {useAssignmentStore} from '../src/stores/assignments'
 import {copyReferenceDesign} from '../src/application/assignments/authoring'
-import type {AssignmentDefinition,AssignmentAuthoringDocument} from '@tinihi-labs/contracts/dto'
+import type {AssignmentDefinition,AssignmentAuthoringDocument} from '@cirnet/contracts/dto'
 const definition:AssignmentDefinition={schema_version:'1.0',assignment_id:'author-and',title:'Original',lab_endpoints:[],assessment_policy:'FUNCTIONAL_ONLY'}
 const document:AssignmentAuthoringDocument={schema_version:'1.0',assignment_id:'author-and',title:'Original',owner_id:'teacher',revision:1,published:false,published_revision:null,feedback_policy:'observed_only',created_at:1,updated_at:1,definition}
 function setup(){setActivePinia(createPinia());const store=useAssignmentStore();store.setScope('teacher','INSTRUCTOR');return store}

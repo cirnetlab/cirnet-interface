@@ -1,4 +1,4 @@
-import type { ContractMap, GeneratorCapability, InstrumentCapabilities, LabEndpoint, ObservedPhysicalComponent } from '@tinihi-labs/contracts/dto'
+import type { ContractMap, GeneratorCapability, InstrumentCapabilities, LabEndpoint, ObservedPhysicalComponent } from '@cirnet/contracts/dto'
 import { contractIssue, ContractValidationError, parseStructural, type ValidationProfile } from './structural'
 import { normalizeCircuitDocument, validateCircuitDocument } from '../domain/document/circuitFile'
 import { validateSignalDomains } from '../electrical/signalDomains'

@@ -105,18 +105,26 @@ test('an unlisted external transport package cannot bypass the pure core through
 })
 
 test('only reviewed pure SDK entrypoints may enter the core',()=>{
-  for(const specifier of ['@tinihi-labs/contracts/dto','@tinihi-labs/contracts/capture-layout','@tinihi-labs/contracts/validators.structural.core','@tinihi-labs/contracts/data/editorParts.json']){
+  for(const specifier of ['@cirnet/contracts/dto','@cirnet/contracts/capture-layout','@cirnet/contracts/validators.structural.core','@cirnet/contracts/data/editorParts.json']){
     const result=audit({'domain/document.ts':`export {value} from '${specifier}'`})
     assert.equal(result.status,0,`${specifier}: ${result.stderr}${result.stdout}`)
   }
-  for(const specifier of ['@tinihi-labs/contracts/private','@tinihi-labs/contracts/dist/dto.js','@tinihi-labs/contracts/data/unreviewed.json']){
+  for(const specifier of ['@cirnet/contracts/private','@cirnet/contracts/dist/dto.js','@cirnet/contracts/data/unreviewed.json']){
     const result=audit({'domain/document.ts':`export {value} from '${specifier}'`})
     assert.equal(result.status,1,`${specifier}: ${result.stderr}${result.stdout}`)
   }
 })
 
 test('unreviewed Contracts package paths cannot bypass browser policy outside the core',()=>{
-  const result=audit({'components/client.ts':"export {value} from '@tinihi-labs/contracts/dist/private.js'"})
+  const result=audit({'components/client.ts':"export {value} from '@cirnet/contracts/dist/private.js'"})
   assert.equal(result.status,1,result.stderr+result.stdout)
   assert.match(result.stdout,/unapproved Contracts package entrypoint/)
+})
+
+test('legacy SDK imports cannot bypass the canonical browser entrypoint allowlist',()=>{
+  for(const specifier of ['@tinihi-labs/contracts/dto','@tinihi-labs/contracts/dist/private.js']){
+    const result=audit({'components/client.ts':`export {value} from '${specifier}'`})
+    assert.equal(result.status,1,result.stderr+result.stdout)
+    assert.match(result.stdout,/unapproved Contracts package entrypoint/)
+  }
 })

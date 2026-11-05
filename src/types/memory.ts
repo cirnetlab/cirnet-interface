@@ -1,1 +1,1 @@
-export type { MemoryImage } from '@tinihi-labs/contracts/dto'
+export type { MemoryImage } from '@cirnet/contracts/dto'

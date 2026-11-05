@@ -52,10 +52,10 @@ resources through `disposeObject`.
 ## Reproducible assets
 
 These exports are product assets. Screenshots, traces and rendered diagnostic
-comparisons from inspection follow the repository [verification policy](https://github.com/net-Circuit-Remote/net-Circuit-Remote/blob/745077403f233790bdb6781c36d6502feca01642/docs/VERIFICATION.md)
+comparisons from inspection follow the repository [verification policy](https://github.com/cirnetlab/cirnet-remote/blob/745077403f233790bdb6781c36d6502feca01642/docs/VERIFICATION.md)
 and are created outside the checkout; retained inspection evidence is Markdown.
 
-From `apps/web`:
+From the `cirnet-interface` checkout root:
 
 ```bash
 npm ci

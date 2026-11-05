@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { getDefinition } from '../src/data/editorCatalog'
 import { getPartForType, getPartDefinition, packageLeadCollisionRadiusMm, physicalDescriptorForPart, getPartForModule, MM_TO_WORLD } from '../src/data/partCatalog'
 import { ribbonGroups } from '../src/data/ribbon'
-import executionRegistry from '@tinihi-labs/contracts/data/physicalParts.json' with { type: 'json' }
+import executionRegistry from '@cirnet/contracts/data/physicalParts.json' with { type: 'json' }
 
 // Execution profiles are inspected at their own boundary; editor parts omit them.
 const executionPart = (type: string) => executionRegistry.parts.find(part => part.editorType === type)!

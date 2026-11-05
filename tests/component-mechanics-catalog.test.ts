@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import historicalFixture from '@tinihi-labs/contracts/fixtures/component-mechanics-legacy.json' with { type: 'json' }
+import historicalFixture from '@cirnet/contracts/fixtures/component-mechanics-legacy.json' with { type: 'json' }
 import { parseCircuitFile } from '../src/domain/document/circuitFile'
 import { getPartForType, MM_TO_WORLD } from '../src/data/partCatalog'
 import { buildComponent, disposeObject } from '../src/three/ComponentModel'

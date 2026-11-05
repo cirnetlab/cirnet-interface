@@ -1,7 +1,7 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import captureConformance from '@tinihi-labs/contracts/fixtures/capture-conformance.json' with { type: 'json' }
-import type {AnalogCaptureDescriptor} from '@tinihi-labs/contracts/dto'
+import captureConformance from '@cirnet/contracts/fixtures/capture-conformance.json' with { type: 'json' }
+import type {AnalogCaptureDescriptor} from '@cirnet/contracts/dto'
 import {loadAnalogCapture,verifyAndDecodeAnalogCapture} from '../src/services/captures/analog'
 import {ApiError} from '../src/services/api/client'
 import {deferred} from './helpers/capture'

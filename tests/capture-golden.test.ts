@@ -1,15 +1,15 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import captureConformance from '@tinihi-labs/contracts/fixtures/capture-conformance.json' with { type: 'json' }
+import captureConformance from '@cirnet/contracts/fixtures/capture-conformance.json' with { type: 'json' }
 import {readContractsResource} from '../scripts/contracts-resources.mjs'
 import { createHash } from 'node:crypto'
 import { decodeDigitalCapture } from '../src/services/captures/digital'
 import { calibratedValue, decodeAnalogCapture, frameTimeNs } from '../src/domain/capture/ncap'
 import { verifyAndDecodeAnalogCapture } from '../src/services/captures/analog'
-import type { AnalogCaptureDescriptor } from '@tinihi-labs/contracts/dto'
+import type { AnalogCaptureDescriptor } from '@cirnet/contracts/dto'
 import type { CaptureMetadata, CaptureResult } from '../src/types/lab'
 import {parseLab,ContractValidationError} from '../src/contracts/validation'
-import {captureLayout} from '@tinihi-labs/contracts/capture-layout'
+import {captureLayout} from '@cirnet/contracts/capture-layout'
 import { captureFixture } from './helpers/capture'
 
 test('NCAP v1 rejects nonintegral lexical count and duration tokens consistently with Python',()=>{

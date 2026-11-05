@@ -1,4 +1,4 @@
-import type { ApiOperations } from '@tinihi-labs/contracts/operations'
+import type { ApiOperations } from '@cirnet/contracts/operations'
 import { apiClient,ApiError,type ApiClient } from './client'
 import { callOperation } from './operations'
 export function createProjectsApi(client:ApiClient) {

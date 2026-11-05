@@ -1,4 +1,4 @@
-import type {GeneratorConfiguration,InstrumentCommandRecord,InstrumentControlAccess} from '@tinihi-labs/contracts/dto'
+import type {GeneratorConfiguration,InstrumentCommandRecord,InstrumentControlAccess} from '@cirnet/contracts/dto'
 import type {Experiment} from '../../types/experiment'
 import type {StationDescriptor} from '../../types/station'
 import {generatorConfigurationIssue,runtimeGeneratorIssue} from '../../types/station'

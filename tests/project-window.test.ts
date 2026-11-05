@@ -6,7 +6,7 @@ import { useProjectStore } from '../src/stores/projects'
 import { useCircuitStore } from '../src/stores/circuit'
 import { configureApiClient } from '../src/services/api/client'
 import { loadSfc,mountSfc,dispatch } from './helpers/vueSfc'
-import type { Project } from '@tinihi-labs/contracts/dto'
+import type { Project } from '@cirnet/contracts/dto'
 const project:Project={schema_version:'1.0',project_id:'p1',owner_id:'owner',name:'Lab project',description:'',revision:1,created_at:1,updated_at:1,access_scope:'private'}
 const flush=async()=>{for(let i=0;i<8;i++)await new Promise(resolve=>setTimeout(resolve,0));await nextTick()}
 test('project window creates a project and saves the authoritative graph as a separate server document',async()=>{
