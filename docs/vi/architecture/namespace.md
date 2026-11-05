@@ -8,7 +8,7 @@ Các đầu vào đã xem xét gồm `cirnet-contracts-0.1.2.tgz`, `cirnet_contr
 
 ## Môi trường
 
-Với các script dùng adapter tương thích, `CIRNET_` được ưu tiên hơn `NETCIRCUIT_` cho cùng hậu tố. Giá trị chính thức được đặt tường minh là rỗng vẫn được ưu tiên. Nếu chỉ có giá trị cũ, adapter chấp nhận giá trị đó. Adapter đồng bộ hai cách viết cho công cụ con. Adapter allocator chuyển giá trị phiên và context do allocator đã ghim ghi về các tên chính thức.
+Với các script dùng adapter tương thích, `CIRNET_*` được ưu tiên hơn `NETCIRCUIT_*` cho cùng hậu tố. Giá trị chính thức được đặt tường minh là rỗng vẫn được ưu tiên. Nếu chỉ có giá trị cũ, adapter chấp nhận giá trị đó. Adapter đồng bộ hai cách viết cho công cụ con. Adapter allocator chuyển giá trị phiên và context do allocator đã ghim ghi về các tên chính thức.
 
 | Mục đích | Tên chính thức | Bí danh cũ được chấp nhận |
 | --- | --- | --- |
@@ -25,18 +25,22 @@ CI chọn URL từ khóa trong Git. URL không rỗng do người vận hành ch
 
 | Ranh giới | Hành vi tương thích |
 | --- | --- |
-| Xuất bản khôi phục | Ghi định dạng `cirnet.recovery` phiên bản 1. Đọc `netcircuit.recovery` phiên bản 1 và chuẩn hóa về định dạng chính thức. |
-| IndexedDB khôi phục | Dùng `cirnet-document-recovery`. Một giao dịch sao chép các bản nháp còn thiếu từ `netcircuit-document-recovery` và ghi `migration:netcircuit-document-recovery:v1` cùng dữ liệu sao chép. Bản nháp ở cơ sở dữ liệu mới được ưu tiên khi trùng. Cơ sở dữ liệu cũ giữ nguyên. Có thể thử lại nếu chuyển đổi thất bại, và mở lại không khôi phục bản nháp đã xóa sau chuyển đổi. |
-| Quan sát đang chờ | Ghi cả `cirnet.pending-observations.v1` và `netcircuit.pending-observations.v1`. Giá trị cũ được ưu tiên khi có mặt để các tab cũ còn ghi được. Web Lock cũng dùng `netcircuit.pending-observations.v1`. Bí danh không làm xuất hiện lại quan sát đã hoàn tất. Khôi phục quan sát không chạy lại lệnh. |
+| Bản ghi và bản xuất khôi phục | Bản ghi và bản xuất mới dùng `cirnet.recovery` phiên bản 1. Bộ đọc chấp nhận `netcircuit.recovery` phiên bản 1 và chuẩn hóa về định dạng chính thức. |
+| IndexedDB khôi phục | Dùng `cirnet-document-recovery`. Trong lần đầu sử dụng, một giao dịch sao chép các bản nháp còn thiếu từ `netcircuit-document-recovery` và ghi `migration:netcircuit-document-recovery:v1` cùng dữ liệu sao chép. Bản nháp ở cơ sở dữ liệu mới được ưu tiên khi trùng. Cơ sở dữ liệu cũ giữ nguyên. Có thể thử lại nếu chuyển đổi thất bại, và mở lại không khôi phục bản nháp đã xóa sau chuyển đổi. |
+| Quan sát đang chờ | Ghi cả `cirnet.pending-observations.v1` và `netcircuit.pending-observations.v1`. Giá trị cũ được ưu tiên khi có mặt để các tab cũ còn ghi được. Web Lock cũng dùng `netcircuit.pending-observations.v1`. Các bản ghi này dùng để theo dõi quan sát. Bí danh không làm xuất hiện lại quan sát đã hoàn tất. Khôi phục quan sát không chạy lại lệnh. |
 | Kéo thả linh kiện | Ghi `application/x-cirnet-component` và `application/x-netcircuit-component`. Đọc tên chính thức trước. |
 | CSRF và phiên | Khi có giá trị CSRF, gửi cùng giá trị trong `X-CIRNET-CSRF` và `X-CSRF-Token`. Kiểm thử trình duyệt thật nhận `cirnet_session` và `netcircuit_session`, yêu cầu ít nhất một cookie đã xem xét, kiểm tra từng cookie nhận diện được và yêu cầu thông tin xác thực khớp nhau khi có cả hai tên. |
-| Bản thu | Yêu cầu `application/vnd.cirnet.capture; version=1`. Chấp nhận kiểu phản hồi cũ `application/vnd.netcircuit.capture` với cùng kiểm tra phiên bản và kích thước. |
+| Bản thu | Yêu cầu `application/vnd.cirnet.capture; version=1`. Chấp nhận phản hồi `application/vnd.cirnet.capture` và `application/vnd.netcircuit.capture` với cùng kiểm tra nghiêm ngặt về phiên bản và kích thước. |
 | Trạng thái API | Schema đã chọn chấp nhận `cirnet-api` và `netcircuit-api`. Adapter kiểm tra payload gốc trước. Nếu bộ kiểm tra từ chối định danh chính thức, adapter có thể thử với định danh cũ và vẫn trả payload gốc. |
 
 Xem [bộ đọc khôi phục](../../../src/application/projects/recovery.ts), [adapter IndexedDB](../../../src/services/recovery/indexedDb.ts), [lưu trữ quan sát](../../../src/services/recovery/pendingObservations.ts), [API client](../../../src/services/api/client.ts), [kiểm tra trạng thái](../../../src/contracts/structural.ts) và [kiểm tra cookie phiên](../../../e2e/session-cookies.ts).
 
 ## Định danh lịch sử và bằng chứng tài nguyên
 
-Các gói Interface 0.1.1–0.1.3 đã phát hành giữ metadata gói và mã băm ban đầu. Khóa phát hành, fixture đã ghim, mục kiểm chứng theo thời điểm và hình vẽ gốc giữ tên nhận diện đúng dữ liệu đã ghi. Các bài kiểm thử tương thích kiểm tra cả hai thế hệ. Giấy phép, tài nguyên mô hình đã giao, đầu vào baseline và fixture lịch sử giữ nguồn gốc.
+Các gói Interface 0.1.1–0.1.3 đã phát hành giữ metadata gói và mã băm ban đầu trong hồ sơ phát hành và các phiên bản từng sử dụng chúng. Các bản ghim chính thức chọn đầu vào mới và giữ nguyên gói lịch sử. Khóa phát hành, fixture đã ghim, mục kiểm chứng theo thời điểm và hình vẽ gốc giữ tên nhận diện đúng dữ liệu đã ghi. Bộ đọc, bộ ghi và kiểm thử tương thích tiếp tục xử lý cả hai thế hệ. [Đợt chuyển đổi namespace](../../VERIFICATION.md#2026-11-04-canonical-source-names) giữ nguyên byte của giấy phép, tài nguyên mô hình đã giao, đầu vào baseline và fixture lịch sử.
 
-Chữ trên mặt PSU, Function Generator và Oscilloscope đang chạy dùng `CIRNET` với bố cục hai màu và điểm neo hiện có. Factory tạo mô hình bằng mã và script xuất hiện tại dùng `cirnet_function_generator_2ch` và `cirnet_oscilloscope_2ch`. Tệp GLB/glTF đã giao giữ `net_circuit_function_generator_2ch` và `net_circuit_oscilloscope_2ch`, cùng hình học, texture, nhãn mô hình và mã băm gốc. Kiểm thử tải mô hình kiểm tra tên đã giao. Kiểm thử factory kiểm tra node gốc chính thức. Xem [hướng dẫn mô hình thiết bị](../guides/instrument-models.md), [tài liệu namespace hiện có](../../NAMESPACE.md) và [hồ sơ kiểm chứng theo thời điểm](../../VERIFICATION.md).
+### Thương hiệu thiết bị và định danh tài nguyên được giữ lại
+
+Chữ trên mặt PSU, Function Generator và Oscilloscope đang chạy dùng `CIRNET`. Lần cập nhật thương hiệu giữ nguyên bố cục hai màu, điểm neo, font, hình học mặt thiết bị và hành vi điều khiển. [Kiểm thử cảnh](../../../tests/scene.test.ts) kiểm tra tên in trên mặt thiết bị.
+
+Factory tạo mô hình bằng mã và script xuất hiện tại dùng `cirnet_function_generator_2ch` và `cirnet_oscilloscope_2ch`. Script xuất ghi metadata mô hình `CIRNET`. Tệp GLB/glTF đã giao giữ `net_circuit_function_generator_2ch` và `net_circuit_oscilloscope_2ch`, cùng hình học, texture, hình vẽ, nhãn mô hình, mã băm và README nguồn gốc đi kèm. Kiểm thử tải mô hình kiểm tra tên đã giao, còn kiểm thử factory kiểm tra node gốc chính thức. Lần cập nhật thương hiệu giữ nguyên từng byte của gói xuất đã duyệt và baseline hình ảnh. Xem [hướng dẫn mô hình thiết bị](../guides/instrument-models.md) và [hồ sơ kiểm chứng theo thời điểm](../../VERIFICATION.md#2026-11-04-canonical-source-names).

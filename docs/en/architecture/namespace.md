@@ -8,7 +8,7 @@ The reviewed inputs are `cirnet-contracts-0.1.2.tgz`, `cirnet_contracts-0.1.2.ta
 
 ## Environment
 
-For the scripts using the compatibility adapter, `CIRNET_` wins over `NETCIRCUIT_` for the same suffix. An explicitly empty canonical value also wins. If only the legacy value exists, the adapter accepts it. The adapter synchronizes both spellings for child tooling. The allocator adapter reflects session and context values written by the pinned allocator back into the canonical names.
+For the scripts using the compatibility adapter, `CIRNET_*` wins over `NETCIRCUIT_*` for the same suffix. An explicitly empty canonical value also wins. If only the legacy value exists, the adapter accepts it. The adapter synchronizes both spellings for child tooling. The allocator adapter reflects session and context values written by the pinned allocator back into the canonical names.
 
 | Purpose | Canonical | Accepted legacy alias |
 | --- | --- | --- |
@@ -25,18 +25,22 @@ CI chooses URLs from the tracked lock. Any nonempty explicit operator URL must m
 
 | Boundary | Compatibility behavior |
 | --- | --- |
-| Recovery export | Writes format `cirnet.recovery` version 1. Accepts `netcircuit.recovery` version 1 and normalizes it to the canonical format. |
-| Recovery IndexedDB | Uses `cirnet-document-recovery`. A transaction copies missing drafts from `netcircuit-document-recovery` and records `migration:netcircuit-document-recovery:v1` with the copy. Canonical drafts win collisions. The legacy database stays intact. A failed migration can retry, and reopening does not restore deleted migrated drafts. |
-| Pending observations | Writes both `cirnet.pending-observations.v1` and `netcircuit.pending-observations.v1`. The legacy value wins when present so old tabs can still write. The Web Lock also uses `netcircuit.pending-observations.v1`. A completed observation cannot be resurrected through the alias, and recovery of observations never replays a command. |
+| Recovery records and exports | New recovery records and exports use `cirnet.recovery` version 1. The reader accepts `netcircuit.recovery` version 1 and normalizes it to the canonical format. |
+| Recovery IndexedDB | Uses `cirnet-document-recovery`. On first use, a transaction copies missing drafts from `netcircuit-document-recovery` and records `migration:netcircuit-document-recovery:v1` with the copy. Canonical drafts win collisions. The legacy database stays intact. A failed migration can retry, and reopening does not restore deleted migrated drafts. |
+| Pending observations | Writes both `cirnet.pending-observations.v1` and `netcircuit.pending-observations.v1`. The legacy value wins when present so old tabs can still write. The Web Lock also uses `netcircuit.pending-observations.v1`. These records are observation hints. A completed observation cannot be resurrected through the alias, and recovery of observations never replays a command. |
 | Component drag and drop | Writes `application/x-cirnet-component` and `application/x-netcircuit-component`. Reads the canonical name first. |
 | CSRF and sessions | Sends the same CSRF value in `X-CIRNET-CSRF` and `X-CSRF-Token` when present. The real-browser test recognizes `cirnet_session` and `netcircuit_session`, requires at least one reviewed cookie, checks every recognized cookie, and requires matching credentials when both names are present. |
-| Capture | Requests `application/vnd.cirnet.capture; version=1`. Accepts the legacy `application/vnd.netcircuit.capture` response type with the same version and size checks. |
+| Capture | Requests `application/vnd.cirnet.capture; version=1`. Accepts `application/vnd.cirnet.capture` and `application/vnd.netcircuit.capture` responses with the same strict version and size checks. |
 | API health | The selected schema accepts `cirnet-api` and `netcircuit-api`. The adapter validates the original payload first. If a validator rejects the canonical identity, it can retry validation with the legacy identity and still returns the original payload. |
 
 See the [recovery reader](../../../src/application/projects/recovery.ts), [IndexedDB adapter](../../../src/services/recovery/indexedDb.ts), [observation storage](../../../src/services/recovery/pendingObservations.ts), [API client](../../../src/services/api/client.ts), [health validation](../../../src/contracts/structural.ts) and [session cookie checks](../../../e2e/session-cookies.ts).
 
 ## Historical identity and asset evidence
 
-Previously published Interface 0.1.1–0.1.3 archives keep their original package metadata and digests. Release locks, pinned fixtures, dated verification entries and original artwork retain the names that identify their recorded bytes. Compatibility tests intentionally exercise both generations. The license, delivered model assets, baseline inputs and historical fixtures retain their provenance.
+Previously published Interface 0.1.1–0.1.3 archives keep their original package metadata and digests in release records and historical consumers. Canonical pins select new inputs and leave historical archives intact. Release locks, pinned fixtures, dated verification entries and original artwork retain the names that identify their recorded bytes. Compatibility readers, writers and tests continue to handle both generations. The license, delivered model assets, baseline inputs and historical fixture bytes were preserved in the [namespace migration](../../VERIFICATION.md#2026-11-04-canonical-source-names).
 
-Live PSU, Function Generator and Oscilloscope panel text uses `CIRNET` with its existing two-tone layout and anchors. Current procedural factories and exporters use `cirnet_function_generator_2ch` and `cirnet_oscilloscope_2ch`. Delivered GLB/glTF files retain `net_circuit_function_generator_2ch` and `net_circuit_oscilloscope_2ch`, with their original geometry, textures, model labels and hashes. Loader tests check those delivered names. Factory tests check the canonical roots. See the [instrument model guide](../guides/instrument-models.md), [existing namespace reference](../../NAMESPACE.md) and [dated verification record](../../VERIFICATION.md).
+### Instrument branding and retained asset identities
+
+Live PSU, Function Generator and Oscilloscope panel text uses `CIRNET`. The branding update kept the existing two-tone layout, anchors, fonts, panel geometry and control behavior. The [scene test](../../../tests/scene.test.ts) checks the printed name.
+
+Current procedural factories and exporters use `cirnet_function_generator_2ch` and `cirnet_oscilloscope_2ch`. The exporters write `CIRNET` model metadata. Delivered GLB/glTF files retain `net_circuit_function_generator_2ch` and `net_circuit_oscilloscope_2ch`, with their original geometry, textures, artwork, model labels, hashes and adjacent README provenance. Loader tests check the delivered names, and factory tests check the canonical roots. The branding update preserved the approved exports and visual baselines byte for byte. See the [instrument model guide](../guides/instrument-models.md) and [dated verification record](../../VERIFICATION.md#2026-11-04-canonical-source-names).
