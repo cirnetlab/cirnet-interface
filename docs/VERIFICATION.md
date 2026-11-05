@@ -381,3 +381,42 @@ final brand build `a58ec78b9ec803f0fda43434b046d1ed9d82f66e0bcb8baf994405e974160
 ### Allocator alias follow-up (2026-11-04)
 
 Two native regression tests pass for the pinned DEV allocator adapter. An explicit separate allocation retains the inherited active session; an empty canonical session setting allocates once and synchronizes both output prefixes before reuse. Each fixture cleans only its own children. Frozen artifacts and baselines remain unchanged. The source CI requires both manifest aliases to be cleared when selecting the Interface release SDK.
+
+## 2026-11-05 Node 26 LTS compatibility
+
+Current CI selects Node 26 LTS. A clean physical export of
+`b2fd6ed6cc797113c70f70678395be55366bf316` passed on Windows x64 with official
+Node 26.13.0 and its bundled npm 11.20.0. The Windows ZIP SHA256 was
+`dcc60d59a0746999f99064a01c020445d54d84228c691cdbf25b49ac3b59150a`, checked
+against the official release checksums. The live Node release index identified
+this version as Lithium LTS on 2026-11-05. Verification made no global tool installation.
+
+| Gate | Result |
+| --- | --- |
+| Reviewed SDK/DEV bootstrap, then clean `npm ci --no-audit --no-fund` | PASS, 92 packages |
+| `node --test scripts/*.test.mjs` in the clean export | PASS, 27/27 |
+| `npm run check:boundaries` | PASS, 229 modules |
+| `npm test` | PASS, 10 Contracts prechecks and 1,497/1,497 runtime tests, no skips |
+| `npm exec -- tsc --noEmit -p tsconfig.e2e.json` | PASS |
+| `npm run build` | PASS, all three production entrypoints |
+| Native Sharp PNG encode/decode and Vue Demi/Vue 3 smoke | PASS |
+| New checkout CI toolchain selection/order regression | PASS, 1/1 |
+
+All 33 installed dependency engine declarations admit Node 26. npm's existing
+install-script restrictions remained enabled; the existing build chunk-size
+warning requires no dependency upgrade. All 581 exported tracked files, the
+lockfile and the three original SDK/DEV archives remained byte-identical.
+The source export predates this task's workflow/README/toolchain-test changes;
+those changes affect CI policy and documentation, not application runtime code.
+Minimum package engines and `@types/node` are preserved for consumer compatibility.
+
+The initial restricted-filesystem install failed with `EPERM`; the unchanged
+native install and all complete gates above then passed. Full browser acceptance,
+hosted Actions, publication and physical hardware verification are NOT_RUN for
+this toolchain change. Historical Node 22/24 results retain their original
+inputs and meaning. Raw diagnostics started in the shared external allocator
+session; only this Markdown evidence belongs in source.
+
+Receipt SHA256: `ad8e6372ae06b2ee0049aa5bdbe3353137297cb70223d0c99e9d32ea4aab10cb`.
+Full `npm test` log SHA256:
+`7a41dd9ff340911724f13d889b902fdf8d96112d71c5b8a9e000ad02fb8f72ef`.
