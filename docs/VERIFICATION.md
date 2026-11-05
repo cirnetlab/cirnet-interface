@@ -1,5 +1,41 @@
 # Interface verification and external evidence
 
+## 2026-11-05 canonical 0.1.4 source verification
+
+A fresh external copy of the reviewed working tree selects canonical
+`@cirnet/contracts@0.1.2`, its same-source `cirnet-contracts` sdist and independent
+`@cirnet/artifact-paths@1.0.0-m1.0`. All three SHA256 pins were checked against
+producer bytes before bootstrap; both npm SHA512 integrity values were
+recomputed from their tarballs. Regenerating the npm lock preserved every
+third-party package record. Published earlier artifacts were not modified.
+
+A separate fresh bootstrap downloaded all three inputs from the published
+Contracts 0.1.2 numeric asset URLs now recorded in the lock; their SHA256 values
+and package identities match the selected producer bytes. CI no longer selects
+these URLs through repository variables. Explicit operator URLs must match a
+tracked URL, and the authentication/redirect transport regressions pass.
+The compatibility descriptor pins Remote API source
+`ce84ec4cf3602ef6fd001f91877e864c8955f9c7` and its exact OpenAPI digest.
+Both complete npm archives, all 203 generated test/helper `.mjs` bundles, four
+native helper `.mjs` bundles and the Git-exported candidate static payload were
+scanned with no former-owner package-scope references.
+
+On Windows, Node 26.12.1, bundled npm 11.20.0 and Python 3.14.4, fresh bootstrap
+and `npm ci` pass. All **31/31 script tests**, **1,498/1,498 runtime tests**,
+unit types, E2E types and **229-module AST boundaries** pass with no test skips
+or failures. The production build passes and includes all three entrypoints.
+The script suite includes clean-export reproducibility and rejects stale product
+versions, alternate package identities, arbitrary static roots and missing pages.
+Browser workflow source imports are covered by the canonical dependency scan.
+The official clean-export builder also passes from an owned synthetic Git
+snapshot, including a second fresh install and all three static entrypoints.
+That snapshot revision is verification provenance only; publication requires
+rebuilding from the real reviewed product commit.
+
+These results describe the reviewed working tree and an isolated build, not a
+new full browser acceptance run or published release. Historical committed
+release and browser evidence below retains its original versions and hashes.
+
 ## 2026-11-04 complete committed-artifact Ubuntu acceptance
 
 The frozen functional source is `6c150f34193bb3b009046cbaa586fae0260560f4`.

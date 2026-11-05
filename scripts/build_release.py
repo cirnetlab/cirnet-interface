@@ -11,8 +11,8 @@ import subprocess
 import tarfile
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = '0.1.3'
-CONTRACTS_VERSION = '0.1.1'
+VERSION = '0.1.4'
+CONTRACTS_VERSION = '0.1.2'
 EXCLUDED = {'.git', 'node_modules', '.artifacts', '.runtime', '.build', '.test-build',
             '.benchmark-build', 'dist'}
 
@@ -105,6 +105,14 @@ def build(output_directory, source_root=ROOT):
     product = json.loads(source['package.json'])
     if product.get('name') != '@cirnet/web' or product.get('version') != VERSION:
         raise ValueError('Committed Interface product metadata must be @cirnet/web=='+VERSION)
+    lock = json.loads(source['integration/contracts-artifacts.json'])
+    expected_packages = {'npm': ('@cirnet/contracts', CONTRACTS_VERSION),
+                         'sdist': ('cirnet-contracts', CONTRACTS_VERSION),
+                         'dev_npm': ('@cirnet/artifact-paths', '1.0.0-m1.0')}
+    if lock.get('contractsVersion') != CONTRACTS_VERSION or any(
+            (lock.get(key, {}).get('name'), lock.get(key, {}).get('version')) != expected
+            for key, expected in expected_packages.items()):
+        raise ValueError('Committed Contracts lock must select canonical packages at the reviewed versions.')
     fingerprint = hashlib.sha256(''.join(hashlib.sha256(value).hexdigest()+'  '+name+'\n'
         for name,value in sorted(source.items()) if name != 'migration/verification.md').encode()).hexdigest()
     metadata = {'schema':1, 'name':'cirnet-interface', 'version':VERSION, 'kind':'source',

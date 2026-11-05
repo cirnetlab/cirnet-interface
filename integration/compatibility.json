@@ -3,19 +3,19 @@
   "status": "PINNED_ARTIFACT_INPUTS",
   "interface": {
     "name": "@cirnet/web",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "artifactName": "cirnet-interface"
   },
   "contracts": {
-    "npm": "0.1.1",
-    "python": "0.1.1",
-    "npmSha256": "3bfc8b6f84b645cd6b7864bd1391de1d5efdc6ee4ba653cb92e145a3ddd2bc83"
+    "npm": "0.1.2",
+    "python": "0.1.2",
+    "npmSha256": "b963cf4990fee8b5a9294a6aaf85cfd803ed7724efc9ad2b3ee1ec302646b3c8"
   },
   "remote": {
-    "sourceRevision": "c9ce51c35942ad8211dacabe838ce25c5e76e537",
-    "apiOpenApiSha256": "9a02d85f33b5f07f931895e05aaf6e491cfa38a84d851db995b96dd5effa2a0f",
+    "apiOpenApiSha256": "dc39c874386eba2b58f8b5c631cbee0d63ded86cf287aea63f54e4a237ff8f08",
     "hardwareRpcVersion": "2.0",
-    "integrationOwner": "cirnet-remote"
+    "integrationOwner": "cirnet-remote",
+    "sourceRevision": "ce84ec4cf3602ef6fd001f91877e864c8955f9c7"
   },
   "graphs": [
     "1.0",

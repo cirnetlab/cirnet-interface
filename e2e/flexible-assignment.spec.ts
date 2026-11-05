@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
 import {readFileSync} from 'node:fs'
 import { parseStructural } from '../src/contracts/structural'
-const fixtures=JSON.parse(readFileSync(require.resolve('@tinihi-labs/contracts/fixtures/flexible-mounting-parity.json'),'utf8')) as {cases:{graph:Record<string,unknown>}[]}
+const fixtures=JSON.parse(readFileSync(require.resolve('@cirnet/contracts/fixtures/flexible-mounting-parity.json'),'utf8')) as {cases:{graph:Record<string,unknown>}[]}
 
 test('actual authoring UI creates, reopens, updates and publishes a private Graph 1.2 assignment reference without replacing the canvas', async ({ page, context, browser }, testInfo) => {
   test.setTimeout(120_000)

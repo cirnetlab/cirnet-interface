@@ -1,7 +1,7 @@
 import { fileCommand, expectEventConnection, selectRun } from './workbench-ui'
 import {test,expect,type Browser,type BrowserContext,type Page} from '@playwright/test'
 import {randomUUID} from 'node:crypto'
-import type {ExperimentCreate,ExperimentRecord} from '@tinihi-labs/contracts/dto'
+import type {ExperimentCreate,ExperimentRecord} from '@cirnet/contracts/dto'
 import {parseStructural} from '../src/contracts/structural'
 const origin='http://127.0.0.1:14173'
 const assignmentPanel=(page:Page)=>page.getByRole('region',{name:'Assignments',exact:true})

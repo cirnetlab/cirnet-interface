@@ -8,12 +8,14 @@ See [source-name compatibility](docs/NAMESPACE.md) for legacy environment, brows
 
 ## Run and verify
 
-This repository is the standalone Interface product extracted at Remote revision `745077403f233790bdb6781c36d6502feca01642`. Node 26 is the CI toolchain. Current source imports `@cirnet/contracts@0.1.1`; independent DEV allocator `@cirnet/artifact-paths@1.0.0-m1.0` is not a browser runtime dependency. The default install uses canonical dependency keys over the unchanged digest-pinned published tarballs. npm records their original package identities in the lockfile. The current product release is [0.1.3](https://github.com/cirnetlab/cirnet-interface/releases/tag/v0.1.3), with Contracts remaining `0.1.1`; the existing third-party dependency locks and model artwork are preserved. The current source package identity is `@cirnet/web`. The product compatibility descriptor is recorded in `integration/compatibility.json`. Exact committed source/static artifacts pass the complete Ubuntu browser gate; the release selection belongs to `cirnet-remote`. Generic Contracts generation and Python/API implementation are owned elsewhere.
+This repository is the standalone Interface product extracted at Remote revision `745077403f233790bdb6781c36d6502feca01642`. Node 26 is the CI toolchain. Active source targets **Interface 0.1.4**, with canonical `@cirnet/contracts@0.1.2` and independent DEV allocator `@cirnet/artifact-paths@1.0.0-m1.0`. DEV tooling is not a browser runtime dependency. The default install uses the exact canonical producer tarballs selected by the bootstrap and npm locks; third-party dependency versions and model artwork are preserved. The source package is `@cirnet/web` and its compatibility descriptor is `integration/compatibility.json`.
 
-Before `npm ci`, materialize the three reviewed artifacts from an explicit local release manifest or configured immutable HTTPS URLs. Bootstrap verifies the DEV archive and canonical allocator before creating diagnostic output; package caches live only in ignored `.artifacts` and are not source dependencies. Missing or mismatched releases fail rather than falling back to a sibling checkout or latest version.
+The GitHub release title for 0.1.4 is `cirnet-interface-v0.1.4` and its tag is `v0.1.4`; building locally does not create either. The previously published [0.1.3 release](https://github.com/cirnetlab/cirnet-interface/releases/tag/v0.1.3) and its recorded browser acceptance remain immutable. System release selection belongs to `cirnet-remote`; generic Contracts generation and Python/API implementation remain producer responsibilities.
+
+Before `npm ci`, materialize the three reviewed artifacts from an explicit local release manifest or the immutable HTTPS URLs in `integration/contracts-artifacts.json`. An operator URL setting must match the tracked URL; CI no longer selects artifacts through mutable repository variables. Bootstrap verifies the DEV archive and canonical allocator before creating diagnostic output; package caches live only in ignored `.artifacts` and are not source dependencies. Missing or mismatched releases fail rather than falling back to a sibling checkout or latest version.
 
 Interface uses the canonical `@cirnet/contracts` import path for browser runtime and the exact
-published `netcircuit_contracts-0.1.1.tar.gz` archive for supplemental test
+selected `cirnet_contracts-0.1.2.tar.gz` archive for supplemental test
 resources. The Python distribution `cirnet-contracts` is selected by Python
 consumers through their own artifact manifests.
 

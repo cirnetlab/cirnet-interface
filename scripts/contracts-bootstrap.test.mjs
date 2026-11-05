@@ -5,12 +5,25 @@ import {resolve} from 'node:path'
 import {spawnSync} from 'node:child_process'
 import {build} from 'esbuild'
 import {getArtifactDirectory,cleanupArtifactSession} from '@cirnet/artifact-paths'
-import {checkedHttps,requestHeaders,downloadArtifact,verifyBytes,archiveEntry,root,lock,digest} from './contracts-artifacts.mjs'
+import {checkedHttps,artifactUrl,requestHeaders,downloadArtifact,verifyBytes,archiveEntry,root,lock,digest} from './contracts-artifacts.mjs'
 import {readContractsResource} from './contracts-resources.mjs'
 
 test('release transport rejects mutable or credential-bearing destinations',()=>{
   for(const value of ['http://example.com/v1.tgz','https://user:secret@example.com/v1.tgz','https://example.com/releases/latest/file.tgz'])assert.throws(()=>checkedHttps(value))
-  assert.equal(checkedHttps('https://example.com/releases/0.1.1/contracts.tgz').protocol,'https:')
+  assert.equal(checkedHttps('https://example.com/releases/0.1.2/contracts.tgz').protocol,'https:')
+})
+
+test('tracked artifact URLs cannot drift with CI or operator variables',()=>{
+  const url='https://api.github.com/repositories/123/releases/assets/456'
+  const entry={url,urlEnvironment:'CIRNET_CONTRACTS_NPM_URL'}
+  assert.equal(artifactUrl(entry,{}),url)
+  assert.equal(artifactUrl(entry,{CIRNET_CONTRACTS_NPM_URL:url}),url)
+  assert.throws(()=>artifactUrl(entry,{CIRNET_CONTRACTS_NPM_URL:'https://example.com/other.tgz'}),/tracked release lock/)
+  assert.equal(artifactUrl({urlEnvironment:entry.urlEnvironment},{CIRNET_CONTRACTS_NPM_URL:url}),url)
+  assert.throws(()=>artifactUrl({urlEnvironment:entry.urlEnvironment},{}),/publication\/access/)
+  for(const unsafe of ['http://example.com/v1.tgz','https://user:secret@example.com/v1.tgz','https://example.com/releases/latest/file.tgz']){
+    assert.throws(()=>artifactUrl({...entry,url:unsafe},{}))
+  }
 })
 test('download authentication is confined to the initial GitHub API asset request',async()=>{
   assert.equal(requestHeaders('https://example.com/asset','secret').Authorization,undefined)
@@ -37,14 +50,14 @@ test('renamed GitHub API assets retain binary negotiation across API redirects w
     calls.push({url:String(url),headers:options.headers})
     if(calls.length===1)return new Response(null,{status:301,headers:{location:stable}})
     if(calls.length===2){
-      if(options.headers.Accept!=='application/octet-stream')return new Response(JSON.stringify({id:682226359,name:'tinihi-labs-contracts-0.1.1.tgz'}))
+      if(options.headers.Accept!=='application/octet-stream')return new Response(JSON.stringify({id:682226359,name:'cirnet-contracts-0.1.2.tgz'}))
       return new Response(null,{status:302,headers:{location:'https://release-assets.githubusercontent.com/exact/contracts.tgz'}})
     }
     return new Response(bytes)
   }
   const before=process.env.CIRNET_ARTIFACTS_TOKEN
   process.env.CIRNET_ARTIFACTS_TOKEN='fixture-token'
-  try{assert.deepEqual(await downloadArtifact('https://api.github.com/repos/TINIHI-Labs/net-Circuit-Contracts/releases/assets/682226359',digest(bytes),fetcher),bytes)}
+  try{assert.deepEqual(await downloadArtifact('https://api.github.com/repos/example/renamed-contracts/releases/assets/682226359',digest(bytes),fetcher),bytes)}
   finally{if(before===undefined)delete process.env.CIRNET_ARTIFACTS_TOKEN;else process.env.CIRNET_ARTIFACTS_TOKEN=before}
   assert.equal(calls[0].headers.Authorization,'Bearer fixture-token')
   assert.equal(calls[1].url,stable)

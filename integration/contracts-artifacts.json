@@ -1,27 +1,30 @@
 {
   "schemaVersion": 1,
   "status": "PINNED_ARTIFACT_INPUTS",
-  "contractsVersion": "0.1.1",
+  "contractsVersion": "0.1.2",
   "npm": {
-    "name": "@tinihi-labs/contracts",
-    "version": "0.1.1",
-    "filename": "tinihi-labs-contracts-0.1.1.tgz",
-    "sha256": "3bfc8b6f84b645cd6b7864bd1391de1d5efdc6ee4ba653cb92e145a3ddd2bc83",
-    "urlEnvironment": "NETCIRCUIT_CONTRACTS_NPM_URL"
+    "name": "@cirnet/contracts",
+    "version": "0.1.2",
+    "filename": "cirnet-contracts-0.1.2.tgz",
+    "sha256": "b963cf4990fee8b5a9294a6aaf85cfd803ed7724efc9ad2b3ee1ec302646b3c8",
+    "urlEnvironment": "CIRNET_CONTRACTS_NPM_URL",
+    "url": "https://api.github.com/repos/cirnetlab/cirnet-contracts/releases/assets/712718345"
   },
   "sdist": {
-    "name": "netcircuit-contracts",
-    "version": "0.1.1",
-    "filename": "netcircuit_contracts-0.1.1.tar.gz",
-    "sha256": "9e15850d42ddc61311979cec2df95f5e55d07699e7cbfd83a8f24f0b988b4e07",
-    "urlEnvironment": "NETCIRCUIT_CONTRACTS_SDIST_URL"
+    "name": "cirnet-contracts",
+    "version": "0.1.2",
+    "filename": "cirnet_contracts-0.1.2.tar.gz",
+    "sha256": "dac0dbe5f30630faee0cabbb76d4da39012805295a12581d87ade23431e6aec6",
+    "urlEnvironment": "CIRNET_CONTRACTS_SDIST_URL",
+    "url": "https://api.github.com/repos/cirnetlab/cirnet-contracts/releases/assets/712718302"
   },
   "dev_npm": {
-    "name": "@tinihi-labs/artifact-paths",
+    "name": "@cirnet/artifact-paths",
     "version": "1.0.0-m1.0",
-    "filename": "tinihi-labs-artifact-paths-1.0.0-m1.0.tgz",
-    "sha256": "53190cceb3eee6bb92e91edf1eda0c01043e0ea095cbba1e745a0f7103e6f6df",
-    "nodeSha256": "7c42c4fd171ed861b365f08501f3c765282d6bba2dcd6430c9677cddd1abe345",
-    "urlEnvironment": "NETCIRCUIT_ARTIFACT_PATHS_NPM_URL"
+    "filename": "cirnet-artifact-paths-1.0.0-m1.0.tgz",
+    "sha256": "764fda1ffcb189af5c063653b8656fd3acdab1877f2f87b74182fff3269f9132",
+    "nodeSha256": "742ef11f9083beaf901d0d4f9a5a777d87aeae71a990597f9640a1b3a9329b5a",
+    "urlEnvironment": "CIRNET_ARTIFACT_PATHS_NPM_URL",
+    "url": "https://api.github.com/repos/cirnetlab/cirnet-contracts/releases/assets/712718440"
   }
 }

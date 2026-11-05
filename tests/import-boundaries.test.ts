@@ -121,8 +121,8 @@ test('unreviewed Contracts package paths cannot bypass browser policy outside th
   assert.match(result.stdout,/unapproved Contracts package entrypoint/)
 })
 
-test('legacy SDK imports cannot bypass the canonical browser entrypoint allowlist',()=>{
-  for(const specifier of ['@tinihi-labs/contracts/dto','@tinihi-labs/contracts/dist/private.js']){
+test('alternate SDK imports cannot bypass the canonical browser entrypoint allowlist',()=>{
+  for(const specifier of ['@other/contracts/dto','@other/contracts/dist/private.js']){
     const result=audit({'components/client.ts':`export {value} from '${specifier}'`})
     assert.equal(result.status,1,result.stderr+result.stdout)
     assert.match(result.stdout,/unapproved Contracts package entrypoint/)

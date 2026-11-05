@@ -9,7 +9,7 @@ import { parseStructural } from '../src/contracts/structural'
 
 interface NativeSceneProbe { scene: Object3D; camera: Camera; frames: number; trustedPointerDowns: number; trustedContextMenus: number;memory:{geometries:number;textures:number}; target?: number[] }
 type ProbedCanvas = HTMLCanvasElement & { nativeSceneProbe?: NativeSceneProbe }
-const topologies=JSON.parse(readFileSync(require.resolve('@tinihi-labs/contracts/data/breadboardTopologies.json'),'utf8')) as {profiles:BreadboardTopology[]}
+const topologies=JSON.parse(readFileSync(require.resolve('@cirnet/contracts/data/breadboardTopologies.json'),'utf8')) as {profiles:BreadboardTopology[]}
 export const workspaceCanvas = (page: Page) => page.getByLabel('Three-dimensional circuit workspace', { exact: true })
 
 /** Observe Three's own devtools event and every original native render. This

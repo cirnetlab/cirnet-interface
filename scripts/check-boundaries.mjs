@@ -104,7 +104,8 @@ const sdkEntrypoints=new Set([
   'validators','validators.core','validators.editor','validators.editor.core','validators.structural','validators.structural.core',
   ...['breadboardMechanics','breadboardTopologies','editorCatalog','editorParts','flexibleMechanics','labContracts','physicalParts','signalPortCatalog'].map(name=>`data/${name}.json`),
 ].map(name=>`@cirnet/contracts/${name}`))
-const sdkPackages=['@cirnet/contracts','@tinihi-labs/contracts']
+// Alternate scoped Contracts packages must not bypass the exact public API list.
+const contractsPackage=spec=>/^@[^/]+\/contracts(?:\/|$)/.test(spec)
 const corePackages=new Set(['lossless-json',...sdkEntrypoints])
 const coreDependency=(spec,target)=>(!spec.startsWith('.')&&!spec.startsWith('@/')&&!corePackages.has(spec))
   ||!!target&&/^(?:stores|components|composables|three|services\/(?:api|websocket|session|assets))\//.test(label(target))
@@ -129,7 +130,7 @@ for(const [file,item] of files) {
   if(label(file).startsWith('three/'))traverse(file,'renderer',rendererDependency,networkGlobals)
   for(const edge of item.edges){
     if(privateModule(edge.spec)||edge.target&&privateModule(label(edge.target)))report('browser',[file,edge.target??edge.spec],'private hardware/RPC client')
-    if(sdkPackages.some(name=>edge.spec===name||edge.spec.startsWith(name+'/'))&&!sdkEntrypoints.has(edge.spec))report('browser',[file,edge.spec],'unapproved Contracts package entrypoint')
+    if(contractsPackage(edge.spec)&&!sdkEntrypoints.has(edge.spec))report('browser',[file,edge.spec],'unapproved Contracts package entrypoint')
   }
 }
 for(const start of files.keys())if(label(start).startsWith('stores/')) {

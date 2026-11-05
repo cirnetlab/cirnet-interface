@@ -23,9 +23,6 @@ jobs:
       - name: Bootstrap exact SDK and DEV artifacts before allocation or npm ci
         env:
           CIRNET_ARTIFACTS_DIR: ${{ runner.temp }}/cirnet-interface
-          CIRNET_CONTRACTS_NPM_URL: ${{ vars.CIRNET_CONTRACTS_NPM_URL || vars.NETCIRCUIT_CONTRACTS_NPM_URL }}
-          CIRNET_CONTRACTS_SDIST_URL: ${{ vars.CIRNET_CONTRACTS_SDIST_URL || vars.NETCIRCUIT_CONTRACTS_SDIST_URL }}
-          CIRNET_ARTIFACT_PATHS_NPM_URL: ${{ vars.CIRNET_ARTIFACT_PATHS_NPM_URL || vars.NETCIRCUIT_ARTIFACT_PATHS_NPM_URL }}
           CIRNET_ARTIFACTS_TOKEN: ${{ secrets.CIRNET_ARTIFACTS_READ_TOKEN || secrets.NETCIRCUIT_ARTIFACTS_READ_TOKEN }}
         run: node scripts/bootstrap-contracts.mjs --github-env "$GITHUB_ENV"
       - name: Clean locked install without sibling sources
@@ -41,9 +38,6 @@ jobs:
           npm run build
       - name: Export versioned source verification and static bundles externally
         env:
-          CIRNET_CONTRACTS_NPM_URL: ${{ vars.CIRNET_CONTRACTS_NPM_URL || vars.NETCIRCUIT_CONTRACTS_NPM_URL }}
-          CIRNET_CONTRACTS_SDIST_URL: ${{ vars.CIRNET_CONTRACTS_SDIST_URL || vars.NETCIRCUIT_CONTRACTS_SDIST_URL }}
-          CIRNET_ARTIFACT_PATHS_NPM_URL: ${{ vars.CIRNET_ARTIFACT_PATHS_NPM_URL || vars.NETCIRCUIT_ARTIFACT_PATHS_NPM_URL }}
           CIRNET_ARTIFACTS_TOKEN: ${{ secrets.CIRNET_ARTIFACTS_READ_TOKEN || secrets.NETCIRCUIT_ARTIFACTS_READ_TOKEN }}
         run: |
           output="$(node --input-type=module -e "import {getArtifactDirectory} from './scripts/artifact-paths.mjs';console.log(getArtifactDirectory('interface-artifacts'))")"
@@ -52,7 +46,7 @@ jobs:
       - name: Retain versioned Interface artifacts for explicit downstream review
         uses: actions/upload-artifact@v4
         with:
-          name: cirnet-interface-0.1.3
+          name: cirnet-interface-0.1.4
           path: ${{ env.CIRNET_INTERFACE_EXPORT_DIR }}
           if-no-files-found: error
           retention-days: 7

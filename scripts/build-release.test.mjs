@@ -11,27 +11,27 @@ const product=resolve(dirname(fileURLToPath(import.meta.url)),'..')
 const python=process.env.CIRNET_RELEASE_PYTHON??'python'
 const pages=['index.html','oscilloscope-preview.html','function-generator-preview.html']
 
-function fixture({omitPage,productVersion='0.1.3',contractsVersion='0.1.1',sdkName='@tinihi-labs/contracts'}={}){
+function fixture({omitPage,productVersion='0.1.4',contractsVersion='0.1.2',sdkName='@cirnet/contracts'}={}){
   const owned=mkdtempSync(resolve(getArtifactDirectory('interface-export-regression'),'case-')),source=resolve(owned,'source')
-  const sdkRoot=resolve(owned,'sdk','package'),sdistRoot=resolve(owned,'sdist','netcircuit_contracts-0.1.1')
+  const sdkRoot=resolve(owned,'sdk','package'),sdistRoot=resolve(owned,'sdist','cirnet_contracts-0.1.2')
   for(const directory of [resolve(source,'scripts'),resolve(source,'integration'),resolve(source,'dist'),sdkRoot,sdistRoot])mkdirSync(directory,{recursive:true})
-  writeFileSync(resolve(sdkRoot,'package.json'),JSON.stringify({name:sdkName,version:'0.1.1',type:'module',exports:'./index.mjs'}))
-  writeFileSync(resolve(sdkRoot,'index.mjs'),"export const marker='reviewed SDK 0.1.1'\n")
-  writeFileSync(resolve(sdistRoot,'PKG-INFO'),'Name: netcircuit-contracts\nVersion: 0.1.1\n')
+  writeFileSync(resolve(sdkRoot,'package.json'),JSON.stringify({name:sdkName,version:'0.1.2',type:'module',exports:'./index.mjs'}))
+  writeFileSync(resolve(sdkRoot,'index.mjs'),"export const marker='reviewed SDK 0.1.2'\n")
+  writeFileSync(resolve(sdistRoot,'PKG-INFO'),'Name: cirnet-contracts\nVersion: 0.1.2\n')
   const sdk=resolve(owned,'sdk.tgz'),sdist=resolve(owned,'sdist.tar.gz')
   execFileSync('tar',['-czf',sdk,'-C',dirname(sdkRoot),'package'],{windowsHide:true})
-  execFileSync('tar',['-czf',sdist,'-C',dirname(sdistRoot),'netcircuit_contracts-0.1.1'],{windowsHide:true})
+  execFileSync('tar',['-czf',sdist,'-C',dirname(sdistRoot),'cirnet_contracts-0.1.2'],{windowsHide:true})
   const lock=JSON.parse(readFileSync(resolve(product,'integration/contracts-artifacts.json'),'utf8'))
   lock.contractsVersion=contractsVersion
-  lock.npm={...lock.npm,name:sdkName,filename:'fixture-contracts.tgz',sha256:createHash('sha256').update(readFileSync(sdk)).digest('hex')}
-  lock.sdist={...lock.sdist,filename:'fixture-contracts.tar.gz',sha256:createHash('sha256').update(readFileSync(sdist)).digest('hex')}
+  lock.npm={...lock.npm,name:sdkName,version:'0.1.2',filename:'fixture-contracts.tgz',sha256:createHash('sha256').update(readFileSync(sdk)).digest('hex')}
+  lock.sdist={...lock.sdist,name:'cirnet-contracts',version:'0.1.2',filename:'fixture-contracts.tar.gz',sha256:createHash('sha256').update(readFileSync(sdist)).digest('hex')}
   writeFileSync(resolve(source,'integration/contracts-artifacts.json'),JSON.stringify(lock))
   for(const name of ['bootstrap-contracts.mjs','contracts-artifacts.mjs','environment.mjs'])writeFileSync(resolve(source,'scripts',name),readFileSync(resolve(product,'scripts',name)))
   const dependency='file:.artifacts/fixture-contracts.tgz',integrity='sha512-'+createHash('sha512').update(readFileSync(sdk)).digest('base64')
   writeFileSync(resolve(source,'package.json'),JSON.stringify({name:'@cirnet/web',version:productVersion,scripts:{build:'node scripts/build.mjs'},dependencies:{'@cirnet/contracts':dependency}}))
   writeFileSync(resolve(source,'package-lock.json'),JSON.stringify({name:'@cirnet/web',version:productVersion,lockfileVersion:3,requires:true,packages:{
     '':{name:'@cirnet/web',version:productVersion,dependencies:{'@cirnet/contracts':dependency}},
-    'node_modules/@cirnet/contracts':{name:sdkName,version:'0.1.1',resolved:dependency,integrity},
+    'node_modules/@cirnet/contracts':{name:sdkName,version:'0.1.2',resolved:dependency,integrity},
   }}))
   writeFileSync(resolve(source,'.gitignore'),'dist/\nnode_modules/\n.artifacts/\n')
   writeFileSync(resolve(source,'source.txt'),'committed source\n')
@@ -62,20 +62,20 @@ test('release builds the exact committed export with locked SDK installation, ig
   assert.equal(a.status,0,a.stderr);assert.equal(b.status,0,b.stderr)
   const first=JSON.parse(a.stdout),second=JSON.parse(b.stdout)
   for(const kind of ['source','static'])assert.equal(first.artifacts[kind].sha256,second.artifacts[kind].sha256)
-  assert.equal(first.version,'0.1.3');assert.equal(first.contractsVersion,'0.1.1')
+  assert.equal(first.version,'0.1.4');assert.equal(first.contractsVersion,'0.1.2')
   const archive=first.artifacts.source.path
   const metadata=JSON.parse(execFileSync('tar',['-xzOf',archive,'interface-artifact.json'],{encoding:'utf8',windowsHide:true}))
   assert.equal(metadata.source.revision,git('rev-parse','HEAD').trim())
   assert.equal(metadata.source.uncommittedMigration,false)
-  assert.equal(metadata.version,'0.1.3');assert.equal(metadata.contractsVersion,'0.1.1')
+  assert.equal(metadata.version,'0.1.4');assert.equal(metadata.contractsVersion,'0.1.2')
   const staticMetadata=JSON.parse(execFileSync('tar',['-xzOf',first.artifacts.static.path,'interface-artifact.json'],{encoding:'utf8',windowsHide:true}))
-  assert.equal(staticMetadata.version,'0.1.3');assert.equal(staticMetadata.contractsVersion,'0.1.1')
+  assert.equal(staticMetadata.version,'0.1.4');assert.equal(staticMetadata.contractsVersion,'0.1.2')
   assert.equal(execFileSync('tar',['-xzOf',archive,'source.txt'],{encoding:'utf8',windowsHide:true}),'committed source\n')
-  for(const page of pages)assert.equal(execFileSync('tar',['-xzOf',first.artifacts.static.path,page],{encoding:'utf8',windowsHide:true}),`<title>${page}</title>\ncommitted source\nreviewed SDK 0.1.1\n`)
+  for(const page of pages)assert.equal(execFileSync('tar',['-xzOf',first.artifacts.static.path,page],{encoding:'utf8',windowsHide:true}),`<title>${page}</title>\ncommitted source\nreviewed SDK 0.1.2\n`)
   const builds=readFileSync(receipt,'utf8').trim().split('\n').map(line=>JSON.parse(line))
   assert.equal(builds.length,2)
   assert.notEqual(builds[0].cwd,builds[1].cwd,'each build needs a fresh exported source tree')
-  for(const build of builds){assert.notEqual(resolve(build.cwd),source);assert.equal(build.git,false);assert.equal(build.text,'committed source\n');assert.equal(build.marker,'reviewed SDK 0.1.1')}
+  for(const build of builds){assert.notEqual(resolve(build.cwd),source);assert.equal(build.git,false);assert.equal(build.text,'committed source\n');assert.equal(build.marker,'reviewed SDK 0.1.2')}
   assert.equal(readFileSync(resolve(source,'dist/index.html'),'utf8'),'stale ignored bundle')
   assert.equal(existsSync(resolve(source,'node_modules')),false)
   writeFileSync(resolve(source,'source.txt'),'dirty source\n')
@@ -100,22 +100,23 @@ test('the freshly executed build must still produce all three production entrypo
 })
 
 test('release rejects a stale Interface product without advancing its Contracts version',()=>{
-  const {owned,invoke}=fixture({productVersion:'0.1.1'})
+  const {owned,invoke}=fixture({productVersion:'0.1.3'})
   const result=invoke(resolve(owned,'output'))
   assert.notEqual(result.status,0)
-  assert.match(result.stderr,/Committed Interface product metadata must be @cirnet\/web==0\.1\.3/)
+  assert.match(result.stderr,/Committed Interface product metadata must be @cirnet\/web==0\.1\.4/)
 })
 
 test('release rejects a bootstrap that reports the Interface patch as its Contracts version',()=>{
-  const {owned,invoke}=fixture({contractsVersion:'0.1.3'})
+  const {owned,invoke}=fixture({contractsVersion:'0.1.4'})
   const result=invoke(resolve(owned,'output'))
   assert.notEqual(result.status,0)
-  assert.match(result.stderr,/Committed bootstrap must select the exact Contracts version/)
+  assert.match(result.stderr,/Committed Contracts lock must select canonical packages/)
 })
 
-test('release supports an explicitly pinned canonical Contracts candidate without changing the published lock',()=>{
-  const {owned,invoke,receipt}=fixture({sdkName:'@cirnet/contracts'})
-  const result=invoke(resolve(owned,'canonical'))
-  assert.equal(result.status,0,result.stderr)
-  assert.equal(JSON.parse(readFileSync(receipt,'utf8').trim()).marker,'reviewed SDK 0.1.1')
+test('new releases reject alternate SDK package identities before bootstrap or build',()=>{
+  const {owned,invoke,receipt}=fixture({sdkName:'@other/contracts'})
+  const result=invoke(resolve(owned,'legacy-sdk'))
+  assert.notEqual(result.status,0)
+  assert.match(result.stderr,/Committed Contracts lock must select canonical packages/)
+  assert.equal(existsSync(receipt),false)
 })

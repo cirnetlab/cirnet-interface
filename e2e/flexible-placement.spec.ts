@@ -236,7 +236,7 @@ test('native diode and Zener spans and whole-assembly Move preserve stable pin b
 
 test('native explicit rebuild previews historical geometry, cancels and applies with one Undo while preserving saved overrides',async({page},testInfo)=>{
  test.setTimeout(600_000);await openBoard(page)
- const graph=JSON.parse(readFileSync(require.resolve('@tinihi-labs/contracts/fixtures/component-mechanics-legacy.json'),'utf8')) as CircuitGraph,module=graph.modules.find(module=>module.mount)!
+ const graph=JSON.parse(readFileSync(require.resolve('@cirnet/contracts/fixtures/component-mechanics-legacy.json'),'utf8')) as CircuitGraph,module=graph.modules.find(module=>module.mount)!
  await page.getByLabel('Open circuit file',{exact:true}).setInputFiles({name:'historical-component.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(graph))})
  await page.getByRole('button',{name:'Zoom To View Entire Circuit',exact:true}).click()
  const before=await exportedNativeGraph(page),point=await projectModuleCenter(page,module.id);await page.mouse.click(point.x,point.y)
@@ -249,7 +249,7 @@ test('native explicit rebuild previews historical geometry, cancels and applies 
  await info(page).getByRole('button',{name:'Cancel component geometry rebuild',exact:true}).click();expect(await exportedNativeGraph(page)).toEqual(before);expect((await nativeComponentBody(page,module.id)).size).toEqual(originalBody.size)
  await info(page).getByRole('button',{name:'Rebuild component geometry',exact:true}).click();await info(page).getByRole('button',{name:'Apply rebuilt component geometry',exact:true}).click()
  const rebuilt=await exportedNativeGraph(page),changed=rebuilt.modules.find(candidate=>candidate.id===module.id)!
- const current=JSON.parse(readFileSync(require.resolve('@tinihi-labs/contracts/data/editorParts.json'),'utf8')).parts.find((part:{editorType:string})=>part.editorType===module.type)
+ const current=JSON.parse(readFileSync(require.resolve('@cirnet/contracts/data/editorParts.json'),'utf8')).parts.find((part:{editorType:string})=>part.editorType===module.type)
  expect(changed.mount?.version).toBe(2);expect(changed.mount?.partRevision).toBe(current.revision);expect(changed.mount?.packageRevision).toBe(current.package.revision);expect(changed.mount?.contacts).toEqual(module.mount?.contacts);expect(changed.properties).toEqual(module.properties);expect(rebuilt.connections).toEqual(before.connections);expect((await nativeComponentBody(page,module.id)).size).toEqual(compactBody.size)
  await page.getByRole('button',{name:'Undo',exact:true}).click();expect(await exportedNativeGraph(page)).toEqual(before);expect((await nativeComponentBody(page,module.id)).size).toEqual(originalBody.size)
  await page.getByRole('button',{name:'Redo',exact:true}).click();expect(await exportedNativeGraph(page)).toEqual(rebuilt);expect((await nativeComponentBody(page,module.id)).size).toEqual(compactBody.size)

@@ -14,6 +14,14 @@ export function checkedHttps(value){
   if(url.protocol!=='https:'||url.username||url.password||url.pathname.toLowerCase().split('/').includes('latest'))throw Error('Artifact requests require an immutable HTTPS URL without credentials.')
   return url
 }
+export function artifactUrl(entry,environment=process.env){
+  const configured=environmentValue(entry.urlEnvironment,environment)
+  if(entry.url!==undefined&&configured&&configured!==entry.url)throw Error('Artifact URL differs from the tracked release lock.')
+  const selected=entry.url??configured
+  if(!selected)throw Error(`Provide --manifest ABSOLUTE_MANIFEST or ${entry.urlEnvironment}; publication/access has not been established.`)
+  checkedHttps(selected)
+  return selected
+}
 export function requestHeaders(value,token=environmentValue('CIRNET_ARTIFACTS_TOKEN')){
   const url=checkedHttps(value),headers={'User-Agent':'cirnet-interface-consumer'}
   if(url.hostname==='api.github.com'&&(!url.port||url.port==='443')&&/^\/(?:repos\/[^/]+\/[^/]+|repositories\/[0-9]+)\/releases\/assets\/[0-9]+$/.test(url.pathname)){
@@ -70,9 +78,7 @@ async function selectedBytes(key,manifest){
     if(!isAbsolute(selected.path??''))throw Error('Local release manifest requires absolute artifact paths.')
     return verifyBytes(readFileSync(selected.path),entry.sha256)
   }
-  const url=environmentValue(entry.urlEnvironment)
-  if(!url)throw Error(`Provide --manifest ABSOLUTE_M1_MANIFEST or ${entry.urlEnvironment}; publication/access has not been established.`)
-  return downloadArtifact(url,entry.sha256)
+  return downloadArtifact(artifactUrl(entry),entry.sha256)
 }
 export async function bootstrap({manifestPath,githubEnv}={}){
   if(manifestPath&&!isAbsolute(manifestPath))throw Error('The release manifest path must be absolute.')
@@ -80,8 +86,7 @@ export async function bootstrap({manifestPath,githubEnv}={}){
   const dev=await selectedBytes('dev_npm',manifest)
   const metadata=JSON.parse(archiveEntry(dev,'package/package.json').toString('utf8'))
   if(metadata.name!==lock.dev_npm.name||metadata.version!==lock.dev_npm.version)throw Error('DEV artifact package identity differs from its lock.')
-  const namespace=metadata.files?.some(path=>path.startsWith('cirnet_artifact_paths/'))?'cirnet_artifact_paths':'netcircuit_artifact_paths'
-  const canonical=verifyBytes(archiveEntry(dev,`package/${namespace}/artifact-paths.mjs`),lock.dev_npm.nodeSha256)
+  const canonical=verifyBytes(archiveEntry(dev,'package/cirnet_artifact_paths/artifact-paths.mjs'),lock.dev_npm.nodeSha256)
   const context=process.env.CIRNET_ARTIFACTS_CONTEXT??JSON.stringify({owner:`git:${realpathSync(root)}`,roots:[realpathSync(root)]})
   const allocatorEnvironment=synchronizeEnvironment({...process.env,CIRNET_ARTIFACTS_CONTEXT:context})
   const allocation=execFileSync(process.execPath,['--input-type=module'],{

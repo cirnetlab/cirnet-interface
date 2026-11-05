@@ -4,19 +4,20 @@ Current source exports identify `@cirnet/web` and `cirnet-interface`.
 `CIRNET_*` environment settings take precedence over their `NETCIRCUIT_*`
 aliases, including an explicitly empty canonical value. Bootstrap and allocator
 adapters synchronize both spellings before invoking pinned older tooling.
-CI uses canonical variables/secrets with fallback to existing provisioned names.
+CI selects artifact URLs from the tracked release lock. The read-token secret
+keeps its provisioned-name fallback; explicit operator URLs must match the lock.
 
-The digest-pinned Contracts/SDK/DEV locks remain unchanged. Their distribution,
-archive member and resource names describe the actual published bytes. Resource
-readers derive the sdist directory from the selected identity; DEV bootstrap
-prefers the canonical resource namespace when the signed package declares it.
-Current source imports use `@cirnet/contracts` and `@cirnet/artifact-paths`.
-The default file dependencies install the digest-pinned published tarballs under
-those canonical keys. Their original `@tinihi-labs` package names remain in
-archive metadata and npm's generated lockfile; published bytes are unchanged.
-New producer packs use the canonical scope. Selecting those packs requires an
-explicitly reviewed bootstrap lock, local tarball references and regenerated
-npm lock; it does not change the published 0.1.1–0.1.3 release selection.
+Interface 0.1.4 selects canonical `@cirnet/contracts@0.1.2` and
+`@cirnet/artifact-paths@1.0.0-m1.0` producer packs. Its matching
+`cirnet-contracts` sdist supplies supplemental test resources. Bootstrap checks
+exact archive digests, package identities and the DEV resource digest before
+execution; npm's lock retains the selected tarball integrity. New release builds
+reject legacy package identities rather than relabeling their bytes.
+
+Previously published 0.1.1–0.1.3 archives and their original package metadata remain
+unchanged in release records and historical consumers. Canonical candidate pins
+do not rewrite or republish those artifacts. Source readers derive each sdist
+resource directory from its selected identity.
 
 New browser recovery records and exported recovery data use `cirnet.recovery`.
 The reader accepts the old format. On first use, a transaction copies missing

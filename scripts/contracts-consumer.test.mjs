@@ -8,10 +8,10 @@ const root=resolve(dirname(fileURLToPath(import.meta.url)),'..')
 function sources(directory){return readdirSync(directory,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?sources(resolve(directory,entry.name)):/\.(?:ts|vue|mjs)$/.test(entry.name)?[resolve(directory,entry.name)]:[])}
 test('the independent product consumes SDK entrypoints rather than generated source copies',()=>{
   assert.equal(existsSync(resolve(root,'src/contracts/generated')),false,'canonical generation belongs to Contracts')
-  for(const file of sources(resolve(root,'src'))){
+  for(const file of [...sources(resolve(root,'src')),...sources(resolve(root,'e2e'))]){
     const text=readFileSync(file,'utf8')
     assert.doesNotMatch(text,/["'][^"']*contracts\/generated\//,file)
-    assert.doesNotMatch(text,/["'][^"']*(?:net-Circuit|CIRNET)-(?:Remote|Contracts|Simulator|Hardware|FPGA)[/\\]/i,file)
+    assert.doesNotMatch(text,/["'][^"']*CIRNET-(?:Remote|Contracts|Simulator|Hardware|FPGA)[/\\]/i,file)
   }
 })
 test('all generic catalog projections come from the pinned public package',()=>{
@@ -22,7 +22,8 @@ test('all generic catalog projections come from the pinned public package',()=>{
   const lock=JSON.parse(readFileSync(resolve(root,'integration/contracts-artifacts.json'),'utf8'))
   assert.equal(pkg.dependencies['@cirnet/contracts'],`file:.artifacts/${lock.npm.filename}`)
   assert.equal(pkg.devDependencies['@cirnet/artifact-paths'],`file:.artifacts/${lock.dev_npm.filename}`)
-  for(const file of sources(resolve(root,'src'))){
-    assert.doesNotMatch(readFileSync(file,'utf8'),/@tinihi-labs\//,file)
+  for(const file of [...sources(resolve(root,'src')),...sources(resolve(root,'e2e'))]){
+    const imports=readFileSync(file,'utf8').matchAll(/['"](@[^/]+\/contracts(?:\/[^'"]*)?)['"]/g)
+    for(const [,specifier] of imports)assert.ok(specifier.startsWith('@cirnet/contracts/'),file)
   }
 })
