@@ -1,5 +1,7 @@
 # CIRNET source names and compatibility
 
+[English guide](en/architecture/namespace.md) · [Hướng dẫn tiếng Việt](vi/architecture/namespace.md)
+
 Current source exports identify `@cirnet/web` and `cirnet-interface`.
 `CIRNET_*` environment settings take precedence over their `NETCIRCUIT_*`
 aliases, including an explicitly empty canonical value. Bootstrap and allocator
@@ -35,9 +37,10 @@ component media names and reads the canonical name first.
 
 Requests send `X-CIRNET-CSRF` and the prior generic `X-CSRF-Token` header. Capture
 requests use `application/vnd.cirnet.capture; version=1`; responses may use either
-namespace, with the same strict version and size checks. The narrow health
-identity adapter validates `cirnet-api` through the pinned SDK's existing
-`netcircuit-api` contract and returns the original payload unchanged.
+namespace, with the same strict version and size checks. The selected health
+schema accepts `cirnet-api` and `netcircuit-api`. The adapter validates the
+original payload first, then tries the legacy identity for a canonical payload
+when the validator requires it. It returns the original payload unchanged.
 
 Legacy names intentionally remain in immutable artifact locks, recorded release
 and migration evidence, pinned source fixtures, original artwork/model metadata,
