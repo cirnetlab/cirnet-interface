@@ -420,3 +420,16 @@ session; only this Markdown evidence belongs in source.
 Receipt SHA256: `ad8e6372ae06b2ee0049aa5bdbe3353137297cb70223d0c99e9d32ea4aab10cb`.
 Full `npm test` log SHA256:
 `7a41dd9ff340911724f13d889b902fdf8d96112d71c5b8a9e000ad02fb8f72ef`.
+
+## 2026-11-05 Python 3.14 CI baseline
+
+Interface's archive-export CI selects Python 3.14 while Node remains 26.
+The Python archive exporter compiles cleanly under CPython 3.14.6; both CI
+toolchain selection/order regressions pass and actionlint 1.7.12 accepts the
+workflow. Runtime Web source, dependency locks, model assets and published
+archives are unchanged. The full Web/browser and production-export gates are
+NOT_RUN for this Python policy change; their preceding Node 26 results retain
+their recorded inputs. The fresh Remote Python 3.14.6 package and integration
+gates exercise the versioned backend/Contracts boundary separately. Raw
+diagnostics are outside Git in the session owned by
+`cirnet-python314-compat-20261105`; no hosted Actions or publication is claimed.

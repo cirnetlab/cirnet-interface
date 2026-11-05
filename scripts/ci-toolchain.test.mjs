@@ -2,6 +2,11 @@ import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 
+test('CI selects Python 3.14 for archive export',()=>{
+  const workflow=readFileSync(new URL('../.github/workflows/frontend.yml',import.meta.url),'utf8')
+  assert.deepEqual([...workflow.matchAll(/^          python-version: ['"]([^'"]+)['"]\r?$/gm)].map(match=>match[1]),['3.14'])
+})
+
 test('CI selects Node 26 before bootstrapping the allocator or installing packages',()=>{
   const workflow=readFileSync(new URL('../.github/workflows/frontend.yml',import.meta.url),'utf8')
   const steps=workflow.split(/^      - /m).slice(1)
