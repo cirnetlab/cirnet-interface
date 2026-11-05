@@ -5,6 +5,44 @@ suite once before the typed runtime tests. Plain `npm test` runs the Contracts
 consumer and bootstrap checks before the runtime tests. The AST checker and
 clean release export remain separate gates.
 
+## Native browser platform gate
+
+`npm run test:e2e:platform -- --forbid-only` runs the existing depth diagnostics
+and the standalone two-tab Web Locks case. The launcher serves fixtures and
+their real modules from an OS-assigned loopback port and uses a separate Vite
+cache in the owned external session. The platform server has no API or
+WebSocket proxy. It does not require a sibling checkout or server credentials.
+
+The platform config inherits the integrated gate's Chromium launch flags,
+viewport defaults, timeouts, one worker, zero retries and evidence policy.
+The depth cases retain their own viewport and DPR assertions. Install the
+exact Chromium revision with `npm run test:e2e:install` before running either
+suite. Both launchers copy that runtime into the owned artifact session before
+starting the browser.
+Use long Playwright option names with the platform launcher. The launcher
+owns its config and keeps last-run, blob and Perfetto output inside the external
+session.
+
+The integrated Web Locks case uses the same contention assertions after
+obtaining a real API principal and checking both event connections. The full
+Remote browser gate keeps that case and all other integrated assertions. The
+standalone case exercises native contention, storage and identity removal on
+a minimal page, with the production ledger adapter in both tabs.
+
+Local verification used Ubuntu 24.04 with a four-CPU quota, Node 26.12.1,
+Playwright 1.64.1 and Chromium 1248 with SwiftShader. The platform suite passed
+nine cases in 11.8 minutes. Its retained-source capture had the original opt-in
+skip. The full depth matrices completed 30 poses each at DPR 1 and DPR 2 with
+zero changed pixels across 2,349,652 and 9,399,115 sampled positions,
+respectively. The existing system config still collects 58 cases in 17 specs.
+An independent replay of the final launcher passed Web Locks and six QUAD
+poses at DPR 2. It verified that last-run, blob and Perfetto files stayed
+within the allocated paths despite inherited output overrides.
+Two faults applied to that isolated export failed the existing assertions.
+Bypassing the ledger lock produced zero pending writes where two were
+expected. Disabling WebGL prevented the depth harness from becoming ready.
+The export files were restored byte-for-byte after both controls.
+
 ## 2026-11-05 canonical 0.1.4 source verification
 
 A fresh external copy of the reviewed working tree selects canonical

@@ -9,8 +9,9 @@ test('CI selects Python 3.14 for archive export',()=>{
 
 test('CI selects Node 26 before bootstrapping the allocator or installing packages',()=>{
   const workflow=readFileSync(new URL('../.github/workflows/frontend.yml',import.meta.url),'utf8')
-  const steps=workflow.split(/^      - /m).slice(1)
-  const node=steps.flatMap((step,index)=>step.startsWith('uses: actions/setup-node@')?[index]:[])
+  const product=workflow.split(/^  platform:\r?$/m)[0]
+  const steps=product.split(/^      - /m).slice(1)
+  const node=steps.flatMap((step,index)=>step.includes('uses: actions/setup-node@')?[index]:[])
   const bootstrap=steps.findIndex(step=>step.includes('run: node scripts/bootstrap-contracts.mjs'))
   const install=steps.findIndex(step=>step.includes('run: npm ci'))
   assert.equal(node.length,1,'CI must explicitly select one Node toolchain')

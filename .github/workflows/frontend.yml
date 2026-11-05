@@ -15,7 +15,8 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - &interface-node
+        uses: actions/setup-node@v4
         with:
           node-version: '26'
       - uses: actions/setup-python@v5
@@ -26,7 +27,8 @@ jobs:
           CIRNET_ARTIFACTS_DIR: ${{ runner.temp }}/cirnet-interface
           CIRNET_ARTIFACTS_TOKEN: ${{ secrets.CIRNET_ARTIFACTS_READ_TOKEN || secrets.NETCIRCUIT_ARTIFACTS_READ_TOKEN }}
         run: node scripts/bootstrap-contracts.mjs --github-env "$GITHUB_ENV"
-      - name: Clean locked install without sibling sources
+      - &interface-locked-install
+        name: Clean locked install without sibling sources
         run: npm ci --no-audit --no-fund
       - name: AST boundaries and all runtime tests
         run: |
@@ -51,6 +53,39 @@ jobs:
           if-no-files-found: error
           retention-days: 7
           include-hidden-files: true
-      - name: Clean only this owned external verification session
+      - &interface-cleanup
+        name: Clean only this owned external verification session
         if: always() && env.CIRNET_ARTIFACTS_SESSION != ''
         run: node scripts/cleanup-contracts.mjs
+  platform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - *interface-node
+      - name: Bootstrap exact public SDK and DEV artifacts
+        env:
+          CIRNET_ARTIFACTS_DIR: ${{ runner.temp }}/cirnet-interface
+        run: node scripts/bootstrap-contracts.mjs --github-env "$GITHUB_ENV"
+      - *interface-locked-install
+      - name: Native Chromium Web Locks and renderer platform gate
+        id: native-platform
+        run: |
+          npm run test:e2e:install -- --with-deps
+          npm run test:e2e:platform -- --forbid-only --reporter=line,junit
+      - name: Retain native platform diagnostics on failure
+        if: failure() && steps.native-platform.outcome == 'failure' && env.CIRNET_ARTIFACTS_SESSION != ''
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: cirnet-interface-platform-${{ github.run_attempt }}
+          path: |
+            ${{ env.CIRNET_ARTIFACTS_SESSION }}/playwright
+            ${{ env.CIRNET_ARTIFACTS_SESSION }}/playwright-reporters
+            ${{ env.CIRNET_ARTIFACTS_SESSION }}/browser-logs
+            ${{ env.CIRNET_ARTIFACTS_SESSION }}/depth-artifacts
+          if-no-files-found: warn
+          retention-days: 7
+      - *interface-cleanup

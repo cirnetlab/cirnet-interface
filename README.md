@@ -84,6 +84,18 @@ Raw logs, test/browser diagnostics, npm cache and temporary fixtures must use th
 
 The product's semantic validation/normalization, renderers, commands/history, historical descriptors and lifecycle remain Interface-owned. It consumes package exports instead of regenerating schemas/catalogs. The retained `deviceMetadata.json` presentation snapshot is tested against exact versioned canonical resources; test-only resource readers are outside browser source.
 
+The native platform gate runs from Interface after bootstrap and `npm ci`.
+
+```sh
+npm run test:e2e:install
+npm run test:e2e:platform -- --forbid-only
+```
+
+It runs the renderer diagnostics and two-tab Web Locks case against actual
+Chromium on an isolated loopback origin. CI adds `--with-deps` to the Chromium
+installation on Ubuntu. The complete browser gate below still exercises
+the application with real API, WebSocket, RPC and Simulator services.
+
 `npm run dev` starts the frontend only. Vite proxies `/api` and `/ws` to `127.0.0.1:8000`; keep FastAPI running using the [API startup instructions](https://github.com/cirnetlab/cirnet-remote/blob/745077403f233790bdb6781c36d6502feca01642/services/api/README.md#local-run). `ECONNREFUSED 127.0.0.1:8000` means that API target is unavailable. Local graph editing remains available; remote validation, discovery and execution require the backend. `VITE_API_BASE_URL` / `VITE_WS_URL` configure explicit deployed endpoints.
 
 On Windows, closing or reloading a page can interrupt a pending proxy write with `write ECONNABORTED`. The development-only diagnostics plugin reports this specific browser-side interruption as a short warning. It preserves Vite's socket cleanup and log-level settings; upstream errors, refused connections, read failures and unknown errors retain their original diagnostics. If the open page remains disconnected or the warning repeats without navigation, inspect the browser's Network → WS panel and API logs. `CIRNET_DEV_API_TARGET` overrides the development proxy target for both `/api` and `/ws`; restart Vite after changing its configuration.
