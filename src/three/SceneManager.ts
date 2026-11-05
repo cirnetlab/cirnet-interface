@@ -1,4 +1,4 @@
-import { AmbientLight, BufferGeometry, Color, DirectionalLight, Group, LineBasicMaterial, LineLoop, Matrix4, Mesh, MOUSE, PerspectiveCamera, Plane, Raycaster, Scene, Vector3, type Object3D } from 'three'
+import { AmbientLight, BufferGeometry, Color, DirectionalLight, Group, LineBasicMaterial, LineLoop, Matrix4, Mesh, MOUSE, PerspectiveCamera, Plane, Quaternion, Raycaster, Scene, Vector3, type Object3D } from 'three'
 import { ORIENTATION_DIRECTIONS } from '../components/workbench/viewCubeMath'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { applyPose, buildComponent, disposeObject, portAnchor } from './ComponentModel'
@@ -137,6 +137,7 @@ export function createSceneManager({ renderer, canvas, onBeforeRender, onRender,
   const raycaster = new Raycaster()
   let width = 1, height = 1, sized = false, frame: number | null = null, disposed = false, visible = false, suspended = false, pointerLocked = false
   let bufferWidth = 0, bufferHeight = 0
+  let lastDrawDuration = 0, drawTiming: ReturnType<typeof setTimeout> | undefined
   let ghost: Group | null = null
   let ghostModule: CircuitModule | null = null
   // Explicit rendering roots exclude the technical grid, picking proxies and
@@ -169,20 +170,21 @@ export function createSceneManager({ renderer, canvas, onBeforeRender, onRender,
     if (origin.y < 0) { camera.position.y -= origin.y; origin.y = 0 }
   }
 
+  const orbitUp = new Vector3(0, 1, 0), poleUp = new Vector3(0, 0, -1)
+  const viewUp = (direction: Vector3) => direction.x === 0 && direction.z === 0 ? poleUp : orbitUp
   const applyViewPose = (direction: Vector3, distance: number) => {
     navigationTransaction++
     keepViewAboveBoard()
     const targetPt = controls?.target ?? viewTarget
     const position = targetPt.clone().addScaledVector(direction, distance)
     // OrbitControls caches Y as its orbit axis and also uses camera.up for XZ panning.
-    camera.up.set(0, 1, 0)
+    camera.up.copy(orbitUp)
     camera.position.copy(position)
     zoomLimits()
     controls?.update()
     // Controls nudges the pole for its spherical math. Presets retain exact positions.
     camera.position.copy(position)
-    const lookUp = direction.x === 0 && direction.z === 0 ? new Vector3(0, 0, -1) : camera.up
-    camera.quaternion.setFromRotationMatrix(new Matrix4().lookAt(position, targetPt, lookUp))
+    camera.quaternion.setFromRotationMatrix(new Matrix4().lookAt(position, targetPt, viewUp(direction)))
     camera.updateMatrixWorld()
     navigationTransaction--
   }
@@ -192,16 +194,20 @@ export function createSceneManager({ renderer, canvas, onBeforeRender, onRender,
   }
 
   const stepTransition = (timestamp?: number) => {
-    if (!transition) return
+    if (!transition) return true
     const now = typeof timestamp === 'number' && timestamp > 0 ? timestamp : (typeof performance !== 'undefined' ? performance.now() : Date.now())
     const elapsed = now - transition.startTime
+    const slowDraw = lastDrawDuration >= transition.duration
+    // Input can arrive after the current animation frame's timestamp was taken.
+    if (elapsed <= 0 && !slowDraw) { schedule(); return false }
     const t = Math.min(1, Math.max(0, elapsed / transition.duration))
-    const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-    if (t >= 1) {
+    // If a whole frame takes longer than the preset, show its final pose first.
+    if (t >= 1 || slowDraw) {
       applyViewPose(transition.targetDir, transition.distance)
       transition = null
       notifyZoom()
     } else {
+      const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
       // Interpolate bounded polar/azimuth angles, including antipodal side faces.
       // A shortest 3D quaternion arc can otherwise pass below the breadboard.
       const phi = transition.startPhi + (transition.targetPhi - transition.startPhi) * ease
@@ -211,6 +217,7 @@ export function createSceneManager({ renderer, canvas, onBeforeRender, onRender,
       notifyZoom()
       schedule()
     }
+    return true
   }
 
   const finishTransition = () => {
@@ -231,12 +238,21 @@ export function createSceneManager({ renderer, canvas, onBeforeRender, onRender,
 
     const targetPt = controls?.target ?? viewTarget
     const currentOffset = camera.position.clone().sub(targetPt)
-    const distance = currentOffset.length() > 1e-4 && Number.isFinite(currentOffset.length()) ? currentOffset.length() : defaultDistance
-    const startDir = currentOffset.length() > 1e-4 ? currentOffset.normalize() : new Vector3(0, 1, 0)
+    const offsetLength = currentOffset.length()
+    const hasOffset = Number.isFinite(offsetLength) && offsetLength > 1e-4
+    const distance = hasOffset ? offsetLength : defaultDistance
+    const startDir = hasOffset ? currentOffset.divideScalar(offsetLength) : orbitUp
 
     cancelTransition()
 
-    if (!animate || duration <= 0) {
+    const sameDirection = hasOffset && startDir.distanceToSquared(targetDir) <= 1e-20
+    if (sameDirection && targetPt.y >= 0 && camera.up.equals(orbitUp)) {
+      const canonical = new Quaternion().setFromRotationMatrix(new Matrix4().lookAt(camera.position, targetPt, viewUp(targetDir)))
+      // Equivalent quaternion signs and rounding do not change the rendered view.
+      if (Math.abs(camera.quaternion.dot(canonical)) >= 1 - 4 * Number.EPSILON) return
+    }
+
+    if (!animate || duration <= 0 || sameDirection) {
       applyViewPose(targetDir, distance)
       notifyZoom()
       schedule()
@@ -263,11 +279,12 @@ export function createSceneManager({ renderer, canvas, onBeforeRender, onRender,
   const schedule = () => {
     if (disposed || !visible || suspended || frame !== null) return
     frame = requestFrame((timestamp) => {
+      const drawStarted = performance.now()
       // Layout obstacles join this draw, rather than scheduling a second draw after it.
       if (!disposed && visible && !suspended) onBeforeRender?.()
       frame = null
       if (!disposed && visible && !suspended) {
-        if (transition) stepTransition(timestamp)
+        if (transition && !stepTransition(timestamp)) return
         // setSize clears the drawing buffer. Refill it in this same frame.
         if (bufferWidth !== width || bufferHeight !== height) { renderer.setSize(width, height, false); bufferWidth = width; bufferHeight = height }
         ensureProjection()
@@ -281,6 +298,11 @@ export function createSceneManager({ renderer, canvas, onBeforeRender, onRender,
         if (activeOutline) updateSelectionOutline(activeOutline.group, camera.position, width, height)
         for (const outline of multiOutlines.values()) updateSelectionOutline(outline, camera.position, width, height)
         renderer.render(scene, camera); onRender?.()
+        // The browser can spend more time painting after WebGL submits the draw.
+        drawTiming ??= setTimeout(() => {
+          lastDrawDuration = performance.now() - drawStarted
+          drawTiming = undefined
+        }, 0)
       }
     })
   }
@@ -880,6 +902,6 @@ export function createSceneManager({ renderer, canvas, onBeforeRender, onRender,
     finishTransition,
     setViewOrientation,
     suspend(value: boolean) { suspended = value; if (value && frame !== null) { cancelFrame(frame); frame = null }; updateControlsEnabled(); if (!value) schedule() },
-    dispose() { if (disposed) return; disposed = true; cancelTransition(); gizmo.update(undefined, [], camera, width, height); if (frame !== null) cancelFrame(frame); frame = null; controls?.removeEventListener('change', viewChanged); controls?.removeEventListener('start', cancelTransition); controls?.dispose();canvas?.removeEventListener('wheel',wheelZoom); removeActiveOutline(); clearMultiOutlines(); selectionPreview.dispose(); wireLayer.dispose(); clearMountPreview(); mountMarkerGeometry.dispose(); mountMarkerValid.dispose(); mountMarkerInvalid.dispose(); disposeObject(scene); models.clear(); modules.clear(); ghost = null; highlightedId = null; gizmoObstacles = []; scene.environment = null; studio?.dispose(); scene.clear(); renderer.dispose() },
+    dispose() { if (disposed) return; disposed = true; cancelTransition(); clearTimeout(drawTiming); gizmo.update(undefined, [], camera, width, height); if (frame !== null) cancelFrame(frame); frame = null; controls?.removeEventListener('change', viewChanged); controls?.removeEventListener('start', cancelTransition); controls?.dispose();canvas?.removeEventListener('wheel',wheelZoom); removeActiveOutline(); clearMultiOutlines(); selectionPreview.dispose(); wireLayer.dispose(); clearMountPreview(); mountMarkerGeometry.dispose(); mountMarkerValid.dispose(); mountMarkerInvalid.dispose(); disposeObject(scene); models.clear(); modules.clear(); ghost = null; highlightedId = null; gizmoObstacles = []; scene.environment = null; studio?.dispose(); scene.clear(); renderer.dispose() },
   }
 }

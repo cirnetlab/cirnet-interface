@@ -671,6 +671,76 @@ test('animated opposite face transitions stay above the board and finish with ca
   } finally { manager.dispose() }
 })
 
+test('requesting the same rendered ViewCube preset leaves the exact pose and queues no new frame', () => {
+  const frames = new Map<number, FrameRequestCallback>()
+  let id = 0
+  const manager = createSceneManager({
+    renderer: { setSize() {}, render() {}, dispose() {} },
+    requestFrame(callback) { frames.set(++id, callback); return id }, cancelFrame(frame) { frames.delete(frame) },
+  })
+  try {
+    manager.resize(1920, 1080)
+    manager.setViewOrientation('TOP-FRONT-RIGHT', false)
+    const pending = [...frames.values()]; frames.clear(); pending.forEach(callback => callback(performance.now()))
+    const pose = [manager.camera.position.toArray(), manager.cameraQuaternion(), manager.target().toArray()] as const
+
+    manager.setViewOrientation('TOP-FRONT-RIGHT')
+
+    assert.deepEqual([manager.camera.position.toArray(), manager.cameraQuaternion(), manager.target().toArray()], pose)
+    assert.equal(manager.isTransitioning(), false)
+    assert.equal(frames.size, 0)
+
+    manager.camera.rotateZ(.5)
+    manager.setViewOrientation('TOP-FRONT-RIGHT')
+    assert.equal(manager.isTransitioning(), false)
+    assert.equal(frames.size, 1)
+    assert.ok(manager.camera.quaternion.angleTo(new Quaternion(...pose[1]!)) < 1e-7)
+  } finally { manager.dispose() }
+})
+
+test('ViewCube keeps animation for responsive draws and presents the final pose first when a draw outlasts it', (t) => {
+  let now = 1000
+  t.mock.method(performance, 'now', () => now)
+  t.mock.timers.enable({ apis: ['setTimeout'] })
+  for (const drawTime of [1, 250]) {
+    let id = 0
+    const frames = new Map<number, FrameRequestCallback>()
+    const directions: Vector3[] = []
+    const manager = createSceneManager({
+      renderer: { setSize() {}, render(_, camera) { directions.push(camera.getWorldDirection(new Vector3()).negate()) }, dispose() {} },
+      requestFrame(callback) { frames.set(++id, callback); return id }, cancelFrame(frame) { frames.delete(frame) },
+    })
+    const renderFrame = (elapsed: number, timestamp?: number) => {
+      now += elapsed
+      const before = directions.length
+      const pending = [...frames.values()]; frames.clear(); pending.forEach(callback => callback(timestamp ?? now))
+      // Browser work can continue in the animation task after Three submits the draw.
+      if (directions.length > before) now += drawTime
+      t.mock.timers.tick(1)
+    }
+    try {
+      manager.resize(1920, 1080)
+      manager.setViewOrientation('FRONT', false)
+      renderFrame(16)
+      const staleTimestamp = now - 1
+      manager.setViewOrientation('TOP')
+      renderFrame(1, staleTimestamp)
+
+      if (drawTime < 200) {
+        assert.equal(directions.length, 1, 'a timestamp older than the key request queues no redundant draw')
+        assert.equal(manager.isTransitioning(), true)
+        renderFrame(16)
+        assert.ok(directions[1]!.z > 0 && directions[1]!.y > 0)
+        renderFrame(200)
+      }
+      assert.equal(manager.isTransitioning(), false)
+      assert.equal(frames.size, 0)
+      assert.ok(directions.at(-1)!.distanceTo(ORIENTATION_DIRECTIONS.TOP!) < 1e-8)
+      assert.equal(directions.length, drawTime < 200 ? 3 : 2)
+    } finally { manager.dispose() }
+  }
+})
+
 test('cardinal ring follows camera heading while Cube presets and Home keep their behavior', async () => {
   const { manager } = setup()
   const Navigator = await loadSfc('components/workbench/WorkspaceNavigator.vue')

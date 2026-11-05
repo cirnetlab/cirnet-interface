@@ -1,5 +1,10 @@
 # Interface verification and external evidence
 
+Interface CI runs `npm test -- --all-script-tests` to execute each script
+suite once before the typed runtime tests. Plain `npm test` runs the Contracts
+consumer and bootstrap checks before the runtime tests. The AST checker and
+clean release export remain separate gates.
+
 ## 2026-11-05 canonical 0.1.4 source verification
 
 A fresh external copy of the reviewed working tree selects canonical

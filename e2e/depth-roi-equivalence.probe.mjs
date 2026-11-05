@@ -71,20 +71,22 @@ try{
       h.manager.scene.traverse(o=>{callbacks.set(o,o.onBeforeRender);for(const m of o.material?(Array.isArray(o.material)?o.material:[o.material]):[])materials.set(m,{color:m.color?.toArray(),emissive:m.emissive?.toArray(),intensity:m.emissiveIntensity})})
       r.setScissor(11,13,17,19);r.setScissorTest(enabled)
       let calls=0,caught=false
-      r.render=function(...args){const value=originalRender.apply(this,args);if(++calls===2)throw Error('intentional analysis draw failure');return value}
+      const drawClips=[]
+      r.render=function(...args){drawClips.push({rectangle:scissor(),enabled:r.getScissorTest()});const value=originalRender.apply(this,args);if(++calls===2)throw Error('intentional analysis draw failure');return value}
       try{await h.leaks('DISPLAY')}catch(error){caught=error.message==='intentional analysis draw failure'}finally{r.render=originalRender}
       const sameScissor=JSON.stringify(scissor())===JSON.stringify([11,13,17,19])&&r.getScissorTest()===enabled
       const sameCallbacks=[...callbacks].every(([object,callback])=>object.onBeforeRender===callback)
       const sameMaterials=[...materials].every(([m,s])=>JSON.stringify(m.color?.toArray())===JSON.stringify(s.color)&&JSON.stringify(m.emissive?.toArray())===JSON.stringify(s.emissive)&&m.emissiveIntensity===s.intensity)
       // Read the finally-restored framebuffer directly: a new draw could hide damage.
       const after=read();let differing=0;for(let i=0;i<before.length;i++)if(before[i]!==after[i])differing++
-      out.push({enabled,caught,sameScissor,sameCallbacks,sameMaterials,fullRestoredDifferingBytes:differing})
+      const restorationMatchesAnalysisClip=drawClips.length===3&&drawClips[2].enabled&&JSON.stringify(drawClips[0])===JSON.stringify(drawClips[2])
+      out.push({enabled,caught,sameScissor,sameCallbacks,sameMaterials,restorationMatchesAnalysisClip,fullRestoredDifferingBytes:differing})
      }
      return out
     }finally{r.render=originalRender;r.setScissor(...originalScissor);r.setScissorTest(originalTest);capture()}
    })
    result.failureRestoration??=[];result.failureRestoration.push({dpr,checks:failureRestoration});await persist()
-   for(const check of failureRestoration){assert.equal(check.caught,true);assert.equal(check.sameScissor,true);assert.equal(check.sameCallbacks,true);assert.equal(check.sameMaterials,true);assert.equal(check.fullRestoredDifferingBytes,0)}
+   for(const check of failureRestoration){assert.equal(check.caught,true);assert.equal(check.sameScissor,true);assert.equal(check.sameCallbacks,true);assert.equal(check.sameMaterials,true);assert.equal(check.restorationMatchesAnalysisClip,true,'The restoration draw must stay inside the analysis clip, even after a failed diagnostic draw');assert.equal(check.fullRestoredDifferingBytes,0)}
    await page.screenshot({path:resolve(directory,`restored-dpr${dpr}.png`)})
    assert.deepEqual(pageErrors,[],'The native proof must not hide browser errors')
   }finally{await context.close()}

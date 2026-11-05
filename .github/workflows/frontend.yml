@@ -1,6 +1,7 @@
 name: Standalone Interface
 on:
   push:
+    branches: [master]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -29,9 +30,8 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: AST boundaries and all runtime tests
         run: |
-          node --test scripts/*.test.mjs
           npm run check:boundaries
-          npm test
+          npm test -- --all-script-tests
       - name: Browser typecheck and every production entrypoint
         run: |
           npx tsc --noEmit -p tsconfig.e2e.json

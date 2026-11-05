@@ -4,13 +4,18 @@ import {existsSync} from 'node:fs'
 import {resolve} from 'node:path'
 import { spawnSync } from 'node:child_process'
 
-const selected=process.argv.slice(2)
+const arguments_=process.argv.slice(2)
+const allScriptTests=arguments_.includes('--all-script-tests')
+const selected=arguments_.filter(argument=>argument!=='--all-script-tests')
 const productContracts=existsSync(resolve('src/contracts/structural.ts'))
 const contractProfiles=resolve('tests/helpers/contractProfiles.ts')
 if(productContracts&&!existsSync(contractProfiles))throw new Error('Product tests require the offline contract profile preparation helper.')
 if(productContracts){
-  const contracts=spawnSync(process.execPath,['--test','scripts/contracts-consumer.test.mjs','scripts/contracts-bootstrap.test.mjs'],{stdio:'inherit'})
-  if(contracts.status!==0)process.exit(contracts.status??1)
+  const scripts=allScriptTests
+    ? (await readdir('scripts')).filter(file=>file.endsWith('.test.mjs')).sort().map(file=>`scripts/${file}`)
+    : ['scripts/contracts-consumer.test.mjs','scripts/contracts-bootstrap.test.mjs']
+  const result=spawnSync(process.execPath,['--test',...scripts],{stdio:'inherit'})
+  if(result.status!==0)process.exit(result.status??1)
 }
 // The generic batching harness also runs isolated fixture projects. Only the
 // real product has synchronous validators that need a prepared test workflow.

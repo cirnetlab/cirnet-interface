@@ -72,7 +72,9 @@ async function leaks(id=selected,glyphs=false,images?:LeakImages,fullAnalysis=fa
  }finally{
   for(const[mesh,callback]of callbacks)mesh.onBeforeRender=callback
   for(const[mat,state]of saved){mat.color.copy(state.color);if(state.emissive){mat.emissive.copy(state.emissive);mat.emissiveIntensity=state.intensity}mat.needsUpdate=true}
-  const restored=snapshot();if(images)images.restored=restored
+  // Analysis only touched this clip; restore it without redrawing untouched pixels.
+  // Keep the full readback so the proof also checks the framebuffer outside the clip.
+  const restored=analysisSnapshot(bounds,fullAnalysis);if(images)images.restored=restored
  }
 }
 
