@@ -20,7 +20,7 @@ Both models use editor world units, a center-bottom origin, Y up and +Z forward.
 
 The Generator L1571979 screen illustrates Frequency, Amplitude, Offset, Duty and Phase for each channel. Sync/Counter is separate from its two outputs. The Oscilloscope shows a wide waveform screen with Horizontal, Trigger and Vertical sections. Trig Out is an output alongside the two inputs. The model dimensions describe the front layout in editor units. The pitched Oscilloscope assembly has a slightly greater projected height, and gizmo bounds follow the full model.
 
-Each GLB is self-contained. Keep the glTF, matching `.bin`, `screen.png`, `legends.png` and `owl.png` together for the external form. The imported files preserve their original names and materials. Current procedural materials and branding may differ. See [Generator provenance](../../../public/models/function-generator-2ch/README.md), [Oscilloscope provenance](../../../public/models/oscilloscope-2ch/README.md) and [namespace compatibility](../architecture/namespace.md).
+The delivered [Generator GLB](../../../public/models/function-generator-2ch/function-generator-2ch.glb) and [Oscilloscope GLB](../../../public/models/oscilloscope-2ch/oscilloscope-2ch.glb) are self-contained. Keep the glTF, matching `.bin`, `screen.png`, `legends.png` and `owl.png` together for the external form. The imported files preserve their original names and materials. Current procedural materials and branding may differ. See [Generator provenance](../../../public/models/function-generator-2ch/README.md), [Oscilloscope provenance](../../../public/models/oscilloscope-2ch/README.md) and [namespace compatibility](../architecture/namespace.md).
 
 ## Inspect the selected assets
 

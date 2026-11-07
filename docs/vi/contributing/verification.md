@@ -35,8 +35,19 @@ export CIRNET_E2E_PYTHON="$remote_root/services/api/.venv/bin/python"
 (cd "$remote_root" && node scripts/e2e-interface.mjs --interface-root "$interface_root" --forbid-only)
 ```
 
-Trên Windows, trình thông dịch venv đã chuẩn bị thường nằm ở `services/api/.venv/Scripts/python.exe` trong Remote. Cũng có thể dùng chính trình thông dịch đó chạy `scripts/check_release.py --group browser --interface-root ABSOLUTE_INTERFACE_PRODUCT` từ Remote. Remote quản lý API, RPC, Simulator, xác thực và trạng thái kiểm thử riêng, khởi động lại có kiểm soát và dừng dịch vụ. Kiểm tra tích hợp dùng các cổng 14173, 15151 và 18181, một worker và không chạy lại khi lỗi.
+Trong PowerShell, tiếp tục với các thư mục gốc tuyệt đối từ [thiết lập](../guides/getting-started.md).
 
-Mỗi lần chạy trình duyệt dùng bản sao đầy đủ của bản đã ghim trong thư mục con `br-<8hex>` riêng, được chọn bằng `PLAYWRIGHT_BROWSERS_PATH`. Khi sao chép, bộ chạy lấy nội dung từ liên kết trình duyệt và bỏ qua `.links` cùng log debug cũ. Giữ đường dẫn `.exe` trên Windows trong giới hạn 259 đơn vị UTF-16 của bộ chạy. [README của repository](../../../README.md) có thêm chi tiết sao chép và hướng dẫn PowerShell.
+```powershell
+Set-Location -LiteralPath $interfaceRoot
+npm run test:e2e:install
+if ($LASTEXITCODE -ne 0) { throw 'Pinned Chromium installation failed.' }
+$env:CIRNET_E2E_PYTHON = Join-Path $remoteRoot 'services/api/.venv/Scripts/python.exe'
+Set-Location -LiteralPath $remoteRoot
+node scripts/e2e-interface.mjs --interface-root $interfaceRoot --forbid-only
+```
+
+Cũng có thể dùng chính trình thông dịch đó chạy `scripts/check_release.py --group browser --interface-root ABSOLUTE_INTERFACE_PRODUCT` từ Remote. Remote quản lý API, RPC, Simulator, xác thực và trạng thái kiểm thử riêng, khởi động lại có kiểm soát và dừng dịch vụ. Kiểm tra tích hợp dùng các cổng 14173, 15151 và 18181, một worker và không chạy lại khi lỗi.
+
+Mỗi lần chạy trình duyệt dùng bản sao đầy đủ của bản đã ghim trong thư mục con `br-<8hex>` riêng, được chọn bằng `PLAYWRIGHT_BROWSERS_PATH`. Khi sao chép, bộ chạy lấy nội dung từ liên kết trình duyệt và bỏ qua `.links` cùng log debug cũ. Giữ đường dẫn `.exe` trên Windows trong giới hạn 259 đơn vị UTF-16 của bộ chạy. Nếu đường dẫn bản sao vượt giới hạn, đặt `CIRNET_ARTIFACTS_DIR` thành thư mục tuyệt đối bên ngoài ngắn hơn rồi cấp phiên mới. Chromium trên Windows có thể ghi log GPU cạnh tệp thực thi. Kiểm tra bản sao trình duyệt, ảnh chụp và trace trong phiên, rồi xác nhận Chromium, FFmpeg và tiến trình phụ đã thoát trước khi dọn dẹp. Lỗi sao chép dừng bộ chạy.
 
 Xem quy định hiện hành và kết quả theo thời điểm trong [hồ sơ kiểm chứng](../../VERIFICATION.md). Sau khi xem bằng chứng và xác nhận các tiến trình thuộc phiên đã dừng, chạy `node scripts/cleanup-contracts.mjs` trong cùng context để dọn phiên sở hữu.

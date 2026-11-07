@@ -50,7 +50,7 @@ while IFS= read -r entry; do export "$entry"; done <<< "$environment_lines"
 npm ci --no-audit --no-fund || exit 1
 ```
 
-Tiến trình bootstrap in JSON. Nạp `environment` từ kết quả vào shell cha trước khi chạy npm hoặc kiểm thử để các tiến trình con dùng chung phiên đã cấp. Các URL HTTPS đã khóa cũng có thể cung cấp đúng gói được chọn. Xem ví dụ ba checkout trong [thiết lập của repository](../../../README.md#run-and-verify).
+Tiến trình bootstrap in JSON. Nạp `environment` từ kết quả vào shell cha trước khi chạy npm hoặc kiểm thử để các tiến trình con dùng chung phiên đã cấp. Các URL HTTPS đã khóa cũng có thể cung cấp đúng gói được chọn. Để kiểm chứng tích hợp, đặt `$remoteRoot` và `$contractsRoot` (PowerShell), hoặc `remote_root` và `contracts_root` (Bash), thành các thư mục gốc Git tuyệt đối tham gia. Trước bootstrap, đổi mảng `roots` trong PowerShell thành `@($remoteRoot, $interfaceRoot, $contractsRoot)`, hoặc truyền `"$remote_root" "$interface_root" "$contracts_root"` cho lệnh tạo ngữ cảnh trong Bash. Giữ ngữ cảnh đó đến khi dọn dẹp. Xem [kiểm chứng trình duyệt tích hợp](../contributing/verification.md#trình-duyệt-tích-hợp-đầy-đủ).
 
 ## Khởi động môi trường phát triển
 
@@ -60,6 +60,6 @@ npm run dev
 
 Vite phục vụ frontend và mặc định chuyển tiếp `/api` cùng `/ws` đến `127.0.0.1:8000`. Có thể chỉnh sửa đồ thị cục bộ chỉ với frontend. Hãy khởi động Remote API và các dịch vụ cần thiết để xác thực, khám phá tài nguyên từ xa, kiểm tra hợp lệ và thực thi. Đặt `CIRNET_DEV_API_TARGET` trước khi mở Vite để đổi đích proxy phát triển. `VITE_API_BASE_URL` và `VITE_WS_URL` cấu hình endpoint tường minh.
 
-`ECONNREFUSED 127.0.0.1:8000` báo Vite không kết nối được API mặc định. Trên Windows, đóng hoặc tải lại trang có thể ngắt thao tác ghi của proxy đang chờ với `write ECONNABORTED`. Nếu trang đang mở vẫn mất kết nối, kiểm tra Network → WS trong trình duyệt và log API. Xem [hướng dẫn khởi động API](https://github.com/cirnetlab/cirnet-remote/blob/745077403f233790bdb6781c36d6502feca01642/services/api/README.md#local-run).
+`ECONNREFUSED 127.0.0.1:8000` báo Vite không kết nối được API mặc định. Trên Windows, đóng hoặc tải lại trang có thể ngắt thao tác ghi của proxy đang chờ với `write ECONNABORTED`. Nếu trang đang mở vẫn mất kết nối, kiểm tra Network → WS trong trình duyệt và log API. Xem [hướng dẫn khởi động API](https://github.com/cirnetlab/cirnet-remote/blob/ce84ec4cf3602ef6fd001f91877e864c8955f9c7/services/api/README.md#local-run).
 
 Tiếp tục với [hướng dẫn bàn làm việc](workbench.md) hoặc [lệnh kiểm chứng](../contributing/verification.md).

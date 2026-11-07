@@ -20,7 +20,7 @@ Cả hai mô hình dùng đơn vị thế giới của trình biên tập, gốc
 
 Màn hình Generator L1571979 minh họa Frequency, Amplitude, Offset, Duty và Phase cho mỗi kênh. Sync/Counter tách khỏi hai đầu ra. Oscilloscope có màn hình dạng sóng rộng cùng các nhóm Horizontal, Trigger và Vertical. Trig Out là đầu ra bên cạnh hai đầu vào. Kích thước mô hình mô tả bố cục mặt trước theo đơn vị trình biên tập. Cụm Oscilloscope ngả có chiều cao chiếu lớn hơn một chút, còn giới hạn gizmo theo toàn bộ mô hình.
 
-Mỗi GLB chứa đủ dữ liệu. Với dạng tệp ngoài, giữ glTF cùng `.bin`, `screen.png`, `legends.png` và `owl.png` tương ứng. Tệp nhập giữ tên và vật liệu ban đầu. Vật liệu và thương hiệu của mô hình tạo bằng mã hiện tại có thể khác. Xem [nguồn gốc Generator](../../../public/models/function-generator-2ch/README.md), [nguồn gốc Oscilloscope](../../../public/models/oscilloscope-2ch/README.md) và [tương thích namespace](../architecture/namespace.md).
+[GLB Generator](../../../public/models/function-generator-2ch/function-generator-2ch.glb) và [GLB Oscilloscope](../../../public/models/oscilloscope-2ch/oscilloscope-2ch.glb) đã giao đều chứa đủ dữ liệu. Với dạng tệp ngoài, giữ glTF cùng `.bin`, `screen.png`, `legends.png` và `owl.png` tương ứng. Tệp nhập giữ tên và vật liệu ban đầu. Vật liệu và thương hiệu của mô hình tạo bằng mã hiện tại có thể khác. Xem [nguồn gốc Generator](../../../public/models/function-generator-2ch/README.md), [nguồn gốc Oscilloscope](../../../public/models/oscilloscope-2ch/README.md) và [tương thích namespace](../architecture/namespace.md).
 
 ## Kiểm tra tài nguyên đã chọn
 

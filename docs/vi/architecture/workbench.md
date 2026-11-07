@@ -15,6 +15,14 @@ Một bàn làm việc Vue 3 đang hoạt động phối hợp tài liệu mạc
 
 Remote cung cấp xác thực, dự án riêng, xuất bản bài tập, hàng đợi thực thi và lịch sử. API cấp cookie phiên HttpOnly. Interface giữ trạng thái CSRF trong bộ nhớ và tách bản khôi phục theo danh tính. Chuyển dữ liệu khách cần thao tác rõ ràng. Xung đột phiên bản giữ bản chỉnh sửa cục bộ, còn Import và Export là hai thao tác riêng. IndexedDB lưu bản nháp khôi phục. Xuất bản bài tập tách khỏi chỉnh sửa bản nháp. Quan sát và lịch sử có thể báo cáo thao tác mà không chạy lại.
 
-Profile ảo dùng NCAP để thu tín hiệu số được hỗ trợ. Tính năng vật lý và tương tự phụ thuộc profile đã chọn và trình điều khiển đã triển khai. Profile ảo mặc định chưa có thao tác phần cứng Scope và Generator. Xem [kiến trúc hệ thống tại bản sửa đổi Remote đã chọn](https://github.com/cirnetlab/cirnet-remote/blob/ce84ec4cf3602ef6fd001f91877e864c8955f9c7/docs/ARCHITECTURE.md).
+Profile ảo trả payload bản thu số được hỗ trợ dưới dạng NCAP. Tính năng vật lý và tương tự phụ thuộc profile đã chọn và trình điều khiển đã triển khai. Profile ảo mặc định chưa có thao tác phần cứng Scope và Generator. Xem [kiến trúc Lab-First chuẩn](https://github.com/cirnetlab/cirnet-remote/blob/13a35145b6d15644c7be10d95a5410bf69e11867/docs/ARCHITECTURE.md).
+
+[Hướng dẫn hệ thống Remote](https://github.com/cirnetlab/cirnet-remote/blob/13a35145b6d15644c7be10d95a5410bf69e11867/docs/vi/architecture/system.md) mô tả bố cục dịch vụ Python đã phát hành. [Hồ sơ chuyển đổi native](https://github.com/cirnetlab/cirnet-remote/blob/13a35145b6d15644c7be10d95a5410bf69e11867/docs/vi/architecture/native-migration.md) ghi riêng ứng viên Windows Gate 4 và các cổng phát hành còn mở. [Khóa phát hành 0.1.4](https://github.com/cirnetlab/cirnet-remote/blob/38aea6120920f48cea817827ac2277cce4bef25e/integration/release-set.json) chọn bộ gói đã phát hành.
+
+## Quyền quản lý tài liệu và cảnh
+
+Lõi tài liệu thuần quản lý lệnh, lịch sử, tuần tự hóa và theo dõi phiên bản. Lớp Pinia của mạch phối hợp các thao tác này với giao diện Vue đang mở. Xác thực, dự án, bàn làm việc, trạm, thực thi, thiết bị và UI có vòng đời riêng. Store thực thi và thiết bị phối hợp qua bộ điều khiển ứng dụng. Tuyến dự án máy chủ bật Save, Save As và Export sau khi tài liệu yêu cầu tải xong. [Kiểm chứng tải tài liệu theo tuyến](../../../migration/server-route-hydration.md)
+
+Tài nguyên cảnh nằm ngoài Pinia. Bộ dựng hình gộp thay đổi đồ thị, camera và thao tác vào khung hình. Cảnh ẩn, kích thước bằng không hoặc mất ngữ cảnh sẽ tạm dừng. Đổi kích thước và khôi phục ngữ cảnh sẽ vẽ lại. Khi tháo cảnh, ứng dụng giải phóng bộ quan sát, điều khiển, khung hình và tài nguyên GPU. Bộ cung cấp tài nguyên kiểm tra phiên bản của mô hình xem trước và dùng mô hình tạo bằng mã khi nhập thất bại. [Hướng dẫn mô hình thiết bị](../guides/instrument-models.md)
 
 Xem [hướng dẫn bàn làm việc](../guides/workbench.md) về cách chỉnh sửa và [kiểm chứng](../contributing/verification.md) về hai phạm vi kiểm thử trình duyệt.

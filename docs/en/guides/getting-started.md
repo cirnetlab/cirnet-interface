@@ -50,7 +50,7 @@ while IFS= read -r entry; do export "$entry"; done <<< "$environment_lines"
 npm ci --no-audit --no-fund || exit 1
 ```
 
-The bootstrap process prints JSON. Adopt its `environment` in the parent shell before starting npm or tests so child processes share the owned session. The locked HTTPS URLs can also supply the selected archives. For a three-checkout example, see [the repository setup](../../../README.md#run-and-verify).
+The bootstrap process prints JSON. Adopt its `environment` in the parent shell before starting npm or tests so child processes share the owned session. The locked HTTPS URLs can also supply the selected archives. For integrated verification, set `$remoteRoot` and `$contractsRoot` (PowerShell), or `remote_root` and `contracts_root` (Bash), to the participating absolute Git roots. Before bootstrap, replace the PowerShell `roots` array with `@($remoteRoot, $interfaceRoot, $contractsRoot)`, or pass `"$remote_root" "$interface_root" "$contracts_root"` to the Bash context command. Keep that context through cleanup. See [full browser integration](../contributing/verification.md#full-browser-integration).
 
 ## Start development
 
@@ -60,6 +60,6 @@ npm run dev
 
 Vite serves the frontend and proxies `/api` and `/ws` to `127.0.0.1:8000` by default. Local graph editing works with the frontend alone. Start the Remote API and its required services for authentication, remote discovery, validation and execution. Set `CIRNET_DEV_API_TARGET` before starting Vite to select a different development proxy target. `VITE_API_BASE_URL` and `VITE_WS_URL` configure explicit endpoints.
 
-`ECONNREFUSED 127.0.0.1:8000` means Vite could not reach the default API. On Windows a page close or reload can interrupt a pending proxy write with `write ECONNABORTED`. If the open page remains disconnected, check the browser's Network → WS view and the API logs. See the [API startup instructions](https://github.com/cirnetlab/cirnet-remote/blob/745077403f233790bdb6781c36d6502feca01642/services/api/README.md#local-run).
+`ECONNREFUSED 127.0.0.1:8000` means Vite could not reach the default API. On Windows a page close or reload can interrupt a pending proxy write with `write ECONNABORTED`. If the open page remains disconnected, check the browser's Network → WS view and the API logs. See the [API startup instructions](https://github.com/cirnetlab/cirnet-remote/blob/ce84ec4cf3602ef6fd001f91877e864c8955f9c7/services/api/README.md#local-run).
 
 Continue with the [workbench guide](workbench.md) or the [verification commands](../contributing/verification.md).
