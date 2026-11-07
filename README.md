@@ -1,6 +1,6 @@
 # CIRNET Interface
 
-[English documentation](docs/en/index.md) · [Tài liệu tiếng Việt](docs/vi/index.md)
+[English documentation](docs/en/index.md) · [Tài liệu tiếng Việt](docs/vi/index.md) · [Changelogs](docs/changelogs/README.md)
 
 CIRNET Interface is the Vue and Three.js browser workbench for circuit design, private projects and experiments with CIRNET lab services.
 

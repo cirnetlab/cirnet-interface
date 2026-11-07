@@ -1,6 +1,6 @@
 # CIRNET Interface documentation
 
-[Tiếng Việt](../vi/index.md) · [Repository README](../../README.md)
+[Tiếng Việt](../vi/index.md) · [Repository README](../../README.md) · [Changelogs](../changelogs/README.md)
 
 CIRNET Interface provides the browser workbench for circuit design and experiments with CIRNET lab services. For Codex and other coding agents, start with this English index and the [repository instructions](../../AGENTS.md).
 
@@ -18,6 +18,7 @@ CIRNET Interface provides the browser workbench for circuit design and experimen
 ## Verification and operations
 
 - [Verification](contributing/verification.md) covers source checks and the two browser gates.
+- [Documentation conventions](contributing/writing-documentation.md) covers language pairs, release notes and agent work records.
 - [Release and deployment](operations/deployment.md) covers committed source exports and Remote's published selection.
 
 ## History and evidence

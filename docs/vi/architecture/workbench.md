@@ -25,4 +25,6 @@ Lõi tài liệu thuần quản lý lệnh, lịch sử, tuần tự hóa và th
 
 Tài nguyên cảnh nằm ngoài Pinia. Bộ dựng hình gộp thay đổi đồ thị, camera và thao tác vào khung hình. Cảnh ẩn, kích thước bằng không hoặc mất ngữ cảnh sẽ tạm dừng. Đổi kích thước và khôi phục ngữ cảnh sẽ vẽ lại. Khi tháo cảnh, ứng dụng giải phóng bộ quan sát, điều khiển, khung hình và tài nguyên GPU. Bộ cung cấp tài nguyên kiểm tra phiên bản của mô hình xem trước và dùng mô hình tạo bằng mã khi nhập thất bại. [Hướng dẫn mô hình thiết bị](../guides/instrument-models.md)
 
+Mã nguồn hiện tại bỏ qua cấu hình camera định sẵn nếu góc nhìn tương đương. Khi lần vẽ trước mất ít nhất bằng thời lượng chuyển cảnh, bộ dựng hình áp dụng trực tiếp tư thế cuối. Hai quy tắc giảm lượt vẽ dư thừa và giữ lệnh đồ thị cùng kết nối điện độc lập với trạng thái hiển thị. [Bộ quản lý cảnh](../../../src/three/SceneManager.ts)
+
 Xem [hướng dẫn bàn làm việc](../guides/workbench.md) về cách chỉnh sửa và [kiểm chứng](../contributing/verification.md) về hai phạm vi kiểm thử trình duyệt.

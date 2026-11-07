@@ -25,4 +25,6 @@ The pure document core owns commands, history, serialization and revision tracki
 
 Scene resources stay outside Pinia. The renderer coalesces graph, camera and gesture updates into animation frames. Hidden, zero-sized and context-lost scenes pause. Resize and context restoration redraw. Unmount releases observers, controls, frames and GPU resources. The asset provider checks the preview models by revision and falls back to procedural visuals on import failure. [Instrument model guide](../guides/instrument-models.md)
 
+The current source skips an equivalent camera preset. When the previous draw took at least as long as the transition, the renderer applies the final pose directly. Both choices limit redundant rendering while keeping graph commands and electrical connectivity independent of view state. [Scene manager](../../../src/three/SceneManager.ts)
+
 See the [workbench guide](../guides/workbench.md) for editor behavior and [verification](../contributing/verification.md) for the two browser test boundaries.

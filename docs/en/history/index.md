@@ -2,7 +2,7 @@
 
 [Tiếng Việt](../../vi/history/index.md) · [Documentation](../index.md)
 
-Use the [verification guide](../contributing/verification.md) and [release procedure](../operations/deployment.md) for current work. The records below describe their own revisions, inputs and environments.
+Use the [verification guide](../contributing/verification.md) and [release procedure](../operations/deployment.md) for current work. The records below describe their own revisions, inputs and environments. [Versioned changelogs](../../changelogs/README.md)
 
 | Topic | English records |
 | --- | --- |

@@ -1,6 +1,6 @@
 # Tài liệu CIRNET Interface
 
-[English](../en/index.md) · [README của repository](../../README.md)
+[English](../en/index.md) · [README của repository](../../README.md) · [Nhật ký phát hành](../changelogs/README.md)
 
 CIRNET Interface cung cấp bàn làm việc trên trình duyệt để thiết kế mạch và thực hiện thí nghiệm với dịch vụ phòng lab CIRNET. Codex và các agent lập trình bắt đầu từ [mục lục tiếng Anh](../en/index.md) và [hướng dẫn của repository](../../AGENTS.md).
 
@@ -18,6 +18,7 @@ CIRNET Interface cung cấp bàn làm việc trên trình duyệt để thiết 
 ## Kiểm chứng và vận hành
 
 - [Kiểm chứng](contributing/verification.md) hướng dẫn kiểm tra mã nguồn và hai cổng kiểm thử trình duyệt.
+- [Quy ước tài liệu](contributing/writing-documentation.md) quy định cách quản lý cặp ngôn ngữ, changelog và hồ sơ công việc của agent.
 - [Phát hành và triển khai](operations/deployment.md) mô tả cách xuất mã nguồn từ commit và lựa chọn đã phát hành của Remote.
 
 ## Lịch sử và bằng chứng

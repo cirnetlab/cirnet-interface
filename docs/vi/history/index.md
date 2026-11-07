@@ -2,7 +2,7 @@
 
 [English](../../en/history/index.md) · [Mục lục](../index.md)
 
-Dùng [hướng dẫn kiểm chứng](../contributing/verification.md) và [quy trình phát hành](../operations/deployment.md) cho công việc hiện tại. Các hồ sơ dưới đây mô tả từng revision, đầu vào và môi trường tương ứng.
+Dùng [hướng dẫn kiểm chứng](../contributing/verification.md) và [quy trình phát hành](../operations/deployment.md) cho công việc hiện tại. Các hồ sơ dưới đây mô tả từng revision, đầu vào và môi trường tương ứng. [Nhật ký theo phiên bản](../../changelogs/README.md)
 
 | Chủ đề | Hồ sơ tiếng Anh |
 | --- | --- |
