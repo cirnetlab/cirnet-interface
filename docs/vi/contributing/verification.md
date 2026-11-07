@@ -15,7 +15,7 @@ npx tsc --noEmit -p tsconfig.e2e.json
 npm run build
 ```
 
-Lệnh test chạy kiểm thử đơn vị và kiểm thử script. Lệnh build kiểm tra kiểu ứng dụng, rồi tạo bàn làm việc và hai trang xem trước thiết bị.
+Lệnh `npm test` chạy các kiểm tra sử dụng và bootstrap Contracts trước kiểm thử đơn vị. `--all-script-tests` bổ sung các bộ kiểm thử script còn lại, mỗi bộ chạy một lần. Lệnh build kiểm tra kiểu ứng dụng, rồi tạo bàn làm việc và hai trang xem trước thiết bị.
 
 ## Trình duyệt độc lập
 
@@ -50,4 +50,4 @@ Cũng có thể dùng chính trình thông dịch đó chạy `scripts/check_rel
 
 Mỗi lần chạy trình duyệt dùng bản sao đầy đủ của bản đã ghim trong thư mục con `br-<8hex>` riêng, được chọn bằng `PLAYWRIGHT_BROWSERS_PATH`. Khi sao chép, bộ chạy lấy nội dung từ liên kết trình duyệt và bỏ qua `.links` cùng log debug cũ. Giữ đường dẫn `.exe` trên Windows trong giới hạn 259 đơn vị UTF-16 của bộ chạy. Nếu đường dẫn bản sao vượt giới hạn, đặt `CIRNET_ARTIFACTS_DIR` thành thư mục tuyệt đối bên ngoài ngắn hơn rồi cấp phiên mới. Chromium trên Windows có thể ghi log GPU cạnh tệp thực thi. Kiểm tra bản sao trình duyệt, ảnh chụp và trace trong phiên, rồi xác nhận Chromium, FFmpeg và tiến trình phụ đã thoát trước khi dọn dẹp. Lỗi sao chép dừng bộ chạy.
 
-Xem quy định hiện hành và kết quả theo thời điểm trong [hồ sơ kiểm chứng](../../VERIFICATION.md). Sau khi xem bằng chứng và xác nhận các tiến trình thuộc phiên đã dừng, chạy `node scripts/cleanup-contracts.mjs` trong cùng context để dọn phiên sở hữu.
+Sau khi xem bằng chứng và xác nhận các tiến trình thuộc phiên đã dừng, chạy `node scripts/cleanup-contracts.mjs` trong cùng context để dọn phiên sở hữu. [Kết quả kiểm chứng theo thời điểm](../../en/history/verification-ledger.md)

@@ -22,6 +22,4 @@ CIRNET Interface provides the browser workbench for circuit design and experimen
 
 ## History and evidence
 
-- [Verification record](../VERIFICATION.md) contains policy and dated results.
-- [Extraction history](../../migration/history.md) records the product split.
-- [Original detailed README](https://github.com/cirnetlab/cirnet-interface/blob/fe5137f51f76f3aaf969ac0015c10bf5f7bf3647/README.md) preserves the prior editor, setup and lifecycle reference.
+- [History and evidence](history/index.md) indexes dated results and source provenance.

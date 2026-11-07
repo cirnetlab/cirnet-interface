@@ -2,9 +2,7 @@
 
 [Tiếng Việt](../../vi/architecture/namespace.md) · [Documentation](../index.md)
 
-Current source uses `cirnet-interface` for the product repository and `@cirnet/web` for the application package. Interface 0.1.4 imports runtime contracts from `@cirnet/contracts@0.1.2` and diagnostic allocation from the independent DEV package `@cirnet/artifact-paths@1.0.0-m1.0`. The `cirnet-contracts` Python sdist supplies supplemental Interface test resources. Its resource path is derived from the selected distribution identity.
-
-The reviewed inputs are `cirnet-contracts-0.1.2.tgz`, `cirnet_contracts-0.1.2.tar.gz` and `cirnet-artifact-paths-1.0.0-m1.0.tgz`. Bootstrap verifies archive digests and package identities, plus the DEV module digest before running it. The npm lock keeps the selected tarball integrity. Release builds require canonical identities. See the [artifact lock](../../../integration/contracts-artifacts.json) and [npm lock](../../../package-lock.json).
+`cirnet-interface` contains `@cirnet/web` 0.1.4. The app consumes `@cirnet/contracts@0.1.2` at runtime. Supplemental tests use resources from the selected `cirnet-contracts` Python sdist. Development and CI allocate diagnostic output through `@cirnet/artifact-paths@1.0.0-m1.0`. Release builds require canonical package identities. [Artifact lock](../../../integration/contracts-artifacts.json) · [npm lock](../../../package-lock.json) · [Verified setup](../guides/getting-started.md)
 
 ## Environment
 
@@ -37,10 +35,10 @@ See the [recovery reader](../../../src/application/projects/recovery.ts), [Index
 
 ## Historical identity and asset evidence
 
-Previously published Interface 0.1.1–0.1.3 archives keep their original package metadata and digests in release records and historical consumers. Canonical pins select new inputs and leave historical archives intact. Release locks, pinned fixtures, dated verification entries and original artwork retain the names that identify their recorded bytes. Compatibility readers, writers and tests continue to handle both generations. The license, delivered model assets, baseline inputs and historical fixture bytes were preserved in the [namespace migration](../../VERIFICATION.md#2026-11-04-canonical-source-names).
+Previously published Interface 0.1.1–0.1.3 archives keep their original package metadata and digests in release records and historical consumers. Canonical pins select new inputs and leave historical archives intact. Release locks, pinned fixtures, dated verification entries and original artwork retain the names that identify their recorded bytes. Compatibility readers, writers and tests continue to handle both generations. The license, delivered model assets, baseline inputs and historical fixture bytes were preserved in the [namespace migration](../history/verification-ledger.md#2026-11-04-canonical-source-names).
 
 ### Instrument branding and retained asset identities
 
 Live PSU, Function Generator and Oscilloscope panel text uses `CIRNET`. The branding update kept the existing two-tone layout, anchors, fonts, panel geometry and control behavior. The [scene test](../../../tests/scene.test.ts) checks the printed name.
 
-Current procedural factories and exporters use `cirnet_function_generator_2ch` and `cirnet_oscilloscope_2ch`. The exporters write `CIRNET` model metadata. Delivered GLB/glTF files retain `net_circuit_function_generator_2ch` and `net_circuit_oscilloscope_2ch`, with their original geometry, textures, artwork, model labels, hashes and adjacent README provenance. Loader tests check the delivered names, and factory tests check the canonical roots. The branding update preserved the approved exports and visual baselines byte for byte. See the [instrument model guide](../guides/instrument-models.md) and [dated verification record](../../VERIFICATION.md#2026-11-04-canonical-source-names).
+Current procedural factories and exporters use `cirnet_function_generator_2ch` and `cirnet_oscilloscope_2ch`. The exporters write `CIRNET` model metadata. Delivered GLB/glTF files retain `net_circuit_function_generator_2ch` and `net_circuit_oscilloscope_2ch`, with their original geometry, textures, artwork, model labels, hashes and adjacent README provenance. Loader tests check the delivered names, and factory tests check the canonical roots. The branding update preserved the approved exports and visual baselines byte for byte. See the [instrument model guide](../guides/instrument-models.md) and [dated verification record](../history/verification-ledger.md#2026-11-04-canonical-source-names).

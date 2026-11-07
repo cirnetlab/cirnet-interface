@@ -1,5 +1,9 @@
 # Interface verification and external evidence
 
+[History index](index.md) · [Current verification guide](../contributing/verification.md)
+
+This record preserves dated test results and the procedures used to obtain them.
+
 Interface CI runs `npm test -- --all-script-tests` to execute each script
 suite once before the typed runtime tests. Plain `npm test` runs the Contracts
 consumer and bootstrap checks before the runtime tests. The AST checker and
@@ -355,11 +359,11 @@ Before launching, physically copy the complete installed Playwright cache into t
 
 Inspect real screenshots/traces/logs before making claims. Record source revision/dirty state, scenario, commands, environment/browser/executable hash, PASS/FAIL/SKIP/NOT_RUN, limits and physical before/after output inventory. Functional software tests do not establish electrical safety, analog acquisition or deployment. Use actionlint1.7.12 for workflow syntax. After all owned browser/API/helper processes exit, clean only the owning session with `node scripts/artifact-paths.mjs --cleanup ABSOLUTE_SESSION`; keep installation caches and source artifacts. Do not delete or relocate historical Markdown/evidence without the user's decision.
 
-Server-route document command regression and its focused RED/GREEN evidence: [2026-10-28 hydration correction](../migration/server-route-hydration.md). Full browser acceptance remains a separate gate.
+Server-route document command regression and its focused RED/GREEN evidence: [2026-10-28 hydration correction](../../../migration/server-route-hydration.md). Full browser acceptance remains a separate gate.
 
-Working-copy text loss during unrelated renders: [2026-10-28 input-draft correction](../migration/input-draft-rerender.md). It preserves change-time validation/history and records native focused results separately from full artifact acceptance.
+Working-copy text loss during unrelated renders: [2026-10-28 input-draft correction](../../../migration/input-draft-rerender.md). It preserves change-time validation/history and records native focused results separately from full artifact acceptance.
 
-Linux compositing flag selection and its partial diagnostic result: [2026-10-28 browser compositor diagnostic](../migration/linux-browser-compositing.md). The [depth observer proof](../migration/depth-observer-roi.md) records 78 exact pixel-equivalence cases, four restoration guards and the unchanged original DPR 2 test passing within 360 seconds. Hosted Linux and full committed-candidate acceptance remain separate gates.
+Linux compositing flag selection and its partial diagnostic result: [2026-10-28 browser compositor diagnostic](../../../migration/linux-browser-compositing.md). The [depth observer proof](../../../migration/depth-observer-roi.md) records 78 exact pixel-equivalence cases, four restoration guards and the unchanged original DPR 2 test passing within 360 seconds. Hosted Linux and full committed-candidate acceptance remain separate gates.
 
 ## 2026-10-29 CIRNET namespace candidate
 
@@ -414,7 +418,7 @@ Raw outputs started outside Git in the shared session owned by `m6-v012-20261029
 
 The uncommitted candidate based on `9853814a103638e3130b58b740c8789582b8ef40`
 uses `@cirnet/web`, `cirnet-interface` and canonical environment settings with
-legacy compatibility. See [the migration boundaries](NAMESPACE.md). Published
+legacy compatibility. See [the migration boundaries](../architecture/namespace.md). Published
 artifact locks, original artwork, historical fixtures and baselines are intact.
 
 Verification used a fresh physical export outside all six Git roots, a clean

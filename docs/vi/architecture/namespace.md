@@ -2,9 +2,7 @@
 
 [English](../../en/architecture/namespace.md) · [Mục lục](../index.md)
 
-Mã nguồn hiện tại dùng `cirnet-interface` cho repository sản phẩm và `@cirnet/web` cho gói ứng dụng. Interface 0.1.4 nhập hợp đồng lúc chạy từ `@cirnet/contracts@0.1.2` và công cụ cấp thư mục chẩn đoán từ gói DEV độc lập `@cirnet/artifact-paths@1.0.0-m1.0`. Sdist Python `cirnet-contracts` cung cấp tài nguyên kiểm thử bổ sung cho Interface. Đường dẫn tài nguyên được suy ra từ định danh bản phân phối đã chọn.
-
-Các đầu vào đã xem xét gồm `cirnet-contracts-0.1.2.tgz`, `cirnet_contracts-0.1.2.tar.gz` và `cirnet-artifact-paths-1.0.0-m1.0.tgz`. Bootstrap xác minh mã băm gói, định danh gói và mã băm module DEV trước khi chạy module đó. Khóa npm giữ giá trị kiểm tra toàn vẹn của tarball đã chọn. Build phát hành yêu cầu định danh chính thức. Xem [khóa gói](../../../integration/contracts-artifacts.json) và [khóa npm](../../../package-lock.json).
+`cirnet-interface` chứa `@cirnet/web` 0.1.4. Ứng dụng dùng `@cirnet/contracts@0.1.2` khi chạy. Kiểm thử bổ sung dùng tài nguyên từ sdist Python `cirnet-contracts` đã chọn. Môi trường phát triển và CI cấp thư mục chẩn đoán qua `@cirnet/artifact-paths@1.0.0-m1.0`. Build phát hành yêu cầu định danh gói chính thức. [Khóa gói](../../../integration/contracts-artifacts.json) · [Khóa npm](../../../package-lock.json) · [Thiết lập đã kiểm chứng](../guides/getting-started.md)
 
 ## Môi trường
 
@@ -37,10 +35,10 @@ Xem [bộ đọc khôi phục](../../../src/application/projects/recovery.ts), [
 
 ## Định danh lịch sử và bằng chứng tài nguyên
 
-Các gói Interface 0.1.1–0.1.3 đã phát hành giữ metadata gói và mã băm ban đầu trong hồ sơ phát hành và các phiên bản từng sử dụng chúng. Các bản ghim chính thức chọn đầu vào mới và giữ nguyên gói lịch sử. Khóa phát hành, fixture đã ghim, mục kiểm chứng theo thời điểm và hình vẽ gốc giữ tên nhận diện đúng dữ liệu đã ghi. Bộ đọc, bộ ghi và kiểm thử tương thích tiếp tục xử lý cả hai thế hệ. [Đợt chuyển đổi namespace](../../VERIFICATION.md#2026-11-04-canonical-source-names) giữ nguyên byte của giấy phép, tài nguyên mô hình đã giao, đầu vào baseline và fixture lịch sử.
+Các gói Interface 0.1.1–0.1.3 đã phát hành giữ metadata gói và mã băm ban đầu trong hồ sơ phát hành và các phiên bản từng sử dụng chúng. Các bản ghim chính thức chọn đầu vào mới và giữ nguyên gói lịch sử. Khóa phát hành, fixture đã ghim, mục kiểm chứng theo thời điểm và hình vẽ gốc giữ tên nhận diện đúng dữ liệu đã ghi. Bộ đọc, bộ ghi và kiểm thử tương thích tiếp tục xử lý cả hai thế hệ. [Đợt chuyển đổi namespace](../../en/history/verification-ledger.md#2026-11-04-canonical-source-names) giữ nguyên byte của giấy phép, tài nguyên mô hình đã giao, đầu vào baseline và fixture lịch sử.
 
 ### Thương hiệu thiết bị và định danh tài nguyên được giữ lại
 
 Chữ trên mặt PSU, Function Generator và Oscilloscope đang chạy dùng `CIRNET`. Lần cập nhật thương hiệu giữ nguyên bố cục hai màu, điểm neo, font, hình học mặt thiết bị và hành vi điều khiển. [Kiểm thử cảnh](../../../tests/scene.test.ts) kiểm tra tên in trên mặt thiết bị.
 
-Factory tạo mô hình bằng mã và script xuất hiện tại dùng `cirnet_function_generator_2ch` và `cirnet_oscilloscope_2ch`. Script xuất ghi metadata mô hình `CIRNET`. Tệp GLB/glTF đã giao giữ `net_circuit_function_generator_2ch` và `net_circuit_oscilloscope_2ch`, cùng hình học, texture, hình vẽ, nhãn mô hình, mã băm và README nguồn gốc đi kèm. Kiểm thử tải mô hình kiểm tra tên đã giao, còn kiểm thử factory kiểm tra node gốc chính thức. Lần cập nhật thương hiệu giữ nguyên từng byte của gói xuất đã duyệt và baseline hình ảnh. Xem [hướng dẫn mô hình thiết bị](../guides/instrument-models.md) và [hồ sơ kiểm chứng theo thời điểm](../../VERIFICATION.md#2026-11-04-canonical-source-names).
+Factory tạo mô hình bằng mã và script xuất hiện tại dùng `cirnet_function_generator_2ch` và `cirnet_oscilloscope_2ch`. Script xuất ghi metadata mô hình `CIRNET`. Tệp GLB/glTF đã giao giữ `net_circuit_function_generator_2ch` và `net_circuit_oscilloscope_2ch`, cùng hình học, texture, hình vẽ, nhãn mô hình, mã băm và README nguồn gốc đi kèm. Kiểm thử tải mô hình kiểm tra tên đã giao, còn kiểm thử factory kiểm tra node gốc chính thức. Lần cập nhật thương hiệu giữ nguyên từng byte của gói xuất đã duyệt và baseline hình ảnh. Xem [hướng dẫn mô hình thiết bị](../guides/instrument-models.md) và [hồ sơ kiểm chứng theo thời điểm](../../en/history/verification-ledger.md#2026-11-04-canonical-source-names).

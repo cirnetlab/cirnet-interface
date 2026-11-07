@@ -15,7 +15,7 @@ npx tsc --noEmit -p tsconfig.e2e.json
 npm run build
 ```
 
-The test command covers unit and script tests. The build type-checks the application and builds the workbench and the two instrument previews.
+Plain `npm test` runs the Contracts consumer and bootstrap checks before the unit tests. `--all-script-tests` adds the remaining script suites, each once. The build type-checks the application and produces the workbench and two instrument previews.
 
 ## Standalone native browser
 
@@ -50,4 +50,4 @@ Alternatively, use the same interpreter to run `scripts/check_release.py --group
 
 Browser runs use a complete copy of the pinned installation in a unique `br-<8hex>` child selected by `PLAYWRIGHT_BROWSERS_PATH`. The copy dereferences browser links and excludes `.links` and old debug logs. Keep Windows `.exe` paths at or below the launcher's 259 UTF-16 unit limit. If the copy would exceed the limit, set a shorter absolute external `CIRNET_ARTIFACTS_DIR` and allocate a fresh session. Chromium may write GPU logs beside its executable on Windows. Inspect the copied runtime, screenshots and traces in the session, and confirm Chromium, FFmpeg and helpers exit before cleanup. Copy failures stop the launcher.
 
-Review current policy and dated results in the [verification record](../../VERIFICATION.md). After inspecting evidence and confirming owned processes stopped, run `node scripts/cleanup-contracts.mjs` in the same context to clean the owning session.
+After inspecting evidence and confirming owned processes stopped, run `node scripts/cleanup-contracts.mjs` in the same context to clean the owning session. [Dated verification results](../history/verification-ledger.md)

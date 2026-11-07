@@ -2,9 +2,7 @@
 
 [English](../../en/operations/deployment.md) · [Mục lục](../index.md)
 
-Mã nguồn sản phẩm có định danh `@cirnet/web` 0.1.4. [Mô tả tương thích](../../../integration/compatibility.json) ghi bản sửa đổi Remote tương ứng, còn [khóa gói](../../../integration/contracts-artifacts.json) xác định đầu vào do repository sản xuất phát hành. Remote quản lý việc chọn phiên bản hệ thống. Xem bản sửa đổi nguồn, URL và mã băm được chọn trong [bộ phát hành hệ thống 0.1.4](https://github.com/cirnetlab/cirnet-remote/blob/38aea6120920f48cea817827ac2277cce4bef25e/integration/release-set.json).
-
-Mã nguồn checkout có định danh `@cirnet/web` 0.1.4. Bộ gói hệ thống đã phát hành của Remote ghim gói mã nguồn và gói tĩnh Interface tại `f1fe0c4738e105727aff1a331327caf7172cdf5f`, còn API tại `ce84ec4cf3602ef6fd001f91877e864c8955f9c7`. Checkout ở commit sau vẫn có thể khai báo 0.1.4. [Hồ sơ chuyển đổi native](https://github.com/cirnetlab/cirnet-remote/blob/13a35145b6d15644c7be10d95a5410bf69e11867/docs/vi/architecture/native-migration.md) theo dõi nghiệm thu ứng viên riêng với lựa chọn đã phát hành.
+Mã nguồn khai báo `@cirnet/web` 0.1.4. [Mô tả tương thích](../../../integration/compatibility.json) ghi revision Remote tương ứng, còn [khóa gói](../../../integration/contracts-artifacts.json) chọn đầu vào từ các repo cung cấp. [Bộ phát hành hệ thống 0.1.4 của Remote](https://github.com/cirnetlab/cirnet-remote/blob/38aea6120920f48cea817827ac2277cce4bef25e/integration/release-set.json) ghim gói mã nguồn và gói tĩnh Interface tại `f1fe0c4738e105727aff1a331327caf7172cdf5f` và API tại `ce84ec4cf3602ef6fd001f91877e864c8955f9c7`, cùng URL và mã băm. Checkout ở commit sau vẫn có thể giữ cùng phiên bản gói. Nghiệm thu ứng viên được ghi riêng trong [hồ sơ chuyển đổi native](https://github.com/cirnetlab/cirnet-remote/blob/13a35145b6d15644c7be10d95a5410bf69e11867/docs/vi/architecture/native-migration.md).
 
 ## Tạo cặp gói phát hành
 

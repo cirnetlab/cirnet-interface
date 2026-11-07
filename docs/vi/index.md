@@ -22,6 +22,4 @@ CIRNET Interface cung cấp bàn làm việc trên trình duyệt để thiết 
 
 ## Lịch sử và bằng chứng
 
-- [Hồ sơ kiểm chứng](../VERIFICATION.md) lưu quy định và kết quả theo ngày.
-- [Lịch sử tách repository](../../migration/history.md) ghi lại quá trình tách sản phẩm.
-- [README chi tiết trước đây](https://github.com/cirnetlab/cirnet-interface/blob/fe5137f51f76f3aaf969ac0015c10bf5f7bf3647/README.md) lưu tài liệu về trình biên tập, thiết lập và vòng đời.
+- [Lịch sử và bằng chứng](history/index.md) tập hợp kết quả theo thời điểm và nguồn gốc mã.

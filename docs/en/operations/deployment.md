@@ -2,9 +2,7 @@
 
 [Tiếng Việt](../../vi/operations/deployment.md) · [Documentation](../index.md)
 
-The product source identifies as `@cirnet/web` 0.1.4. Its [compatibility descriptor](../../../integration/compatibility.json) records the paired Remote revision, and the [artifact lock](../../../integration/contracts-artifacts.json) identifies its producer inputs. Remote owns system selection. Read the selected source revisions, URLs and digests from its [system 0.1.4 release set](https://github.com/cirnetlab/cirnet-remote/blob/38aea6120920f48cea817827ac2277cce4bef25e/integration/release-set.json).
-
-The checkout source identifies as `@cirnet/web` 0.1.4. Remote's published system selection pins the Interface source and static artifacts at `f1fe0c4738e105727aff1a331327caf7172cdf5f` and the API at `ce84ec4cf3602ef6fd001f91877e864c8955f9c7`. A checkout at a later commit can still declare 0.1.4. The [native migration record](https://github.com/cirnetlab/cirnet-remote/blob/13a35145b6d15644c7be10d95a5410bf69e11867/docs/en/architecture/native-migration.md) tracks candidate acceptance separately from the published selection.
+The source declares `@cirnet/web` 0.1.4. The [compatibility descriptor](../../../integration/compatibility.json) records the paired Remote revision, and the [artifact lock](../../../integration/contracts-artifacts.json) selects producer inputs. Remote's [published system 0.1.4 release set](https://github.com/cirnetlab/cirnet-remote/blob/38aea6120920f48cea817827ac2277cce4bef25e/integration/release-set.json) pins the Interface source and static artifacts at `f1fe0c4738e105727aff1a331327caf7172cdf5f` and the API at `ce84ec4cf3602ef6fd001f91877e864c8955f9c7`, with their URLs and digests. Later checkouts may retain the same package version. Candidate acceptance is recorded separately in the [native migration record](https://github.com/cirnetlab/cirnet-remote/blob/13a35145b6d15644c7be10d95a5410bf69e11867/docs/en/architecture/native-migration.md).
 
 ## Build the release pair
 
