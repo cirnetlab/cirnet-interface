@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "status": "PINNED_ARTIFACT_INPUTS",
+  "contractsVersion": "0.3.0-dev.1",
+  "npm": {
+    "name": "@cirnet/contracts",
+    "version": "0.3.0-dev.1",
+    "filename": "cirnet-contracts-0.3.0-dev.1.tgz"
+  },
+  "dev_npm": {
+    "name": "@cirnet/artifact-paths",
+    "version": "0.3.0-dev.1",
+    "filename": "cirnet-artifact-paths-0.3.0-dev.1.tgz"
+  },
+  "native_crate": {
+    "name": "cirnet-contracts-native",
+    "version": "0.3.0-dev.1",
+    "filename": "cirnet-contracts-native-0.3.0-dev.1.crate"
+  },
+  "remote_openapi": {
+    "filename": "remote-openapi.json"
+  }
+}
