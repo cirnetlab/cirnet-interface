@@ -20,7 +20,7 @@ Một bàn làm việc Vue 3 đang hoạt động phối hợp tài liệu mạc
 
 Remote cung cấp xác thực, dự án riêng, xuất bản bài tập, hàng đợi thực thi và lịch sử. API cấp cookie phiên HttpOnly. Interface giữ trạng thái CSRF trong bộ nhớ và tách bản khôi phục theo danh tính. Chuyển dữ liệu khách cần thao tác rõ ràng. Xung đột phiên bản giữ bản chỉnh sửa cục bộ, còn Import và Export là hai thao tác riêng. IndexedDB lưu bản nháp khôi phục. Xuất bản bài tập tách khỏi chỉnh sửa bản nháp. Quan sát và lịch sử có thể báo cáo thao tác mà không chạy lại.
 
-Profile ảo trả payload bản thu số được hỗ trợ dưới dạng NCAP. Tính năng vật lý và tương tự phụ thuộc profile đã chọn và trình điều khiển đã triển khai. Profile ảo mặc định chưa có thao tác phần cứng Scope và Generator. Remote và Hardware quyết định thí nghiệm có thể chạy an toàn hay không. Xem [kiến trúc Lab-First](https://github.com/cirnetlab/cirnet-rules/blob/887578e8c0aa06882cfa19138955fb54019fb428/docs/tai-lieu-kien-tuc-he-thong/cirnet-architecture-lab-first-vi.md).
+Profile ảo trả payload bản thu số được hỗ trợ dưới dạng NCAP. Tính năng vật lý và tương tự phụ thuộc profile đã chọn và trình điều khiển đã triển khai. Profile ảo mặc định chưa có thao tác phần cứng Scope và Generator. Remote và Hardware quyết định thí nghiệm có thể chạy an toàn hay không. Xem [kiến trúc Lab-First](https://github.com/cirnetlab/cirnet-remote-next/blob/master/docs/cirnet-architecture-lab-first-vi.md).
 
 Trang xem trước thiết bị đo độc lập và thao tác chỉnh sửa cục bộ kiểm tra hành vi trình duyệt. Kiểm thử trình duyệt E2E cho gói sản phẩm dùng Remote đã cài, gói Interface tương ứng và luồng Hardware và Simulator thật. [Kiểm chứng](../contributing/verification.md)
 

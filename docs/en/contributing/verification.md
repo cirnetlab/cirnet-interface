@@ -2,6 +2,12 @@
 
 [Tiếng Việt](../../vi/contributing/verification.md) · [Documentation](../index.md)
 
+## GitHub Actions
+
+Run **Interface verification from a native candidate** with the run ID of Remote's **Windows x64 native candidate** workflow and the reviewed `manifestSha256` from its assembly receipt. Configure `CIRNET_READ_TOKEN` with Actions read access to `cirnetlab/cirnet-remote-next`. The Interface workflow verifies the manifest and all four input digests before bootstrapping, then runs the component build, tests and Chromium platform checks. Remote runs the packaged end-to-end smoke against the full application.
+
+## Local checks
+
 Prepare the [exact build inputs](../guides/getting-started.md) in a fresh copy. Apply the ownership context and session from the bootstrap JSON before running checks. Keep npm cache, browser traces, test bundles and raw logs in that session.
 
 ```powershell
@@ -14,6 +20,8 @@ npm run test:e2e:platform -- --forbid-only
 ```
 
 Set `CIRNET_E2E_BROWSER_CACHE` to an absolute external directory to select the pinned Chromium installation. The platform suite exercises the actual renderer, camera, depth and browser document ownership without a server account.
+
+## Browser against the installed native product
 
 For the installed product, use the same browser cache. Set `CIRNET_E2E_API_TARGET` to `http://127.0.0.1:14173`, `CIRNET_E2E_STATIC_FINGERPRINT` to the selected static artifact fingerprint and `CIRNET_E2E_ADMIN_PASSWORD` to the test administrator credential.
 
