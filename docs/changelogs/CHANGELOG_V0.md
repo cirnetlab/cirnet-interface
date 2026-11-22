@@ -8,3 +8,5 @@
 - Thêm workflow kiểm chứng Interface chọn bản ứng viên Remote theo mã lượt chạy và đối chiếu cả bốn đầu vào bản dựng với manifest đã duyệt.
 - Link the workbench safety boundary to CIRNET Lab-First.
 - Liên kết ranh giới an toàn của bàn làm việc với CIRNET Lab-First.
+- Run Interface CI on master pushes using generated inputs from pinned sources, and allocate manual candidate paths after the runner starts.
+- Chạy CI Interface khi push lên master bằng đầu vào được tạo từ nguồn đã ghim và thiết lập đường dẫn ứng viên thủ công sau khi runner khởi động.

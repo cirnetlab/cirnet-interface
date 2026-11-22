@@ -4,7 +4,9 @@
 
 ## GitHub Actions
 
-Chạy **Interface verification from a native candidate** với mã lượt chạy workflow **Windows x64 native candidate** của Remote và giá trị `manifestSha256` đã duyệt trong biên nhận đóng gói. Cấu hình `CIRNET_READ_TOKEN` có quyền đọc Actions của `cirnetlab/cirnet-remote-next`. Workflow Interface xác minh manifest và mã băm của cả bốn đầu vào trước khi bootstrap, rồi chạy build, bộ kiểm thử thành phần và kiểm thử nền tảng Chromium. Remote chạy smoke test đầu cuối trên ứng dụng đã đóng gói.
+**Interface Windows x64 verification** chạy khi push lên `master`. Workflow tạo đầu vào từ các commit chính xác của Contracts Next và Remote Next được ghim trong cấu hình. Cấu hình `CIRNET_DEPENDENCIES_READ_TOKEN` có quyền đọc Contents ở cả hai repo.
+
+Khi chạy thủ công, chọn mã lượt chạy **Windows x64 native candidate** của Remote và `manifestSha256` đã duyệt. Cấu hình `CIRNET_READ_TOKEN` có quyền đọc Actions của Remote Next. Cả hai chế độ đều build và chạy bộ kiểm thử thành phần cùng kiểm thử nền tảng Chromium.
 
 ## Kiểm tra cục bộ
 

@@ -4,7 +4,9 @@
 
 ## GitHub Actions
 
-Run **Interface verification from a native candidate** with the run ID of Remote's **Windows x64 native candidate** workflow and the reviewed `manifestSha256` from its assembly receipt. Configure `CIRNET_READ_TOKEN` with Actions read access to `cirnetlab/cirnet-remote-next`. The Interface workflow verifies the manifest and all four input digests before bootstrapping, then runs the component build, tests and Chromium platform checks. Remote runs the packaged end-to-end smoke against the full application.
+**Interface Windows x64 verification** runs on pushes to `master`. It builds the dependency inputs from the exact Contracts Next and Remote Next commits pinned in the workflow. Set `CIRNET_DEPENDENCIES_READ_TOKEN` with Contents read access to both repositories.
+
+For a manual run, select a Remote **Windows x64 native candidate** run ID and the reviewed `manifestSha256`. Set `CIRNET_READ_TOKEN` with Actions read access to Remote Next. Both paths run the component build, unit checks and Chromium platform tests.
 
 ## Local checks
 
