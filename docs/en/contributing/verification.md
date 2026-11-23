@@ -4,7 +4,9 @@
 
 ## GitHub Actions
 
-**Interface Windows x64 verification** runs on pushes to `master`. It builds the dependency inputs from the exact Contracts Next and Remote Next commits pinned in the workflow. Set `CIRNET_DEPENDENCIES_READ_TOKEN` with Contents read access to both repositories.
+**Interface Windows x64 verification** runs on pushes to `master`. It builds the dependency inputs from the exact Contracts Next and Remote Next commits pinned in the workflow.
+
+Create the Actions secret `CIRNET_DEPENDENCIES_READ_TOKEN` in [the cirnetlab organization settings](https://github.com/organizations/cirnetlab/settings/secrets/actions) with **Selected repositories** access. Include the repositories that run the workflows. Use a fine-grained token owned by `cirnetlab` with `Contents: read` on the private dependencies listed below. Interface needs `cirnet-contracts-next`. The public Remote checkout uses the default workflow token.
 
 For a manual run, select a Remote **Windows x64 native candidate** run ID and the reviewed `manifestSha256`. Set `CIRNET_READ_TOKEN` with Actions read access to Remote Next. Both paths run the component build, unit checks and Chromium platform tests.
 

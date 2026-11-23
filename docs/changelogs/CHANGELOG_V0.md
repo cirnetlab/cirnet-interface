@@ -10,3 +10,5 @@
 - Liên kết ranh giới an toàn của bàn làm việc với CIRNET Lab-First.
 - Run Interface CI on master pushes using generated inputs from pinned sources, and allocate manual candidate paths after the runner starts.
 - Chạy CI Interface khi push lên master bằng đầu vào được tạo từ nguồn đã ghim và thiết lập đường dẫn ứng viên thủ công sau khi runner khởi động.
+- Limit the private dependency secret to the Contracts checkout.
+- Chỉ dùng secret đọc phụ thuộc private ở bước checkout Contracts.
