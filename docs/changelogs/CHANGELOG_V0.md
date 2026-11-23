@@ -12,3 +12,5 @@
 - Chạy CI Interface khi push lên master bằng đầu vào được tạo từ nguồn đã ghim và thiết lập đường dẫn ứng viên thủ công sau khi runner khởi động.
 - Limit the private dependency secret to the Contracts checkout.
 - Chỉ dùng secret đọc phụ thuộc private ở bước checkout Contracts.
+- Authenticate the pinned Remote checkout after Remote became private.
+- Xác thực bước checkout commit Remote đã ghim sau khi repo Remote chuyển sang private.
