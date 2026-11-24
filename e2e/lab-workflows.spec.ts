@@ -1,8 +1,9 @@
 import { fileCommand, expectEventConnection, selectRun } from './workbench-ui'
 import {test,expect,type Browser,type BrowserContext,type Page} from '@playwright/test'
-import {randomUUID} from 'node:crypto'
+import {createHash,randomUUID} from 'node:crypto'
 import type {ExperimentCreate,ExperimentRecord} from '@cirnet/contracts/dto'
 import {parseStructural} from '../src/contracts/structural'
+import {decodeDigitalCapture} from '../src/services/captures/digital'
 const origin='http://127.0.0.1:14173'
 const experimentCreatePath='/api/v2/experiments'
 const assignmentPanel=(page:Page)=>page.getByRole('region',{name:'Assignments',exact:true})
@@ -55,9 +56,26 @@ test('instructor drafts publish stable student views and CAS conflicts preserve 
 test('a student submits typed pre-run vectors to the real virtual AND circuit and restores captured history without replaying Run',async({page,browser,context})=>{
  test.setTimeout(90_000)
  const requests:{method:string;path:string;status:number;requestId:string|null}[]=[]
+ let creates=0,runs=0,serverHellos=0
  let webSocketFrames=0
+ await page.addInitScript(()=>{
+  const NativeWebSocket=window.WebSocket
+  window.WebSocket=class extends NativeWebSocket {
+   constructor(url:string|URL,protocols?:string|string[]){
+    super(url,protocols)
+    if(new URL(this.url).pathname!=='/ws/events')return
+    const disconnect=()=>{if(this.readyState===NativeWebSocket.OPEN)this.close(4000,'CIRNET reconnect test')}
+    window.addEventListener('cirnet-test-disconnect-events',disconnect)
+    this.addEventListener('close',()=>window.removeEventListener('cirnet-test-disconnect-events',disconnect),{once:true})
+   }
+  }
+ })
  page.on('websocket',socket=>{
-  if(new URL(socket.url()).pathname==='/ws/events')socket.on('framereceived',()=>webSocketFrames++)
+  if(new URL(socket.url()).pathname!=='/ws/events')return
+  socket.on('framereceived',({payload})=>{
+   webSocketFrames++
+   if(typeof payload==='string'&&JSON.parse(payload).type==='hello')serverHellos++
+  })
  })
  page.on('response',response=>{
   const path=new URL(response.url()).pathname
@@ -89,10 +107,30 @@ test('a student submits typed pre-run vectors to the real virtual AND circuit an
   await selectRun(page);await page.getByRole('toolbar',{name:'Execution controls',exact:true}).getByRole('button',{name:'Run',exact:true}).click();const {submitted,record}=await actualCreate;expect(submitted.capture_config).toEqual({signals:['y'],duration_ns:40,max_events:100});expect(submitted.test_vectors).toEqual([{time_ns:20,inputs:{x:1}}]);expect(submitted).not.toHaveProperty('generator_config');expect(submitted).not.toHaveProperty('clock_config');expect(record.assignment_id).toBe(id);expect(createPosts).toBe(1)
   await expect.poll(async()=> (await(await context.request.get(`/api/experiments/${record.experiment_id}`)).json()).state,{timeout:30_000}).toBe('COMPLETE')
   const result=parseStructural('ExperimentRecord',await(await context.request.get(`/api/experiments/${record.experiment_id}`)).json());expect(result.capture?.available).toBe(true);expect(result.functional_verification?.status).toBe('PASS');expect(result.functional_verification).not.toHaveProperty('expected_signals')
+  const metadata=result.capture
+  if(!metadata?.payload_ref)throw new Error('The experiment has no readable NCAP payload')
+  const response=await context.request.get(metadata.payload_ref)
+  expect(response.status()).toBe(200)
+  const bytes=await response.body()
+  const captureSha256=createHash('sha256').update(bytes).digest('hex')
+  expect(captureSha256).toBe(metadata.sha256)
+  const decoded=decodeDigitalCapture(Uint8Array.from(bytes).buffer,metadata)
+  expect(decoded.samples).toEqual([
+   {signal:'y',time_ns:0,value:'X'},
+   {signal:'y',time_ns:8,value:0},
+   {signal:'y',time_ns:28,value:1},
+  ])
   await history(page);await historyPanel(page).getByRole('button',{name:'Refresh execution history',exact:true}).click();await historyPanel(page).getByRole('button',{name:`Read experiment ${record.experiment_id}`,exact:true}).click();await expect(page).toHaveURL(new RegExp(`/experiments/${record.experiment_id}$`));await expect(historyPanel(page).getByLabel('Evidence access',{exact:true})).toContainText('Read-only history')
   await historyPanel(page).getByRole('button',{name:'Open selected capture',exact:true}).click();await expect(page.getByRole('img',{name:'Observed digital event traces',exact:true})).toBeVisible();await expect(page.locator('path.observed-trace[data-signal="y"]')).toHaveAttribute('d',/V8/)
   await expect(canvas).toHaveAttribute('data-w6-canvas','history-preserved');await expect(page.locator('.project-title')).toContainText('AND working circuit')
-  let creates=0,runs=0;page.on('request',request=>{if(request.method()==='POST'&&new URL(request.url()).pathname===experimentCreatePath)creates++;if(request.method()==='POST'&&/\/run$/.test(new URL(request.url()).pathname))runs++})
+  page.on('request',request=>{if(request.method()==='POST'&&new URL(request.url()).pathname===experimentCreatePath)creates++;if(request.method()==='POST'&&/\/run$/.test(new URL(request.url()).pathname))runs++})
+  const beforeReconnect=serverHellos
+  expect(beforeReconnect).toBeGreaterThan(0)
+  await page.evaluate(()=>window.dispatchEvent(new Event('cirnet-test-disconnect-events')))
+  await expect.poll(()=>serverHellos).toBeGreaterThan(beforeReconnect)
+  await expectEventConnection(page)
+  await expect(historyPanel(page).getByRole('region',{name:'Selected experiment evidence',exact:true})).toContainText(record.experiment_id)
+  expect(creates).toBe(0);expect(runs).toBe(0)
   await page.reload();await expect(historyPanel(page).getByRole('region',{name:'Selected experiment evidence',exact:true})).toContainText(record.experiment_id);await expect(historyPanel(page).getByLabel('Evidence access',{exact:true})).toContainText('Read-only history');await historyPanel(page).getByRole('button',{name:'Open selected capture',exact:true}).click();await expect(page.getByRole('img',{name:'Observed digital event traces',exact:true})).toBeVisible();expect(creates).toBe(0);expect(runs).toBe(0)
   expect(webSocketFrames).toBeGreaterThan(0)
   expect(requests).toEqual([
@@ -101,9 +139,9 @@ test('a student submits typed pre-run vectors to the real virtual AND circuit an
   ])
   const screenshot=test.info().outputPath('native-virtual-and.png')
   await page.screenshot({path:screenshot})
-  console.log(JSON.stringify({experimentId:record.experiment_id,captureId:result.capture?.capture_id,
-   sampleCount:result.capture?.sample_count,state:result.state,replayedCreate:creates,replayedRun:runs,
-   utc:new Date().toISOString(),webSocketFrames,requests,circuit:graph(),vectors:submitted.test_vectors}))
+  console.log(JSON.stringify({experimentId:record.experiment_id,captureId:metadata.capture_id,captureSha256,
+   sampleCount:decoded.sample_count,samples:decoded.samples,state:result.state,replayedCreate:creates,replayedRun:runs,
+   utc:new Date().toISOString(),webSocketFrames,reconnected:true,requests,circuit:graph(),vectors:submitted.test_vectors}))
  }finally{await setup.context.close()}
 })
 

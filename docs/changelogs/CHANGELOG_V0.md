@@ -14,3 +14,5 @@
 - Chỉ dùng secret đọc phụ thuộc private ở bước checkout Contracts.
 - Authenticate the pinned Remote checkout after Remote became private.
 - Xác thực bước checkout commit Remote đã ghim sau khi repo Remote chuyển sang private.
+- Check the pinned CI toolchain order and reconnect the real browser event stream after a virtual AND run without replaying Create or Run.
+- Kiểm tra thứ tự dùng công cụ đã ghim trong CI và kết nối lại luồng sự kiện trình duyệt thật sau khi chạy mạch AND ảo mà không gửi lại Create hoặc Run.
