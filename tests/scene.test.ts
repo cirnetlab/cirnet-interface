@@ -6,7 +6,7 @@ import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
 import { buildComponent, disposeObject } from '../src/three/ComponentModel'
 import type { CircuitGraph } from '../src/types/circuit'
 import { createComponentTransformGizmo } from '../src/three/ComponentTransformGizmo'
-import { applyPowerSupplyControls } from '../src/three/PowerSupplyModel'
+import { applyPowerSupplyControls } from '../src/three/instruments/PowerSupplyModel'
 
 test('supply display reuses its canvas texture while knobs, calibrated scale and logo follow local settings', () => {
   const previous = Object.getOwnPropertyDescriptor(globalThis, 'document'), labels: string[] = []

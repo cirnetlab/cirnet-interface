@@ -10,6 +10,24 @@ One mounted Vue 3 workspace coordinates the active circuit document, Pinia state
 | Contracts | Canonical schemas and catalog data, plus the packaged SDK used by the browser. |
 | Remote and station services | Remote authorizes Lab actions and owns the execution API and leases. Hardware enforces local protection and owns private FPGA access. The browser displays the service decisions. |
 
+## Source ownership
+
+Interface groups related features within layers that already have distinct dependencies.
+
+| Source | Responsibility |
+| --- | --- |
+| [`src/components/workbench/`](../../../src/components/workbench) and [`src/components/windows/`](../../../src/components/windows) | Vue workbench shell, viewport, ribbon and window presentation. Instrument windows render controls and observations. |
+| [`src/composables/`](../../../src/composables) and [`src/editor/`](../../../src/editor) | UI bindings and editor gestures for placement, selection, editing and wire routing. |
+| [`src/domain/document/`](../../../src/domain/document) and [`src/domain/capture/`](../../../src/domain/capture) | Pure graph commands, history, revisions and document formats, plus capture decoding and validation. |
+| [`src/electrical/`](../../../src/electrical), [`src/geometry/`](../../../src/geometry) and [`src/wires/`](../../../src/wires) | Electrical topology and connectivity, mechanical poses and constraints, and wire routing and appearance. |
+| [`src/three/`](../../../src/three) | Scene projection, rendering, picking and resource lifecycle. [`three/package/`](../../../src/three/package) owns procedural component packages. [`three/instruments/`](../../../src/three/instruments) owns the procedural supply, oscilloscope and generator visuals and shared artwork and chassis. |
+| [`src/application/`](../../../src/application) | Project, assignment, execution and instrument workflows. Application ports express the services these workflows need. |
+| [`src/stores/`](../../../src/stores) | Pinia facades and browser state for the document, workspace, UI, session, projects, assignments, station, execution and instruments. |
+| [`src/services/`](../../../src/services) | Browser adapters for Remote REST and WebSocket, session scope, files, recovery, captures and model loading. |
+| [`src/contracts/`](../../../src/contracts), [`src/data/`](../../../src/data) and [`src/types/`](../../../src/types) | Browser validation and projections of the Contracts SDK, editor catalogs, local presentation data and types. Contracts publishes the shared schemas and canonical catalogs. |
+
+The AST dependency check enforces the pure domain and application boundaries, the renderer transport boundary, approved public SDK entrypoints and acyclic store runtime imports. [Dependency checker](../../../scripts/check-boundaries.mjs)
+
 ## Graph and contract boundaries
 
 - Graph 1.0 and 1.1 documents retain their meaning. Additive Graph 1.2 operations carry flexible assemblies and pinned free physical descriptors. A flexible board connection names both exact holes. Interface owns semantic validation and normalization before committing an edit.

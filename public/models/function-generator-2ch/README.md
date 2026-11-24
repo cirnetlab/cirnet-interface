@@ -73,7 +73,7 @@ keeps its current procedural coating materials; this delivered export retains it
 older housing finish. See `docs/verification/2026-10-16-w5-assets.md` at repository
 root for the asset ownership decision.
 
-Source of truth: `src/three/FunctionGeneratorModel.ts` (geometry),
+Source of truth: `src/three/instruments/FunctionGeneratorModel.ts` (geometry),
 `FunctionGeneratorArtwork.ts` (layout/decals), `InstrumentArtwork.ts` (Canvas/SVG),
 `scripts/export-function-generator.mjs` (export) and
 `tests/function-generator.test.ts` (placement/history/layout/pivot/budget/round trips)

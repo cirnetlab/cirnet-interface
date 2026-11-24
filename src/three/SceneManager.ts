@@ -28,7 +28,7 @@ import { createSelectionOutline, updateSelectionOutline } from './SelectionOutli
 import { createTechnicalGrid, updateTechnicalGrid } from './TechnicalGrid'
 import { Box3, Line3 } from 'three'
 import { createComponentTransformGizmo, type GizmoObstacle, type TransformHandle } from './ComponentTransformGizmo'
-import { applyPowerSupplyControls, supplyControlPatch, type SupplyControl } from './PowerSupplyModel'
+import { applyPowerSupplyControls, supplyControlPatch, type SupplyControl } from './instruments/PowerSupplyModel'
 import { createWireLayer } from './WireLayer'
 import { createSelectionPreview } from './SelectionPreview'
 import { createScenePicking } from './ScenePicking'

@@ -12,7 +12,7 @@ const require = createRequire(import.meta.url)
 const argument = process.argv.indexOf('--sharp-module')
 const sharp = require(argument >= 0 ? process.argv[argument + 1] : 'sharp')
 const web = new URL('../', import.meta.url)
-const source = (name) => fileURLToPath(new URL(`src/three/${name}.ts`, web))
+const source = (name) => fileURLToPath(new URL(`src/three/instruments/${name}.ts`, web))
 const temp = pathToFileURL(getArtifactDirectory('scope-export') + '/')
 await build({ entryPoints: [source('OscilloscopeModel'), source('OscilloscopeArtwork')], outdir: fileURLToPath(temp), outExtension: { '.js': '.mjs' }, bundle: true, packages: 'external', platform: 'node', format: 'esm',
   plugins: [{ name: 'external-three-from-authoring-tool', setup(context) { context.onResolve({ filter: /^three(?:\/|$)/ }, ({ path }) => ({ path: import.meta.resolve(path), external: true })) } }] })

@@ -11,7 +11,7 @@ Cả hai mô hình dùng đơn vị thế giới của trình biên tập, gốc
 | Quy ước | Function Generator 2 CH | Oscilloscope 2 CH |
 | --- | --- | --- |
 | Loại trong bảng và kích thước hiển thị | `GENERATOR`, `[6,3.6,2.8]` | `OSCILLOSCOPE`, `[6,3.8,2.8]` |
-| Nguồn chính | `FunctionGeneratorModel.ts`, `FunctionGeneratorArtwork.ts`, `GENERATOR_LAYOUT` | `OscilloscopeModel.ts`, `OscilloscopeArtwork.ts`, `SCOPE_LAYOUT` |
+| Nguồn chính | [`FunctionGeneratorModel.ts`](../../../src/three/instruments/FunctionGeneratorModel.ts), [`FunctionGeneratorArtwork.ts`](../../../src/three/instruments/FunctionGeneratorArtwork.ts), `GENERATOR_LAYOUT` | [`OscilloscopeModel.ts`](../../../src/three/instruments/OscilloscopeModel.ts), [`OscilloscopeArtwork.ts`](../../../src/three/instruments/OscilloscopeArtwork.ts), `SCOPE_LAYOUT` |
 | Màn hình | `screen` không chịu ánh sáng, 1024×768, minh họa CH1 sin và CH2 vuông | `screen` không chịu ánh sáng, 1024×704, minh họa CH1 vuông và CH2 sin |
 | Điều khiển có tên | `encoder_knob`, sáu mesh `soft_key_*`, ba hàng phím chức năng và các phím mũi tên | Bảy núm có tâm xoay, nhóm nút Horizontal và Trigger, điều khiển CH1/CH2 và đèn nguồn riêng |
 | Đầu nối | `ch1_output`, `ch2_output`, `sync_counter` | `ch1_bnc`, `ch2_bnc`, `trig_out_bnc` |

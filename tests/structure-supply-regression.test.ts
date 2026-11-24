@@ -7,7 +7,7 @@ import { getDefinition } from '../src/data/editorCatalog'
 import { getPartForType } from '../src/data/partCatalog'
 import { wireHarness } from './helpers/wireHarness'
 import { parseCircuitFile } from '../src/services/files/circuitFile'
-import { supplyControlValue } from '../src/three/PowerSupplyModel'
+import { supplyControlValue } from '../src/three/instruments/PowerSupplyModel'
 
 test('DC source dispatch restores the detailed Structure assembly without changing its electrical identity', () => {
   const module = { id: 'PS', type: 'DC_SUPPLY', properties: { voltage: 5, power_on: true } }

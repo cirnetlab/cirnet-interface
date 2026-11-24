@@ -9,7 +9,7 @@ import {useStationStore} from '../src/stores/station'
 import {stationFixture} from './helpers/station'
 import { useInstrumentStore } from '../src/stores/instrument'
 import { windowDefinitions } from '../src/types/windows'
-import { GENERATOR_LAYOUT, GENERATOR_CH1, GENERATOR_CH2, GENERATOR_SYNC } from '../src/three/FunctionGeneratorArtwork'
+import { GENERATOR_LAYOUT, GENERATOR_CH1, GENERATOR_CH2, GENERATOR_SYNC } from '../src/three/instruments/FunctionGeneratorArtwork'
 import { loadSfc, mountSfc, dispatch } from './helpers/vueSfc'
 import { useWireRouting } from '../src/composables/useWireRouting'
 

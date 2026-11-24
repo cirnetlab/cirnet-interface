@@ -11,7 +11,7 @@ Both models use editor world units, a center-bottom origin, Y up and +Z forward.
 | Contract | Function Generator 2 CH | Oscilloscope 2 CH |
 | --- | --- | --- |
 | Palette type and visual size | `GENERATOR`, `[6,3.6,2.8]` | `OSCILLOSCOPE`, `[6,3.8,2.8]` |
-| Main sources | `FunctionGeneratorModel.ts`, `FunctionGeneratorArtwork.ts`, `GENERATOR_LAYOUT` | `OscilloscopeModel.ts`, `OscilloscopeArtwork.ts`, `SCOPE_LAYOUT` |
+| Main sources | [`FunctionGeneratorModel.ts`](../../../src/three/instruments/FunctionGeneratorModel.ts), [`FunctionGeneratorArtwork.ts`](../../../src/three/instruments/FunctionGeneratorArtwork.ts), `GENERATOR_LAYOUT` | [`OscilloscopeModel.ts`](../../../src/three/instruments/OscilloscopeModel.ts), [`OscilloscopeArtwork.ts`](../../../src/three/instruments/OscilloscopeArtwork.ts), `SCOPE_LAYOUT` |
 | Display | Unlit `screen`, 1024×768, CH1 sine and CH2 square previews | Unlit `screen`, 1024×704, CH1 square and CH2 sine previews |
 | Named controls | `encoder_knob`, six `soft_key_*` meshes, three rows of function keys and arrow keys | Seven centered knob pivots, Horizontal and Trigger button groups, CH1/CH2 controls and separate power indicator |
 | Connectors | `ch1_output`, `ch2_output`, `sync_counter` | `ch1_bnc`, `ch2_bnc`, `trig_out_bnc` |

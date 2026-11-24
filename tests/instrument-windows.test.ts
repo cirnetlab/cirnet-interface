@@ -13,7 +13,7 @@ import { useCircuitStore } from '../src/stores/circuit'
 import { useUiStore } from '../src/stores/ui'
 import { windowDefinitions } from '../src/types/windows'
 import { CH1_COLOR, CH2_COLOR, SCOPE_KEYS, SCOPE_LABELS } from '../src/data/instrumentVisuals'
-import { SCOPE_LAYOUT, scopeLegendsArtwork } from '../src/three/OscilloscopeArtwork'
+import { SCOPE_LAYOUT, scopeLegendsArtwork } from '../src/three/instruments/OscilloscopeArtwork'
 
 // Render the actual SFCs using Vue/esbuild already supplied by this project.
 // No browser, sample source or separate test framework is needed.

@@ -5,7 +5,7 @@
 together. No compression extension or decoder is required. Materials use core PBR
 and `KHR_materials_unlit` for the screen/printed decals.
 
-The same `src/three/OscilloscopeModel.ts` factory supplies the workspace model.
+The same `src/three/instruments/OscilloscopeModel.ts` factory supplies the workspace model.
 Choose **Instruments → Oscilloscope · 2 channels**, then click the surface or drag
 from the palette. Selection, Move-only body dragging, X/Z and Y gizmo transforms,
 Undo/Redo and circuit JSON persistence use the existing editor commands.

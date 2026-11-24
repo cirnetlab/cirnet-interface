@@ -1,7 +1,7 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneGeometry } from 'three'
 import { MM_TO_WORLD, type PartDefinition } from '../data/partCatalog'
 import { createPackageMarking } from './package/PackageMarking'
-import { supplyTerminalAnchor } from './PowerSupplyModel'
+import { supplyTerminalAnchor } from './instruments/PowerSupplyModel'
 
 /** Labels are model-owned scene resources, created only on hover or Show pins. */
 export function setPackagePinLabels(group: Group, part: PartDefinition, pinId: string | null, showAll = false) {

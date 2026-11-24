@@ -1,5 +1,10 @@
 # CIRNET Interface v0
 
+## Unreleased
+
+- Group the procedural Three.js instrument models, artwork and chassis in `src/three/instruments/` and document workbench source ownership.
+- Gom mô hình thiết bị Three.js tạo bằng mã, hình vẽ và khung thiết bị vào `src/three/instruments/` và ghi rõ trách nhiệm của các phần mã nguồn bàn làm việc.
+
 ## 0.3.0-dev.1 (development)
 
 - Migrate the Vue and Three.js workbench, browser tests and assets. Select native Contracts and Remote build inputs by digest.

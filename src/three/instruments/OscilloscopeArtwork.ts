@@ -1,5 +1,5 @@
-import { CH1_COLOR, CH2_COLOR, SCOPE_THEME, SCOPE_SECTIONS, SCOPE_LABELS, SCOPE_KEYS } from '../data/instrumentVisuals'
-export { CH1_COLOR, CH2_COLOR } from '../data/instrumentVisuals'
+import { CH1_COLOR, CH2_COLOR, SCOPE_THEME, SCOPE_SECTIONS, SCOPE_LABELS, SCOPE_KEYS } from '../../data/instrumentVisuals'
+export { CH1_COLOR, CH2_COLOR } from '../../data/instrumentVisuals'
 
 // One drawing recipe drives the live CanvasTextures and the exported PNG decals.
 // These two traces are illustrative; no sampling rate, bandwidth or acquisition

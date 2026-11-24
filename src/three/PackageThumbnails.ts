@@ -5,7 +5,7 @@ import { normalizeComponentProperties } from '../data/componentProperties'
 import { isLeadEditableType, readLeadProperties } from '../data/leadProperties'
 import type { CircuitModule } from '../types/circuit'
 import { buildComponent, disposeObject } from './ComponentModel'
-import { supplyControlValue } from './PowerSupplyModel'
+import { supplyControlValue } from './instruments/PowerSupplyModel'
 import { createStudioEnvironment } from './StudioEnvironment'
 
 export interface PackageThumbnailRenderer {

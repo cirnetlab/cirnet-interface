@@ -4,7 +4,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { GENERATOR_CH1, GENERATOR_CH2, GENERATOR_SYNC, GENERATOR_LAYOUT, GENERATOR_THEME, drawInstrumentArtwork, generatorLegendsArtwork, generatorScreenArtwork } from './FunctionGeneratorArtwork'
 import { loadInstrumentLogo, type InstrumentArtwork } from './InstrumentArtwork'
 import { createInstrumentChassis, mountInstrumentChassis } from './InstrumentChassis'
-import { createCoatingMaterial, stabilizeThinSurface } from './StudioEnvironment'
+import { createCoatingMaterial, stabilizeThinSurface } from '../StudioEnvironment'
 
 export const FUNCTION_GENERATOR_SIZE = [6, 3.6, 2.8] as const
 function canvasTexture(artwork: InstrumentArtwork) {
@@ -86,7 +86,7 @@ export function addFunctionGeneratorModel(group: Group) {
   const logoMaterial = new MeshBasicMaterial({ transparent: true, depthWrite: false, toneMapped: false }); logoMaterial.name = 'generator_brand'
   const owl = add('brand_owl', new PlaneGeometry(layout.owl.size, layout.owl.size), logoMaterial, layout.owl.x, layout.owl.y, 1.12); owl.userData = { asset: 'favicon.svg', ignorePick: true }
   if (typeof document !== 'undefined' && typeof document.createElementNS === 'function') {
-    logoMaterial.map = loadInstrumentLogo(group, new URL('../assets/icons/favicon.svg', import.meta.url).href)
+    logoMaterial.map = loadInstrumentLogo(group, new URL('../../assets/icons/favicon.svg', import.meta.url).href)
   } else logoMaterial.opacity = 0
 
   const button = (name: string, x: number, y: number, width: number, height: number, material: Material = grip, socket: Material = rubber) => {

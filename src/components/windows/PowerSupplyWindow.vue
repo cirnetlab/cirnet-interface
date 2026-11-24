@@ -3,7 +3,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import { useCircuitStore } from '../../stores/circuit'
 import { useWorkspaceStore } from '../../stores/workspace'
 import { useInstrumentStore } from '../../stores/instrument'
-import { supplyControlValue, supplyControlMaximum, type SupplyControl } from '../../three/PowerSupplyModel'
+import { supplyControlValue, supplyControlMaximum, type SupplyControl } from '../../three/instruments/PowerSupplyModel'
 import { SUPPLY_THEME } from '../../data/instrumentVisuals'
 const circuit = useCircuitStore(), workspace = useWorkspaceStore(), instrument = useInstrumentStore()
 const selected = computed(() => circuit.graph?.modules.find(module => module.id === workspace.selectedModuleId && module.type === 'POWER_SUPPLY'))

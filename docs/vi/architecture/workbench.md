@@ -10,6 +10,24 @@ Một bàn làm việc Vue 3 đang hoạt động phối hợp tài liệu mạc
 | Contracts | Schema và dữ liệu danh mục chuẩn, cùng gói SDK trình duyệt sử dụng. |
 | Remote và dịch vụ trạm | Remote phân quyền thao tác Lab và sở hữu API thực thi cùng lease. Hardware áp dụng bảo vệ cục bộ và sở hữu truy cập FPGA nội bộ. Trình duyệt hiển thị quyết định của dịch vụ. |
 
+## Trách nhiệm trong mã nguồn
+
+Interface gom các tính năng liên quan trong từng lớp có ranh giới phụ thuộc riêng.
+
+| Mã nguồn | Trách nhiệm |
+| --- | --- |
+| [`src/components/workbench/`](../../../src/components/workbench) và [`src/components/windows/`](../../../src/components/windows) | Khung bàn làm việc Vue, vùng quan sát, ribbon và phần hiển thị cửa sổ. Cửa sổ thiết bị hiển thị điều khiển và kết quả quan sát. |
+| [`src/composables/`](../../../src/composables) và [`src/editor/`](../../../src/editor) | Kết nối giao diện và xử lý thao tác đặt, chọn, chỉnh sửa linh kiện và đi dây. |
+| [`src/domain/document/`](../../../src/domain/document) và [`src/domain/capture/`](../../../src/domain/capture) | Lệnh đồ thị thuần, lịch sử, phiên bản và định dạng tài liệu, cùng phần giải mã và kiểm tra bản thu. |
+| [`src/electrical/`](../../../src/electrical), [`src/geometry/`](../../../src/geometry) và [`src/wires/`](../../../src/wires) | Tô pô và kết nối điện, tư thế và ràng buộc cơ khí, cùng đường đi và hình thức dây. |
+| [`src/three/`](../../../src/three) | Biểu diễn cảnh, dựng hình, chọn đối tượng và quản lý vòng đời tài nguyên. [`three/package/`](../../../src/three/package) tạo vỏ linh kiện bằng mã. [`three/instruments/`](../../../src/three/instruments) quản lý mô hình tạo bằng mã của bộ cấp nguồn, oscilloscope và generator cùng hình vẽ và khung thiết bị dùng chung. |
+| [`src/application/`](../../../src/application) | Luồng nghiệp vụ dự án, bài tập, thực thi và thiết bị. Các cổng ứng dụng khai báo dịch vụ mà những luồng này cần. |
+| [`src/stores/`](../../../src/stores) | Lớp Pinia và trạng thái trình duyệt của tài liệu, bàn làm việc, UI, phiên, dự án, bài tập, trạm, thực thi và thiết bị. |
+| [`src/services/`](../../../src/services) | Adapter trình duyệt cho REST và WebSocket của Remote, phạm vi phiên, tệp, khôi phục, bản thu và nạp mô hình. |
+| [`src/contracts/`](../../../src/contracts), [`src/data/`](../../../src/data) và [`src/types/`](../../../src/types) | Kiểm tra dữ liệu trình duyệt, biểu diễn từ SDK Contracts, danh mục trình biên tập, dữ liệu hiển thị cục bộ và kiểu dữ liệu. Contracts công bố schema dùng chung và danh mục chuẩn. |
+
+Bộ kiểm tra phụ thuộc AST thực thi ranh giới của domain và application thuần, ranh giới truyền tải của bộ dựng hình, danh sách điểm truy cập công khai được duyệt của SDK và quy tắc cấm vòng lặp import lúc chạy giữa các store. [Bộ kiểm tra phụ thuộc](../../../scripts/check-boundaries.mjs)
+
 ## Ranh giới đồ thị và hợp đồng
 
 - Tài liệu Graph 1.0 và 1.1 giữ nguyên ý nghĩa. Các thao tác bổ sung của Graph 1.2 mang cụm lắp ráp linh hoạt và descriptor vật lý tự do đã ghim. Kết nối bảng mạch linh hoạt chỉ rõ cả hai lỗ. Interface chịu trách nhiệm kiểm tra ngữ nghĩa và chuẩn hóa trước khi ghi nhận chỉnh sửa.

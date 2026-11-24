@@ -1,8 +1,8 @@
 import { BoxGeometry, CanvasTexture, CylinderGeometry, DoubleSide, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneGeometry, SphereGeometry, SRGBColorSpace, TorusGeometry, Vector3 } from 'three'
-import { createCoatingMaterial, stabilizeThinSurface } from './StudioEnvironment'
+import { createCoatingMaterial, stabilizeThinSurface } from '../StudioEnvironment'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import { loadInstrumentLogo } from './InstrumentArtwork'
-import { SUPPLY_THEME } from '../data/instrumentVisuals'
+import { SUPPLY_THEME } from '../../data/instrumentVisuals'
 
 export type SupplyControl = 'voltage_v' | 'current_limit_a' | 'power_on'
 /** Detailed Structure renderer dimensions, independent of an electrical package footprint. */
@@ -150,7 +150,7 @@ export function addPowerSupplyModel(group: Group, [w, h, d]: readonly number[]) 
   add('supply-display', new Mesh(new PlaneGeometry(w * 0.60, h * 0.63), stabilizeThinSurface(new MeshBasicMaterial({ color: screen ? '#ffffff' : '#000000', map: screen, toneMapped: false }))), -w * 0.135, h * 0.585, front + 0.041).userData.settings = [false, 0, 0]
   const legends = legendsTexture(w, h)
   if (legends) add('front-legends', new Mesh(new PlaneGeometry(w - 0.16, h - 0.26), stabilizeThinSurface(new MeshBasicMaterial({ map: legends, transparent: true, depthWrite: false, toneMapped: false }))), 0, panelY, front + 0.055)
-  const logoUrl = new URL('../assets/icons/favicon.svg', import.meta.url).href
+  const logoUrl = new URL('../../assets/icons/favicon.svg', import.meta.url).href
   const logoTexture = typeof document !== 'undefined' && typeof document.createElementNS === 'function'
   ? loadInstrumentLogo(group, logoUrl) : null
   const logo = add('supply-brand-icon', new Mesh(new PlaneGeometry(0.155, 0.155), new MeshBasicMaterial({ map: logoTexture, transparent: true, depthWrite: false, toneMapped: false })), w * 0.165, h * 0.947, front + 0.06)

@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Texture } from 'three'
-import { generatorScreenArtwork, generatorLegendsArtwork, instrumentArtworkSvg } from '../src/three/FunctionGeneratorArtwork'
+import { generatorScreenArtwork, generatorLegendsArtwork, instrumentArtworkSvg } from '../src/three/instruments/FunctionGeneratorArtwork'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { Box3, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneGeometry, Vector3 } from 'three'
