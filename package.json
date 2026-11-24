@@ -5,7 +5,7 @@
   "description": "CIRNET Interface web workbench",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cirnetlab/cirnet-interface-next.git"
+    "url": "https://github.com/cirnetlab/cirnet-interface.git"
   },
   "type": "module",
   "scripts": {

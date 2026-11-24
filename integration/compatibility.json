@@ -4,7 +4,7 @@
   "interface": {
     "name": "@cirnet/web",
     "version": "0.3.0-dev.1",
-    "artifactName": "cirnet-interface-next"
+    "artifactName": "cirnet-interface"
   },
   "contracts": {
     "targetVersion": "0.3.0-dev.1",
@@ -13,7 +13,7 @@
   "remote": {
     "targetVersion": "0.3.0-dev.1",
     "hardwareRpcVersion": "2.0",
-    "integrationOwner": "cirnet-remote-next"
+    "integrationOwner": "cirnet-remote"
   },
   "graphs": [
     "1.0",

@@ -4,11 +4,11 @@
 
 ## GitHub Actions
 
-**Interface Windows x64 verification** chạy khi push lên `master`. Workflow tạo đầu vào từ các commit chính xác của Contracts Next và Remote Next được ghim trong cấu hình.
+**Interface Windows x64 verification** chạy khi push lên `master`. Workflow tạo đầu vào từ các commit chính xác của Contracts và Remote được ghim trong cấu hình.
 
-Đặt `CIRNET_DEPENDENCIES_READ_TOKEN` trong [Actions secrets của repo Interface](https://github.com/cirnetlab/cirnet-interface-next/settings/secrets/actions). Dùng fine-grained token có resource owner là `cirnetlab` và quyền `Contents: read` trên cả `cirnet-contracts-next` lẫn `cirnet-remote-next`. Cả hai bước checkout dùng secret này.
+Đặt `CIRNET_DEPENDENCIES_READ_TOKEN` trong [Actions secrets của repo Interface](https://github.com/cirnetlab/cirnet-interface/settings/secrets/actions). Dùng fine-grained token có resource owner là `cirnetlab` và quyền `Contents: read` trên cả `cirnet-contracts` lẫn `cirnet-remote`. Cả hai bước checkout dùng secret này.
 
-Khi chạy thủ công, chọn mã lượt chạy **Windows x64 native candidate** của Remote và `manifestSha256` đã duyệt. Cấu hình `CIRNET_READ_TOKEN` có quyền đọc Actions của Remote Next. Cả hai chế độ đều build và chạy bộ kiểm thử thành phần cùng kiểm thử nền tảng Chromium.
+Khi chạy thủ công, chọn mã lượt chạy **Windows x64 native candidate** của Remote và `manifestSha256` đã duyệt. Cấu hình `CIRNET_READ_TOKEN` có quyền đọc Actions của Remote. Cả hai chế độ đều build và chạy bộ kiểm thử thành phần cùng kiểm thử nền tảng Chromium.
 
 ## Kiểm tra cục bộ
 

@@ -4,8 +4,8 @@ $PSNativeCommandUseErrorActionPreference = $true
 
 $interface = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $sources = Split-Path -Parent $interface
-$contracts = Join-Path $sources 'cirnet-contracts-next'
-$remote = Join-Path $sources 'cirnet-remote-next'
+$contracts = Join-Path $sources 'cirnet-contracts'
+$remote = Join-Path $sources 'cirnet-remote'
 $allocator = Join-Path $contracts 'tools/artifact-paths/cirnet_artifact_paths/artifact-paths.mjs'
 $env:CIRNET_ARTIFACTS_CONTEXT = @{
     owner = 'cirnet-interface-ci'

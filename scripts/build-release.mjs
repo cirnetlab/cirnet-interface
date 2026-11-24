@@ -164,7 +164,7 @@ function writePair(output, source, staticFiles, metadata) {
   const outputs = new Map()
   for (const [kind, files] of [['source', source], ['static', staticFiles]]) {
     files.set(metadataName, Buffer.from(JSON.stringify({...metadata, kind}, null, 2) + '\n'))
-    const filename = `cirnet-interface-next-${metadata.version}-${kind}.tar.gz`
+    const filename = `cirnet-interface-${metadata.version}-${kind}.tar.gz`
     const path = resolve(output, filename)
     const bytes = archiveBytes(files)
     outputs.set(path, bytes)
@@ -306,7 +306,7 @@ function build({outputDirectory, sourceRoot, manifestPath, candidate, verificati
     if (!staticFiles.has(page)) throw Error(`Missing production entrypoint in static bundle: ${page}`)
   }
   return writePair(output, source, staticFiles, {
-    schema: 1, name: 'cirnet-interface-next', version, contractsVersion, contractsSha256, artifactPurpose,
+    schema: 1, name: 'cirnet-interface', version, contractsVersion, contractsSha256, artifactPurpose,
     contractsCrateSha256: lock.native_crate.sha256, remoteOpenapiSha256: lock.remote_openapi.sha256,
     source: {repository, revision, uncommittedMigration: candidate},
     sourceFingerprint: fingerprint.digest('hex'), sourceFingerprintAlgorithm: 'sha256-path-lines-v1',

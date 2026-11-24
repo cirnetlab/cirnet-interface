@@ -63,7 +63,7 @@ try {
     const response=await fetch(new URL('/interface-artifact.json',target),{redirect:'error',signal:AbortSignal.timeout(5000)})
     if(!response.ok)throw Error('Installed Interface artifact metadata is unavailable.')
     const metadata=await response.json()
-    if(metadata.name!=='cirnet-interface-next'||metadata.kind!=='static'||metadata.sourceFingerprint!==expected)
+    if(metadata.name!=='cirnet-interface'||metadata.kind!=='static'||metadata.sourceFingerprint!==expected)
      throw Error('The native host does not serve the selected static Interface artifact.')
    }
   }

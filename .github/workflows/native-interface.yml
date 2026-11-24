@@ -24,7 +24,7 @@ jobs:
     defaults:
       run:
         shell: pwsh
-        working-directory: source/cirnet-interface-next
+        working-directory: source/cirnet-interface
     env:
       CANDIDATE_RUN_ID: ${{ inputs.candidate_run_id }}
       EXPECTED_MANIFEST_SHA256: ${{ inputs.manifest_sha256 }}
@@ -38,15 +38,15 @@ jobs:
           "CANDIDATE_ARTIFACT_DIR=$(Join-Path $env:RUNNER_TEMP 'cirnet-interface-candidate')" >> $env:GITHUB_ENV
           "CIRNET_ARTIFACTS_DIR=$(Join-Path $env:RUNNER_TEMP 'cirnet-interface-verification')" >> $env:GITHUB_ENV
           if ($env:GITHUB_EVENT_NAME -eq 'push') {
-            if (!$env:DEPENDENCIES_TOKEN) { throw 'Set the CIRNET_DEPENDENCIES_READ_TOKEN Actions secret for cirnet-interface-next. Grant Contents read access to cirnet-contracts-next and cirnet-remote-next.' }
+            if (!$env:DEPENDENCIES_TOKEN) { throw 'Set the CIRNET_DEPENDENCIES_READ_TOKEN Actions secret for cirnet-interface. Grant Contents read access to cirnet-contracts and cirnet-remote.' }
             exit 0
           }
-          if (!$env:ARTIFACT_TOKEN) { throw 'Configure CIRNET_READ_TOKEN with Actions read access to Remote Next.' }
+          if (!$env:ARTIFACT_TOKEN) { throw 'Configure CIRNET_READ_TOKEN with Actions read access to Remote.' }
           if ($env:CANDIDATE_RUN_ID -cnotmatch '^[1-9][0-9]*$') { throw 'Expected a numeric Remote workflow run ID.' }
           if ($env:EXPECTED_MANIFEST_SHA256 -cnotmatch '^[0-9a-f]{64}$') { throw 'Expected a lowercase native manifest SHA-256.' }
       - uses: actions/checkout@v5
         with:
-          path: source/cirnet-interface-next
+          path: source/cirnet-interface
           persist-credentials: false
       - uses: actions/setup-node@v5
         with:
@@ -56,18 +56,18 @@ jobs:
         uses: actions/checkout@v5
         if: github.event_name == 'push'
         with:
-          repository: cirnetlab/cirnet-contracts-next
-          ref: b151f9f16b4d8998ca7142d208c86e7a03268694
-          path: source/cirnet-contracts-next
+          repository: cirnetlab/cirnet-contracts
+          ref: e3f933957db8ec076ab2b313c2a3072d39d6333d
+          path: source/cirnet-contracts
           token: ${{ secrets.CIRNET_DEPENDENCIES_READ_TOKEN || secrets.CIRNET_READ_TOKEN }}
           persist-credentials: false
       - name: Checkout pinned Remote sources
         uses: actions/checkout@v5
         if: github.event_name == 'push'
         with:
-          repository: cirnetlab/cirnet-remote-next
-          ref: ca9bd715088da6e2460399977a8462c1eb73a48a
-          path: source/cirnet-remote-next
+          repository: cirnetlab/cirnet-remote
+          ref: ca839dd895c4bb4e7c19d8577424cab45b54c2b9
+          path: source/cirnet-remote
           token: ${{ secrets.CIRNET_DEPENDENCIES_READ_TOKEN || secrets.CIRNET_READ_TOKEN }}
           persist-credentials: false
       - name: Build verified inputs from pinned sources
@@ -77,7 +77,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         with:
           name: windows-x64-development-candidate
-          repository: cirnetlab/cirnet-remote-next
+          repository: cirnetlab/cirnet-remote
           run-id: ${{ inputs.candidate_run_id }}
           github-token: ${{ secrets.CIRNET_READ_TOKEN }}
           path: ${{ env.CANDIDATE_ARTIFACT_DIR }}

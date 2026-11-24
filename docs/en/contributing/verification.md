@@ -4,11 +4,11 @@
 
 ## GitHub Actions
 
-**Interface Windows x64 verification** runs on pushes to `master`. It builds the dependency inputs from the exact Contracts Next and Remote Next commits pinned in the workflow.
+**Interface Windows x64 verification** runs on pushes to `master`. It builds the dependency inputs from the exact Contracts and Remote commits pinned in the workflow.
 
-Set the [Interface repository Actions secret](https://github.com/cirnetlab/cirnet-interface-next/settings/secrets/actions) `CIRNET_DEPENDENCIES_READ_TOKEN` to a fine-grained token with resource owner `cirnetlab` and `Contents: read` on both `cirnet-contracts-next` and `cirnet-remote-next`. Both checkouts use this secret.
+Set the [Interface repository Actions secret](https://github.com/cirnetlab/cirnet-interface/settings/secrets/actions) `CIRNET_DEPENDENCIES_READ_TOKEN` to a fine-grained token with resource owner `cirnetlab` and `Contents: read` on both `cirnet-contracts` and `cirnet-remote`. Both checkouts use this secret.
 
-For a manual run, select a Remote **Windows x64 native candidate** run ID and the reviewed `manifestSha256`. Set `CIRNET_READ_TOKEN` with Actions read access to Remote Next. Both paths run the component build, unit checks and Chromium platform tests.
+For a manual run, select a Remote **Windows x64 native candidate** run ID and the reviewed `manifestSha256`. Set `CIRNET_READ_TOKEN` with Actions read access to Remote. Both paths run the component build, unit checks and Chromium platform tests.
 
 ## Local checks
 
