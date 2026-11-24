@@ -1,0 +1,150 @@
+name: Interface Windows x64 verification
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      candidate_run_id:
+        description: Remote Windows x64 native candidate workflow run ID
+        required: true
+        type: string
+      manifest_sha256:
+        description: Reviewed SHA-256 of the native candidate manifest
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: windows-2022
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: source/cirnet-interface-next
+    env:
+      CANDIDATE_RUN_ID: ${{ inputs.candidate_run_id }}
+      EXPECTED_MANIFEST_SHA256: ${{ inputs.manifest_sha256 }}
+    steps:
+      - name: Prepare runner paths and validate access
+        working-directory: .
+        env:
+          DEPENDENCIES_TOKEN: ${{ secrets.CIRNET_DEPENDENCIES_READ_TOKEN || secrets.CIRNET_READ_TOKEN }}
+          ARTIFACT_TOKEN: ${{ secrets.CIRNET_READ_TOKEN }}
+        run: |
+          "CANDIDATE_ARTIFACT_DIR=$(Join-Path $env:RUNNER_TEMP 'cirnet-interface-candidate')" >> $env:GITHUB_ENV
+          "CIRNET_ARTIFACTS_DIR=$(Join-Path $env:RUNNER_TEMP 'cirnet-interface-verification')" >> $env:GITHUB_ENV
+          if ($env:GITHUB_EVENT_NAME -eq 'push') {
+            if (!$env:DEPENDENCIES_TOKEN) { throw 'Set the CIRNET_DEPENDENCIES_READ_TOKEN Actions secret for cirnet-interface-next. Grant Contents read access to cirnet-contracts-next and cirnet-remote-next.' }
+            exit 0
+          }
+          if (!$env:ARTIFACT_TOKEN) { throw 'Configure CIRNET_READ_TOKEN with Actions read access to Remote Next.' }
+          if ($env:CANDIDATE_RUN_ID -cnotmatch '^[1-9][0-9]*$') { throw 'Expected a numeric Remote workflow run ID.' }
+          if ($env:EXPECTED_MANIFEST_SHA256 -cnotmatch '^[0-9a-f]{64}$') { throw 'Expected a lowercase native manifest SHA-256.' }
+      - uses: actions/checkout@v5
+        with:
+          path: source/cirnet-interface-next
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 26.12.1
+          package-manager-cache: false
+      - name: Checkout pinned Contracts sources
+        uses: actions/checkout@v5
+        if: github.event_name == 'push'
+        with:
+          repository: cirnetlab/cirnet-contracts-next
+          ref: b151f9f16b4d8998ca7142d208c86e7a03268694
+          path: source/cirnet-contracts-next
+          token: ${{ secrets.CIRNET_DEPENDENCIES_READ_TOKEN || secrets.CIRNET_READ_TOKEN }}
+          persist-credentials: false
+      - name: Checkout pinned Remote sources
+        uses: actions/checkout@v5
+        if: github.event_name == 'push'
+        with:
+          repository: cirnetlab/cirnet-remote-next
+          ref: ca9bd715088da6e2460399977a8462c1eb73a48a
+          path: source/cirnet-remote-next
+          token: ${{ secrets.CIRNET_DEPENDENCIES_READ_TOKEN || secrets.CIRNET_READ_TOKEN }}
+          persist-credentials: false
+      - name: Build verified inputs from pinned sources
+        if: github.event_name == 'push'
+        run: ./scripts/build-ci-inputs.ps1
+      - uses: actions/download-artifact@v7
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          name: windows-x64-development-candidate
+          repository: cirnetlab/cirnet-remote-next
+          run-id: ${{ inputs.candidate_run_id }}
+          github-token: ${{ secrets.CIRNET_READ_TOKEN }}
+          path: ${{ env.CANDIDATE_ARTIFACT_DIR }}
+      - name: Verify inputs from the reviewed Remote candidate
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $bundles = @(Get-ChildItem -LiteralPath $env:CANDIDATE_ARTIFACT_DIR -Filter 'cirnet-native-windows-x64-*.tar.gz' -File)
+          if ($bundles.Count -ne 1) { throw 'Expected exactly one native candidate archive.' }
+          $bundle = $bundles[0].FullName
+          $tar = Join-Path $env:SystemRoot 'System32/tar.exe'
+          $inputs = (New-Item -ItemType Directory -Path (Join-Path $env:RUNNER_TEMP 'cirnet-interface-inputs')).FullName
+          $manifestPath = Join-Path $inputs 'native-manifest.json'
+          & $tar -xOf $bundle './native-manifest.json' > $manifestPath
+          if ((Get-FileHash -LiteralPath $manifestPath -Algorithm SHA256).Hash.ToLowerInvariant() -cne $env:EXPECTED_MANIFEST_SHA256) {
+            throw 'Downloaded candidate manifest differs from the selected SHA-256.'
+          }
+          $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+          $version = $manifest.version
+          if ($manifest.schemaVersion -ne 1 -or $manifest.product -cne 'cirnet-native-candidate' -or
+              $manifest.target -cne 'x86_64-pc-windows-msvc' -or $version -cnotmatch '^\d+\.\d+\.\d+-dev\.\d+$') {
+            throw 'Expected a CIRNET Windows x64 development candidate.'
+          }
+          $members = @{
+            npm = "extras/cirnet-contracts-$version.tgz"
+            dev_npm = "extras/cirnet-artifact-paths-$version.tgz"
+            native_crate = 'extras/contracts-source.crate'
+            remote_openapi = 'receipts/remote-openapi.json'
+          }
+          $selection = @{}
+          foreach ($member in $members.GetEnumerator()) {
+            $record = @($manifest.files | Where-Object { $_.path -ceq $member.Value })
+            if ($record.Count -ne 1 -or $record[0].sha256 -cnotmatch '^[0-9a-f]{64}$') {
+              throw "Expected a unique manifest record for $($member.Value)."
+            }
+            # Stream only the selected bytes to a fixed filename, independent of member paths.
+            $path = Join-Path $inputs ([IO.Path]::GetFileName($member.Value))
+            & $tar -xOf $bundle "./$($member.Value)" > $path
+            $digest = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($digest -cne $record[0].sha256 -or (Get-Item -LiteralPath $path).Length -ne $record[0].size) {
+              throw "Candidate input differs from manifest: $($member.Value)"
+            }
+            $selection[$member.Key] = @{ path = $path; sha256 = $digest }
+          }
+          $selectionPath = Join-Path $inputs 'interface-input.json'
+          $selection | ConvertTo-Json | Set-Content -LiteralPath $selectionPath -Encoding utf8
+          "CIRNET_CONTRACTS_ARTIFACT_MANIFEST=$selectionPath" >> $env:GITHUB_ENV
+      - name: Bootstrap the selected Interface inputs
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          node scripts/bootstrap-contracts.mjs --manifest $env:CIRNET_CONTRACTS_ARTIFACT_MANIFEST --github-env $env:GITHUB_ENV
+      - name: Verify Interface and build static output
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          npm.cmd ci --ignore-scripts --no-audit --no-fund
+          npm.cmd run check:boundaries
+          npm.cmd test -- --all-script-tests
+          node node_modules/typescript/bin/tsc --noEmit -p tsconfig.e2e.json
+          npm.cmd run build
+      - name: Verify Chromium platform behavior
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $env:CIRNET_E2E_BROWSER_CACHE = Join-Path $env:CIRNET_ARTIFACTS_SESSION 'chromium'
+          $env:PLAYWRIGHT_BROWSERS_PATH = $env:CIRNET_E2E_BROWSER_CACHE
+          node node_modules/@playwright/test/cli.js install chromium
+          npm.cmd run test:e2e:platform -- --forbid-only

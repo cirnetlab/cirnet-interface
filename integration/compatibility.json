@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "status": "DEVELOPMENT",
+  "interface": {
+    "name": "@cirnet/web",
+    "version": "0.3.0-dev.1",
+    "artifactName": "cirnet-interface-next"
+  },
+  "contracts": {
+    "targetVersion": "0.3.0-dev.1",
+    "npm": "0.3.0-dev.1"
+  },
+  "remote": {
+    "targetVersion": "0.3.0-dev.1",
+    "hardwareRpcVersion": "2.0",
+    "integrationOwner": "cirnet-remote-next"
+  },
+  "graphs": [
+    "1.0",
+    "1.1",
+    "1.2"
+  ],
+  "delivery": {
+    "sameOrigin": true,
+    "apiPrefix": "/api",
+    "webSocketPrefix": "/ws",
+    "modelPrefix": "/models"
+  },
+  "platforms": {
+    "web": "IMPLEMENTED",
+    "desktop": "PROPOSED",
+    "mobile": "PROPOSED"
+  }
+}

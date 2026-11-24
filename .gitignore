@@ -1,0 +1,9 @@
+/.superpowers/
+/docs/superpowers/
+node_modules/
+dist/
+.test-build/
+.benchmark-build/
+.runtime/
+.artifacts/
+.build/
