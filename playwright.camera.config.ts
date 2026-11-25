@@ -3,7 +3,7 @@ import base from './playwright.config'
 
 export default defineConfig({
   ...base,
-  testMatch: 'unified-camera-framing.spec.ts',
+  testMatch: '**/rendering/unified-camera-framing.spec.ts',
   timeout: 240_000,
   expect: { timeout: 30_000 },
   projects: [

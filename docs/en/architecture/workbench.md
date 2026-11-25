@@ -26,7 +26,11 @@ Interface groups related features within layers that already have distinct depen
 | [`src/services/`](../../../src/services) | Browser adapters for Remote REST and WebSocket, session scope, files, recovery, captures and model loading. |
 | [`src/contracts/`](../../../src/contracts), [`src/data/`](../../../src/data) and [`src/types/`](../../../src/types) | Browser validation and projections of the Contracts SDK, editor catalogs, local presentation data and types. Contracts publishes the shared schemas and canonical catalogs. |
 
-The AST dependency check enforces the pure domain and application boundaries, the renderer transport boundary, approved public SDK entrypoints and acyclic store runtime imports. [Dependency checker](../../../scripts/check-boundaries.mjs)
+The AST dependency check enforces the pure domain and application boundaries, the renderer transport boundary, approved public SDK entrypoints and acyclic store runtime imports. [Dependency checker](../../../scripts/verification/check-boundaries.mjs)
+
+Within the UI layer, workbench chrome, palette, execution and wire controls have separate homes. Editor, instrument and lab windows are grouped with their UI responsibilities. Shared floating-window mechanics stay in `components/windows/`.
+
+Selection and pointer placement live under `editor/selection/` and `editor/interaction/`. Electrical connectivity and mounting are separate, and mechanical geometry groups breadboard and placement functions. Three.js groups scene, camera, breadboard, selection, labels, packages, instruments and wires beneath its renderer boundary. Pinia groups document, lab and workbench state. REST and WebSocket services expose their existing entrypoints from their own directories.
 
 ## Graph and contract boundaries
 
@@ -49,6 +53,6 @@ The pure document core owns commands, history, serialization and revision tracki
 
 Scene resources stay outside Pinia. The renderer coalesces graph, camera and gesture updates into animation frames. Hidden, zero-sized and context-lost scenes pause. Resize and context restoration redraw. Unmount releases observers, controls, frames and GPU resources. The asset provider checks the preview models by revision and falls back to procedural visuals on import failure. [Instrument model guide](../guides/instrument-models.md)
 
-The current source skips an equivalent camera preset. When the previous draw took at least as long as the transition, the renderer applies the final pose directly. Both choices limit redundant rendering while keeping graph commands and electrical connectivity independent of view state. [Scene manager](../../../src/three/SceneManager.ts)
+The current source skips an equivalent camera preset. When the previous draw took at least as long as the transition, the renderer applies the final pose directly. Both choices limit redundant rendering while keeping graph commands and electrical connectivity independent of view state. [Scene manager](../../../src/three/scene/SceneManager.ts)
 
 See the [workbench guide](../guides/workbench.md) for editor behavior and [verification](../contributing/verification.md) for the two browser test boundaries.

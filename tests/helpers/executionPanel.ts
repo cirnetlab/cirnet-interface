@@ -1,6 +1,6 @@
 import { defineComponent,h,type Component } from 'vue'
 import type { Pinia } from 'pinia'
-import { provideExecutionCommands,type ExecutionCommands } from '../../src/composables/useExecutionCommands'
+import { provideExecutionCommands,type ExecutionCommands } from '../../src/composables/lab/useExecutionCommands'
 import { mountSfc } from './vueSfc'
 
 /** The test host owns the commands just as SingleWorkspaceShell does. */

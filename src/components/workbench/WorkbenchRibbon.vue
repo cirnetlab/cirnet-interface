@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed,nextTick,ref,watch } from 'vue'
-import { useUiStore } from '../../stores/ui'
-import { useDrawerMotion } from '../../composables/useDrawerMotion'
-import ComponentRibbon from './ComponentRibbon.vue'
-import RunRibbonPanel from './RunRibbonPanel.vue'
-import WorkbenchIcon from './WorkbenchIcon.vue'
+import { useUiStore } from '../../stores/workbench/ui'
+import { useDrawerMotion } from '../../composables/workbench/useDrawerMotion'
+import ComponentRibbon from './palette/ComponentRibbon.vue'
+import RunRibbonPanel from './execution/RunRibbonPanel.vue'
+import WorkbenchIcon from './chrome/WorkbenchIcon.vue'
 const ui=useUiStore(),drawer=ref<HTMLElement>(),collapseToggle=ref<HTMLButtonElement>()
 const motion=useDrawerMotion({collapsed:()=>ui.componentToolbarCollapsed,drawer:()=>drawer.value})
 const collapseLabel=computed(()=>ui.componentToolbarCollapsed?'Expand Ribbon':'Collapse Ribbon')

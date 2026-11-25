@@ -1,8 +1,8 @@
-import './scripts/environment.mjs'
+import './scripts/utilities/environment.mjs'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath } from 'node:url'
-import { devProxyDiagnostics } from './scripts/dev-proxy-diagnostics'
+import { devProxyDiagnostics } from './scripts/utilities/dev-proxy-diagnostics'
 const apiTarget=process.env.CIRNET_DEV_API_TARGET || 'http://127.0.0.1:8000'
 
 export default defineConfig({

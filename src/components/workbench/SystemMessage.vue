@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed,nextTick,ref } from 'vue'
-import { useWorkspaceMessageStore } from '../../stores/workspaceMessages'
-import { useUiStore } from '../../stores/ui'
-import WorkbenchIcon from './WorkbenchIcon.vue'
+import { useWorkspaceMessageStore } from '../../stores/workbench/workspaceMessages'
+import { useUiStore } from '../../stores/workbench/ui'
+import WorkbenchIcon from './chrome/WorkbenchIcon.vue'
 const messages=useWorkspaceMessageStore(),ui=useUiStore()
 const current=computed(()=>messages.current),expanded=ref(false),details=ref<HTMLElement>(),toggle=ref<HTMLButtonElement>()
 const prefix=computed(()=>current.value?.level==='error'?'Error: ':current.value?.level==='warning'?'Notice: ':'')

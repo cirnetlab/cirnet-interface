@@ -6,7 +6,7 @@ import { addFunctionGeneratorModel } from '../three/instruments/FunctionGenerato
 import { drawInstrumentArtwork,generatorScreenArtwork } from '../three/instruments/FunctionGeneratorArtwork'
 import { addOscilloscopeModel } from '../three/instruments/OscilloscopeModel'
 import { drawScopeArtwork,scopeScreenArtwork } from '../three/instruments/OscilloscopeArtwork'
-import { disposeObject } from '../three/ObjectResources'
+import { disposeObject } from '../three/scene/ObjectResources'
 
 const kind:InstrumentAssetKind=document.body.dataset.instrument==='generator'?'generator':'oscilloscope'
 const scope=kind==='oscilloscope',targetY=scope?1.9:1.8

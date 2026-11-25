@@ -9,6 +9,6 @@ if (!origin || !/^http:\/\/127\.0\.0\.1:[1-9]\d*$/.test(origin)) {
 // Inherit Chromium flags, workers, retries and evidence settings from Remote.
 export default defineConfig({
   ...base,
-  testMatch: ['**/depth-artifacts.spec.ts', '**/pending-observations-platform.ts'],
+  testMatch: ['**/rendering/depth-artifacts.spec.ts', '**/lab/pending-observations-platform.ts'],
   use: {...base.use, baseURL: origin},
 })

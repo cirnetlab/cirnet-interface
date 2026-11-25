@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Group Interface source, tests, scripts and browser suites by responsibility. Discover nested tests and accept unambiguous targeted selectors.
+- Nhóm mã nguồn, test, script và bộ kiểm thử trình duyệt theo trách nhiệm. Tìm test trong thư mục con và hỗ trợ chọn test theo đường dẫn hoặc tên duy nhất.
+
 - Group the procedural Three.js instrument models, artwork and chassis in `src/three/instruments/` and document workbench source ownership.
 - Gom mô hình thiết bị Three.js tạo bằng mã, hình vẽ và khung thiết bị vào `src/three/instruments/` và ghi rõ trách nhiệm của các phần mã nguồn bàn làm việc.
 

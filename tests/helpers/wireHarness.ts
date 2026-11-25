@@ -1,10 +1,10 @@
 import { createRenderer, ref } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { Vector3 } from 'three'
-import { createSceneManager } from '../../src/three/SceneManager'
-import { useCircuitEditor } from '../../src/composables/useCircuitEditor'
-import { useCircuitStore } from '../../src/stores/circuit'
-import { useWorkspaceStore } from '../../src/stores/workspace'
+import { createSceneManager } from '../../src/three/scene/SceneManager'
+import { useCircuitEditor } from '../../src/composables/editor/useCircuitEditor'
+import { useCircuitStore } from '../../src/stores/documents/circuit'
+import { useWorkspaceStore } from '../../src/stores/workbench/workspace'
 
 export function wireHarness() {
   const previous = Object.getOwnPropertyDescriptor(globalThis, 'document')

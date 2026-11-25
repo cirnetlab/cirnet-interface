@@ -3,7 +3,7 @@ import { readLeadProperties, type LeadProperties } from '../../data/leadProperti
 import { MM_TO_WORLD, type PartDefinition } from '../../data/partCatalog'
 import type { CircuitModule } from '../../types/circuit'
 import { createFormedLeadGeometry } from './LeadGeometry'
-import { isFlexibleMount } from '../../electrical/flexibleGeometry'
+import { isFlexibleMount } from '../../electrical/mounting/flexibleGeometry'
 
 interface EditableLead { surface: Mesh<BufferGeometry>; baseline: Vector3[] }
 interface LeadModelState { body: { object: Object3D; y: number }[]; leads: EditableLead[]; signature: string }

@@ -1,21 +1,21 @@
 import { Box3, BoxGeometry, CanvasTexture, CylinderGeometry, Group, Mesh, MeshStandardMaterial, SphereGeometry, Sprite, SpriteMaterial, SRGBColorSpace, Vector3 } from 'three'
 import { getDefinition, type LogicalPort } from '../data/editorCatalog'
 import type { CircuitModule } from '../types/circuit'
-import { addBreadboardHousing, BREADBOARD_PLASTIC_COLOR } from './BreadboardHousing'
-import { getBreadboardGeometrySpec } from '../geometry/BreadboardGeometrySpec'
+import { addBreadboardHousing, BREADBOARD_PLASTIC_COLOR } from './breadboard/BreadboardHousing'
+import { getBreadboardGeometrySpec } from '../geometry/breadboard/BreadboardGeometrySpec'
 import { addPowerSupplyModel, applyPowerSupplyControls, POWER_SUPPLY_VISUAL_SIZE, supplyTerminalAnchor } from './instruments/PowerSupplyModel'
 import { addOscilloscopeModel } from './instruments/OscilloscopeModel'
 import { addFunctionGeneratorModel } from './instruments/FunctionGeneratorModel'
 import { getPartForModule, MM_TO_WORLD } from '../data/partCatalog'
-import { addPackageModel, packagePinAnchor } from './PackageModel'
+import { addPackageModel, packagePinAnchor } from './package/PackageModel'
 import { subduedBodyColor } from './package/PackageMaterials'
 import { preserveStructureLighting } from './StudioEnvironment'
 import { updateFlexiblePackageGeometry } from './package/FlexiblePackageGeometry'
-import { moduleWorldPose } from '../electrical/modulePose'
-import { addLabelModel } from './LabelModel'
+import { moduleWorldPose } from '../electrical/mounting/modulePose'
+import { addLabelModel } from './labels/LabelModel'
 import { updateMountedPackageInsertion } from './package/MountedPackageInsertion'
 
-export { disposeObject } from './ObjectResources'
+export { disposeObject } from './scene/ObjectResources'
 
 function createBreadboardTexture(type: string): CanvasTexture | null {
   if (typeof document === 'undefined') return null

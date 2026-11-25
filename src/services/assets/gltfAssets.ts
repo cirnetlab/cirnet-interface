@@ -1,7 +1,7 @@
 import { Group,Mesh,Texture,type BufferGeometry,type Material } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { AssetProvider,type AssetDescriptor,type AssetLoader } from '../../application/assets/AssetProvider'
-import { disposeObject } from '../../three/ObjectResources'
+import { disposeObject } from '../../three/scene/ObjectResources'
 
 interface ClosableImage { close():void }
 export interface ImportedModel { root:Group; ownedImages:Set<ClosableImage> }

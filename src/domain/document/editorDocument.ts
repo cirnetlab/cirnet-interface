@@ -1,7 +1,7 @@
 import type { CircuitGraph, CircuitModule } from '../../types/circuit'
 import { MAX_CIRCUIT_FILE_BYTES,parseCircuitFile } from './circuitFile'
-import { validateMountBindings } from '../../electrical/mounting'
-import { synchronizeLabelBoardPoses } from '../../geometry/labelBoardPose'
+import { validateMountBindings } from '../../electrical/mounting/mounting'
+import { synchronizeLabelBoardPoses } from '../../geometry/placement/labelBoardPose'
 import { getPartForModule } from '../../data/partCatalog'
 
 export interface CircuitDraft {id:string;name:string;graph:CircuitGraph}

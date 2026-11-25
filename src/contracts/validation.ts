@@ -1,7 +1,7 @@
 import type { ContractMap, GeneratorCapability, InstrumentCapabilities, LabEndpoint, ObservedPhysicalComponent } from '@cirnet/contracts/dto'
 import { contractIssue, ContractValidationError, parseStructural, type ValidationProfile } from './structural'
 import { normalizeCircuitDocument, validateCircuitDocument } from '../domain/document/circuitFile'
-import { validateSignalDomains } from '../electrical/signalDomains'
+import { validateSignalDomains } from '../electrical/connectivity/signalDomains'
 import { validateAnalogCapture } from '../domain/capture/validation'
 import { validateLabelAnnotations } from './labelValidation'
 

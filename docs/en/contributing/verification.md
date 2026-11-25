@@ -23,6 +23,15 @@ npm run test:e2e:install
 npm run test:e2e:platform -- --forbid-only
 ```
 
+The runner discovers `*.test.ts` recursively in [tests](../../../tests) and preserves each feature path in its build output. [Shared helpers](../../../tests/helpers) and [historical fixtures](../../../tests/fixtures/historical) stay at stable paths. Select a test by suite-relative path, repository-relative path or unique filename. Ambiguous and unknown selections fail before executing tests.
+
+```powershell
+npm test -- tests/instruments/oscilloscope.test.ts
+node scripts/test.mjs scripts/verification/test-runner.test.mjs
+```
+
+`--all-script-tests` includes all recursively discovered `*.test.mjs` files. [Scripts](../../../scripts) separate build and packaging, Contracts bootstrap, verification, browser execution, benchmarks, asset export and utilities. The root launchers keep existing integration commands available. [Browser specs and harnesses](../../../e2e) group auth, projects, workbench, rendering and lab; Playwright discovers the nested specs from the same configuration.
+
 Set `CIRNET_E2E_BROWSER_CACHE` to an absolute external directory to select the pinned Chromium installation. The platform suite exercises the actual renderer, camera, depth and browser document ownership without a server account.
 
 The component-palette benchmark verifies and loads the checked-in source fixtures named in its [baseline manifest](../../../tests/fixtures/historical/40a4cad80be76a5b08943fab51ee2218cb7d7012/manifest.json). The original Git revision identifies provenance.

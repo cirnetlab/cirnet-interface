@@ -5,7 +5,7 @@ import { router } from './router'
 import { configureApiClient } from './services/api/client'
 import './style.css'
 import { useAuthStore } from './stores/auth'
-import { useCircuitStore } from './stores/circuit'
+import { useCircuitStore } from './stores/documents/circuit'
 import { circuitsApi } from './services/api/circuits'
 
 const pinia=createPinia(),auth=useAuthStore(pinia)

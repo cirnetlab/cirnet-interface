@@ -1,6 +1,6 @@
 import { BufferGeometry,Float32BufferAttribute,Curve, CurvePath, ExtrudeGeometry, LineCurve3, QuadraticBezierCurve3, Quaternion, Shape, TubeGeometry, Vector3 } from 'three'
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js'
-import { buildLeadPath, type LeadPath } from '../../electrical/leadPath'
+import { buildLeadPath, type LeadPath } from '../../electrical/mounting/leadPath'
 
 /** Circular fillets honor the mechanical profile's minimum radius. */
 export function createFlexibleLeadGeometry(points: Vector3[], diameter: number, radius: number, preferredRadius = radius, endpointStraights = { start:0,end:0 }): BufferGeometry {

@@ -1,7 +1,7 @@
 import { BufferGeometry, Float32BufferAttribute, Vector3 } from 'three'
 import { toCreasedNormals } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { type PartDefinition, type PhysicalPin } from '../../data/partCatalog'
-import { rigidPackageLeadStations } from '../../electrical/rigidPackageLeads'
+import { rigidPackageLeadStations } from '../../electrical/mounting/rigidPackageLeads'
 
 interface Station { point: Vector3; tangent: Vector3; width: number }
 

@@ -1,6 +1,6 @@
 import { defineConfig } from '@playwright/test'
 import { basename, dirname, resolve } from 'node:path'
-import { getArtifactDirectory, validateArtifactDirectory } from './scripts/artifact-paths.mjs'
+import { getArtifactDirectory, validateArtifactDirectory } from './scripts/utilities/artifact-paths.mjs'
 import {prepareContractProfile} from './src/contracts/structural'
 
 // API/graph assertions run in Playwright's Node worker, independently of the

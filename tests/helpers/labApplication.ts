@@ -1,9 +1,9 @@
 import type { Pinia } from 'pinia'
 import { createLabApplication } from '../../src/application/labApplication'
 import {instrumentsApi} from '../../src/services/api/instruments'
-import { useExperimentStore } from '../../src/stores/experiment'
-import { useInstrumentStore } from '../../src/stores/instrument'
-import { useStationStore } from '../../src/stores/station'
+import { useExperimentStore } from '../../src/stores/lab/experiment'
+import { useInstrumentStore } from '../../src/stores/lab/instrument'
+import { useStationStore } from '../../src/stores/lab/station'
 
 /** Standalone store fixtures use the same explicit composition as the app. */
 export function bindLabApplication(pinia?:Pinia) {

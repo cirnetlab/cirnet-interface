@@ -1,6 +1,6 @@
 import { Box3, Group, Mesh, Vector3, type BufferGeometry } from 'three'
 import { getPartForType, MM_TO_WORLD,packageLeadCollisionRadiusMm } from '../../data/partCatalog'
-import { inverseTransformPoint, isFlexibleMount, resolveFlexibleGeometry, rotationMatrix, subtractPoint } from '../../electrical/flexibleGeometry'
+import { inverseTransformPoint, isFlexibleMount, resolveFlexibleGeometry, rotationMatrix, subtractPoint } from '../../electrical/mounting/flexibleGeometry'
 import type { CircuitModule } from '../../types/circuit'
 import { createFlexibleLeadPathGeometry } from './LeadGeometry'
 import {packageLeadSweepOptions} from './PackageFeedthrough'

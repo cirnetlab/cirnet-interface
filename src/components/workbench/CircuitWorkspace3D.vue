@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { PCFSoftShadowMap, WebGLRenderer } from 'three'
-import { createSceneManager, type OrientationAxis } from '../../three/SceneManager'
-import { useWorkspaceStore } from '../../stores/workspace'
-import { useCircuitStore } from '../../stores/circuit'
-import { useUiStore } from '../../stores/ui'
-import WorkspaceNavigator from './WorkspaceNavigator.vue'
-import WireOptions from './WireOptions.vue'
-import WireContextMenu from './WireContextMenu.vue'
-import { useCircuitEditor } from '../../composables/useCircuitEditor'
-import { observeElementSize } from '../../composables/frameTasks'
-import { useWorkspaceMessageStore } from '../../stores/workspaceMessages'
-import { useWorkspaceSceneMessages } from '../../composables/useWorkspaceSceneMessages'
+import { createSceneManager, type OrientationAxis } from '../../three/scene/SceneManager'
+import { useWorkspaceStore } from '../../stores/workbench/workspace'
+import { useCircuitStore } from '../../stores/documents/circuit'
+import { useUiStore } from '../../stores/workbench/ui'
+import WorkspaceNavigator from './chrome/WorkspaceNavigator.vue'
+import WireOptions from './wires/WireOptions.vue'
+import WireContextMenu from './wires/WireContextMenu.vue'
+import { useCircuitEditor } from '../../composables/editor/useCircuitEditor'
+import { observeElementSize } from '../../composables/workbench/frameTasks'
+import { useWorkspaceMessageStore } from '../../stores/workbench/workspaceMessages'
+import { useWorkspaceSceneMessages } from '../../composables/workbench/useWorkspaceSceneMessages'
 const workspace = useWorkspaceStore()
 const circuit = useCircuitStore()
 const ui = useUiStore()

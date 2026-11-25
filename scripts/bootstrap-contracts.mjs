@@ -1,5 +1,5 @@
 /** Executable bootstrap entrypoint; pure resource readers never import this file. */
-import {bootstrap} from './contracts-artifacts.mjs'
+import {bootstrap} from './contracts/contracts-artifacts.mjs'
 import {resolve} from 'node:path'
 import {fileURLToPath} from 'node:url'
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){

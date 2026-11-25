@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCircuitStore } from '../stores/circuit'
+import { useCircuitStore } from '../stores/documents/circuit'
 const circuit = useCircuitStore()
 </script>
 <template>

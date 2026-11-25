@@ -26,7 +26,11 @@ Interface gom các tính năng liên quan trong từng lớp có ranh giới ph�
 | [`src/services/`](../../../src/services) | Adapter trình duyệt cho REST và WebSocket của Remote, phạm vi phiên, tệp, khôi phục, bản thu và nạp mô hình. |
 | [`src/contracts/`](../../../src/contracts), [`src/data/`](../../../src/data) và [`src/types/`](../../../src/types) | Kiểm tra dữ liệu trình duyệt, biểu diễn từ SDK Contracts, danh mục trình biên tập, dữ liệu hiển thị cục bộ và kiểu dữ liệu. Contracts công bố schema dùng chung và danh mục chuẩn. |
 
-Bộ kiểm tra phụ thuộc AST thực thi ranh giới của domain và application thuần, ranh giới truyền tải của bộ dựng hình, danh sách điểm truy cập công khai được duyệt của SDK và quy tắc cấm vòng lặp import lúc chạy giữa các store. [Bộ kiểm tra phụ thuộc](../../../scripts/check-boundaries.mjs)
+Bộ kiểm tra phụ thuộc AST thực thi ranh giới của domain và application thuần, ranh giới truyền tải của bộ dựng hình, danh sách điểm truy cập công khai được duyệt của SDK và quy tắc cấm vòng lặp import lúc chạy giữa các store. [Bộ kiểm tra phụ thuộc](../../../scripts/verification/check-boundaries.mjs)
+
+Trong layer giao diện, thanh công cụ, bảng linh kiện, điều khiển thực thi và điều khiển dây của bàn làm việc có nhóm riêng. Cửa sổ chỉnh sửa, thiết bị và Lab được nhóm theo trách nhiệm UI. Cơ chế cửa sổ nổi dùng chung nằm trong `components/windows/`.
+
+Chọn đối tượng và tương tác đặt linh kiện nằm trong `editor/selection/` và `editor/interaction/`. Kết nối điện và lắp linh kiện tách nhóm, còn hình học cơ khí phân biệt breadboard và thao tác đặt. Three.js nhóm scene, camera, breadboard, lựa chọn, nhãn, package, thiết bị và dây dưới ranh giới bộ dựng hình. Pinia nhóm trạng thái tài liệu, Lab và bàn làm việc. REST và WebSocket giữ các điểm vào hiện có bên trong thư mục dịch vụ tương ứng.
 
 ## Ranh giới đồ thị và hợp đồng
 
@@ -49,6 +53,6 @@ Lõi tài liệu thuần quản lý lệnh, lịch sử, tuần tự hóa và th
 
 Tài nguyên cảnh nằm ngoài Pinia. Bộ dựng hình gộp thay đổi đồ thị, camera và thao tác vào khung hình. Cảnh ẩn, kích thước bằng không hoặc mất ngữ cảnh sẽ tạm dừng. Đổi kích thước và khôi phục ngữ cảnh sẽ vẽ lại. Khi tháo cảnh, ứng dụng giải phóng bộ quan sát, điều khiển, khung hình và tài nguyên GPU. Bộ cung cấp tài nguyên kiểm tra phiên bản của mô hình xem trước và dùng mô hình tạo bằng mã khi nhập thất bại. [Hướng dẫn mô hình thiết bị](../guides/instrument-models.md)
 
-Mã nguồn hiện tại bỏ qua cấu hình camera định sẵn nếu góc nhìn tương đương. Khi lần vẽ trước mất ít nhất bằng thời lượng chuyển cảnh, bộ dựng hình áp dụng trực tiếp tư thế cuối. Hai quy tắc giảm lượt vẽ dư thừa và giữ lệnh đồ thị cùng kết nối điện độc lập với trạng thái hiển thị. [Bộ quản lý cảnh](../../../src/three/SceneManager.ts)
+Mã nguồn hiện tại bỏ qua cấu hình camera định sẵn nếu góc nhìn tương đương. Khi lần vẽ trước mất ít nhất bằng thời lượng chuyển cảnh, bộ dựng hình áp dụng trực tiếp tư thế cuối. Hai quy tắc giảm lượt vẽ dư thừa và giữ lệnh đồ thị cùng kết nối điện độc lập với trạng thái hiển thị. [Bộ quản lý cảnh](../../../src/three/scene/SceneManager.ts)
 
 Xem [hướng dẫn bàn làm việc](../guides/workbench.md) về cách chỉnh sửa và [kiểm chứng](../contributing/verification.md) về hai phạm vi kiểm thử trình duyệt.

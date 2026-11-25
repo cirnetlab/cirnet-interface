@@ -23,6 +23,15 @@ npm run test:e2e:install
 npm run test:e2e:platform -- --forbid-only
 ```
 
+Trình chạy tìm đệ quy các tệp `*.test.ts` trong [tests](../../../tests) và giữ đường dẫn tính năng khi sinh bundle kiểm thử. [Helper dùng chung](../../../tests/helpers) và [fixture lịch sử](../../../tests/fixtures/historical) giữ đường dẫn ổn định. Chọn test bằng đường dẫn tương đối với bộ test, đường dẫn tương đối với repo hoặc tên file duy nhất. Bộ chọn mơ hồ hoặc không tồn tại báo lỗi trước khi chạy.
+
+```powershell
+npm test -- tests/instruments/oscilloscope.test.ts
+node scripts/test.mjs scripts/verification/test-runner.test.mjs
+```
+
+`--all-script-tests` chạy toàn bộ tệp `*.test.mjs` tìm được theo cách đệ quy. [Scripts](../../../scripts) tách build và đóng gói, bootstrap Contracts, kiểm chứng, chạy trình duyệt, benchmark, xuất tài nguyên và tiện ích. Các launcher ở thư mục gốc giữ các lệnh tích hợp hiện có. [Spec và harness trình duyệt](../../../e2e) nhóm theo xác thực, dự án, bàn làm việc, dựng hình và Lab. Playwright tìm các spec trong thư mục con từ cấu hình hiện có.
+
 Đặt `CIRNET_E2E_BROWSER_CACHE` thành thư mục tuyệt đối bên ngoài để chọn bản Chromium đã ghim. Bộ kiểm thử nền tảng chạy trình kết xuất thật, camera, độ sâu và quyền sở hữu tài liệu trong trình duyệt mà không cần tài khoản máy chủ.
 
 Benchmark bảng linh kiện xác minh rồi đọc các fixture mã nguồn đã lưu trong repo theo [manifest đối chứng](../../../tests/fixtures/historical/40a4cad80be76a5b08943fab51ee2218cb7d7012/manifest.json). Revision Git gốc dùng để ghi nhận xuất xứ.

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { useUiStore } from '../../stores/ui'
+import { useUiStore } from '../../stores/workbench/ui'
 import FloatingWindow from './FloatingWindow.vue'
-import OscilloscopeWindow from './OscilloscopeWindow.vue'
-import GeneratorWindow from './GeneratorWindow.vue'
-import PowerSupplyWindow from './PowerSupplyWindow.vue'
-import SignalMonitorWindow from './SignalMonitorWindow.vue'
-import ComponentInfoWindow from './ComponentInfoWindow.vue'
-import InspectorWindow from './InspectorWindow.vue'
-import HexEditorWindow from './HexEditorWindow.vue'
-import ProjectManagerWindow from './ProjectManagerWindow.vue'
-import AssignmentWindow from './AssignmentWindow.vue'
-import ExperimentHistoryWindow from './ExperimentHistoryWindow.vue'
+import OscilloscopeWindow from '../instruments/OscilloscopeWindow.vue'
+import GeneratorWindow from '../instruments/GeneratorWindow.vue'
+import PowerSupplyWindow from '../instruments/PowerSupplyWindow.vue'
+import SignalMonitorWindow from '../instruments/SignalMonitorWindow.vue'
+import ComponentInfoWindow from '../editor/ComponentInfoWindow.vue'
+import InspectorWindow from '../editor/InspectorWindow.vue'
+import HexEditorWindow from '../editor/HexEditorWindow.vue'
+import ProjectManagerWindow from '../lab/ProjectManagerWindow.vue'
+import AssignmentWindow from '../lab/AssignmentWindow.vue'
+import ExperimentHistoryWindow from '../lab/ExperimentHistoryWindow.vue'
 const ui = useUiStore()
 const bodies = { assignments:AssignmentWindow,history:ExperimentHistoryWindow,projects:ProjectManagerWindow,oscilloscope: OscilloscopeWindow, generator: GeneratorWindow, 'power-supply': PowerSupplyWindow, monitor: SignalMonitorWindow, inspector: InspectorWindow, 'hex-editor': HexEditorWindow }
 </script>

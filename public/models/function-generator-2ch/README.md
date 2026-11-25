@@ -75,9 +75,9 @@ root for the asset ownership decision.
 
 Source of truth: `src/three/instruments/FunctionGeneratorModel.ts` (geometry),
 `FunctionGeneratorArtwork.ts` (layout/decals), `InstrumentArtwork.ts` (Canvas/SVG),
-`scripts/export-function-generator.mjs` (export) and
-`tests/function-generator.test.ts` (placement/history/layout/pivot/budget/round trips)
-and `tests/instrument-chassis.test.ts` (pitch, root pose and physical support contact).
+`scripts/assets/export-function-generator.mjs` (export) and
+`tests/instruments/function-generator.test.ts` (placement/history/layout/pivot/budget/round trips)
+and `tests/instruments/instrument-chassis.test.ts` (pitch, root pose and physical support contact).
 
 The export regenerates self-contained `function-generator-2ch.glb`, external
 `.gltf` + `.bin` + `screen.png`/`legends.png`/`owl.png`, `preview.svg`, `preview.png`

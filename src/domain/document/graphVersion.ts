@@ -1,6 +1,6 @@
 import type {CircuitModule as RigidModule} from '@cirnet/contracts/dto'
 import type {CircuitConnection,CircuitGraph,CircuitModule} from '../../types/circuit'
-import {isFlexibleMount} from '../../electrical/flexibleGeometry'
+import {isFlexibleMount} from '../../electrical/mounting/flexibleGeometry'
 
 /** Preserve readable legacy versions; adding flexible geometry is an explicit upgrade. */
 export function withCircuitModules(graph:CircuitGraph,modules:CircuitModule[],connections:CircuitConnection[]=graph.connections):CircuitGraph{

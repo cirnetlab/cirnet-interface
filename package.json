@@ -12,15 +12,15 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vue-tsc --noEmit && vite build",
     "test": "vue-tsc --noEmit -p tsconfig.tests.json && node scripts/test.mjs",
-    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "check:boundaries": "node scripts/verification/check-boundaries.mjs",
     "test:e2e": "node scripts/e2e.mjs test",
     "test:e2e:platform": "node scripts/e2e.mjs test-platform",
     "test:e2e:install": "node scripts/e2e.mjs install chromium",
-    "export:oscilloscope": "node scripts/export-oscilloscope.mjs",
-    "export:generator": "node scripts/export-function-generator.mjs",
+    "export:oscilloscope": "node scripts/assets/export-oscilloscope.mjs",
+    "export:generator": "node scripts/assets/export-function-generator.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "bootstrap:contracts": "node scripts/bootstrap-contracts.mjs",
-    "check:contracts": "node --test scripts/contracts-consumer.test.mjs scripts/contracts-bootstrap.test.mjs"
+    "check:contracts": "node --test scripts/contracts/contracts-consumer.test.mjs scripts/contracts/contracts-bootstrap.test.mjs"
   },
   "dependencies": {
     "lossless-json": "4.3.1",

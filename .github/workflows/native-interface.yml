@@ -72,7 +72,7 @@ jobs:
           persist-credentials: false
       - name: Build verified inputs from pinned sources
         if: github.event_name == 'push'
-        run: ./scripts/build-ci-inputs.ps1
+        run: ./scripts/build/build-ci-inputs.ps1
       - uses: actions/download-artifact@v7
         if: github.event_name == 'workflow_dispatch'
         with:

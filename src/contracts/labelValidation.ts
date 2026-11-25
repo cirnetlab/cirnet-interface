@@ -1,6 +1,6 @@
 import type { CircuitGraph, CircuitModule } from '../types/circuit'
 import { contractIssue, ContractValidationError, parseStructural, type ValidationProfile } from './structural'
-import { getBreadboardTopology } from '../electrical/BreadboardTopology'
+import { getBreadboardTopology } from '../electrical/connectivity/BreadboardTopology'
 
 /** Semantic parity with contracts/label_properties.py; no new graph fields. */
 export function validateLabelAnnotations(name: string, value: unknown, profile: ValidationProfile = 'structural', path = ''): void {

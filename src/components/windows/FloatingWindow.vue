@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onBeforeUnmount, ref, watch } from 'vue'
-import { useUiStore } from '../../stores/ui'
+import { useUiStore } from '../../stores/workbench/ui'
 import { windowDefinitions, type WorkspaceWindow } from '../../types/windows'
-import WorkbenchIcon from '../workbench/WorkbenchIcon.vue'
+import WorkbenchIcon from '../workbench/chrome/WorkbenchIcon.vue'
 const props = defineProps<{ window: WorkspaceWindow }>()
 const ui = useUiStore()
 const root = ref<HTMLElement>()

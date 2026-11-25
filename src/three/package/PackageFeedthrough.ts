@@ -1,6 +1,6 @@
 import {Vector3} from 'three'
 import {MM_TO_WORLD,type PartDefinition} from '../../data/partCatalog'
-import {fixedPackageLeadPath,packageFeedthroughPoints} from '../../electrical/rigidPackageLeads'
+import {fixedPackageLeadPath,packageFeedthroughPoints} from '../../electrical/mounting/rigidPackageLeads'
 import {createFlexibleLeadPathGeometry} from './LeadGeometry'
 
 /** One body-local -> package-frame mapping, shared by every feedthrough consumer.
