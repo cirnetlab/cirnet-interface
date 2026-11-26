@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test'
-import { basename, dirname, resolve } from 'node:path'
+import { basename, dirname, isAbsolute, relative, resolve, sep } from 'node:path'
 import { getArtifactDirectory, validateArtifactDirectory } from './scripts/utilities/artifact-paths.mjs'
 import {prepareContractProfile} from './src/contracts/structural'
 
@@ -16,7 +16,17 @@ for (let index = 0; index < process.argv.length; index++) {
     throw new Error('Select the external artifact parent with CIRNET_ARTIFACTS_DIR or use scripts/e2e.mjs to allocate an owned --output directory.')
   }
 }
+const session = getArtifactDirectory()
 const reporterDirectory = getArtifactDirectory('playwright-reporters')
+function reporterOutput(parent: string) {
+  const directory = validateArtifactDirectory(resolve(parent))
+  const subdirectory = relative(session, directory)
+  // Workers reload the config with the already allocated reporter paths.
+  if (!isAbsolute(subdirectory) && subdirectory !== '..' && !subdirectory.startsWith('..' + sep)) {
+    return getArtifactDirectory(subdirectory)
+  }
+  return getArtifactDirectory('', { directory })
+}
 for (const reporter of ['JUNIT', 'JSON']) {
   const prefix = `PLAYWRIGHT_${reporter}_OUTPUT`
   const configuredFile = process.env[`${prefix}_FILE`]
@@ -25,13 +35,13 @@ for (const reporter of ['JUNIT', 'JSON']) {
   const filename = configuredFile ? basename(resolve(configuredFile)) : name
   if (!filename || filename === '.' || filename === '..' || name !== basename(name)) throw new Error(`${prefix}_NAME must be a filename; select an external directory with ${prefix}_DIR.`)
   const directory = configuredFile || configuredDirectory
-    ? getArtifactDirectory('', { directory: configuredFile ? dirname(resolve(configuredFile)) : configuredDirectory })
+    ? reporterOutput(configuredFile ? dirname(resolve(configuredFile)) : configuredDirectory!)
     : reporterDirectory
   process.env[`${prefix}_FILE`] = resolve(directory, filename)
   process.env[`${prefix}_DIR`] = directory
 }
 process.env.PLAYWRIGHT_HTML_OUTPUT_DIR = process.env.PLAYWRIGHT_HTML_OUTPUT_DIR
-  ? getArtifactDirectory('', { directory: process.env.PLAYWRIGHT_HTML_OUTPUT_DIR })
+  ? reporterOutput(process.env.PLAYWRIGHT_HTML_OUTPUT_DIR)
   : getArtifactDirectory('playwright-reporters/html')
 
 export default defineConfig({

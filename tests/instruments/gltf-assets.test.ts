@@ -1,3 +1,4 @@
+import {resolve} from 'node:path'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
@@ -10,7 +11,7 @@ import { createGltfAssetLoader,createInstrumentAssetProvider } from '../../src/s
 function response(bytes:Uint8Array) {return new Response(new Uint8Array(bytes),{headers:{'Content-Type':'model/gltf-binary'}})}
 test('owned GLB revisions match delivered bytes and the actual decoder produces isolated model leases',async()=>{
   for(const asset of Object.values(instrumentAssets)) {
-    const bytes=await readFile(new URL('../../public'+asset.url,import.meta.url))
+    const bytes=await readFile(resolve('public', '.' + asset.url))
     assert.equal(createHash('sha256').update(bytes).digest('hex'),asset.revision)
     assert.ok(bytes.length<=asset.maxBytes)
     let fetched=0,decoded=0

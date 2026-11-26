@@ -1,3 +1,5 @@
+import {pathToFileURL} from 'node:url'
+import {resolve} from 'node:path'
 import { readFile } from 'node:fs/promises'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Texture } from 'three'
@@ -89,7 +91,7 @@ test('generator supports selected-object gizmo after graph movement and yaw', ()
 })
 
 test('delivered GLB and glTF round-trip through GLTFLoader with all controls and embedded PNGs', async () => {
-  const folder = new URL('../../public/models/function-generator-2ch/', import.meta.url)
+  const folder = pathToFileURL(resolve('public/models/function-generator-2ch') + '/')
   const bytes = await readFile(new URL('function-generator-2ch.glb', folder))
   assert.equal(bytes.readUInt32LE(0), 0x46546c67); assert.equal(bytes.readUInt32LE(4), 2)
   assert.equal(bytes.readUInt32LE(8), bytes.length)

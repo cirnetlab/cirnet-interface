@@ -1,3 +1,5 @@
+import {pathToFileURL} from 'node:url'
+import {resolve} from 'node:path'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { Box3, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneGeometry, Vector3 } from 'three'
@@ -126,7 +128,7 @@ test('scope participates in the existing selected-object transform gizmo after g
 })
 
 test('delivered GLB and glTF round-trip through GLTFLoader with all controls and embedded PNGs', async () => {
-  const folder = new URL('../../public/models/oscilloscope-2ch/', import.meta.url)
+  const folder = pathToFileURL(resolve('public/models/oscilloscope-2ch') + '/')
   const bytes = await readFile(new URL('oscilloscope-2ch.glb', folder))
   assert.equal(bytes.readUInt32LE(0), 0x46546c67); assert.equal(bytes.readUInt32LE(4), 2)
   assert.equal(bytes.readUInt32LE(8), bytes.length)

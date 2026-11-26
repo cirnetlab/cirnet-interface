@@ -21,6 +21,7 @@ function fixture(t, files) {
     run(...args) {
       const env = { ...process.env }
       delete env.NODE_TEST_CONTEXT
+      delete env.CIRNET_INTERFACE_TEST_OUTPUT
       const result = spawnSync(process.execPath, [runner, ...args], { cwd: root, env, encoding: 'utf8' })
       return { status: result.status, output: result.stdout + result.stderr }
     },

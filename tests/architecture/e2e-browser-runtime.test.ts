@@ -1,13 +1,14 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {mkdir,writeFile,readFile,readdir,lstat,symlink} from 'node:fs/promises'
-import {join} from 'node:path'
+import {join,resolve} from 'node:path'
+import {pathToFileURL} from 'node:url'
 import {randomBytes,createHash} from 'node:crypto'
 import {copyBrowserRuntime} from '../../scripts/e2e/e2e-browser-runtime.mjs'
 
 // Keep the allocator's own import.meta rooted in its original module after the
 // unit harness bundles this test. Every fixture byte starts outside Git paths.
-const {getArtifactDirectory}=await import(new URL('../../scripts/utilities/artifact-paths.mjs',import.meta.url).href)
+const {getArtifactDirectory}=await import(pathToFileURL(resolve('scripts/utilities/artifact-paths.mjs')).href)
 const digest=(bytes:Uint8Array)=>createHash('sha256').update(bytes).digest('hex')
 async function fixture(){
  const owned=getArtifactDirectory('brt-'+randomBytes(4).toString('hex')) as string

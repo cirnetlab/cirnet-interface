@@ -22,7 +22,7 @@ beforeEach(() => setActivePinia(createPinia()))
 async function componentScript(relative: string): Promise<Component> {
   const filename = resolve(relative), source = await readFile(filename, 'utf8')
   const script = compileScript(parse(source, { filename }).descriptor, { id: relative }).content
-  const outfile = resolve('.test-build/audit-async/sfc', `${relative.split('/').at(-1)}.mjs`)
+  const outfile = resolve(process.env.CIRNET_INTERFACE_TEST_OUTPUT!, 'audit-async/sfc', `${relative.split('/').at(-1)}.mjs`)
   await mkdir(dirname(outfile), { recursive: true })
   await build({
     stdin: { contents: script, resolveDir: dirname(filename), loader: 'ts', sourcefile: filename },

@@ -22,7 +22,7 @@ test('production main entry does not eagerly import any complete validator regis
 })
 
 test('cold offline authored workflows validate local configuration and assignment references without full profile preparation',async()=>{
-  const outfile=resolve('.test-build/cold-authored-workflows.mjs')
+  const outfile=resolve(process.env.CIRNET_INTERFACE_TEST_OUTPUT!, 'cold-authored-workflows.mjs')
   await build({stdin:{contents:`
     import {strict as assert} from 'node:assert'
     import {parseLab} from './src/contracts/validation'

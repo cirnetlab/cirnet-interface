@@ -45,3 +45,7 @@ node scripts/e2e.mjs test-packaged --forbid-only --grep 'real login|administrato
 ```
 
 The launcher checks the served metadata before running. The full browser suite also requires Remote-owned restart control and test data. See the [deployment guide](../operations/deployment.md).
+
+## Local development storage
+
+With `CIRNET_LOCAL_STORAGE_ROOT` set, use the verified Contracts DEV allocator supporting this setting. Select the reviewed source module via `CIRNET_ARTIFACT_PATHS_MODULE` when the installed DEV archive predates it. Unit bundles, runtime fixtures and direct production builds use an external session. Keep `CIRNET_ARTIFACTS_SESSION` for related runs. Candidate packaging keeps dist in the external source snapshot. Dependency inputs remain under node_modules and .artifacts.

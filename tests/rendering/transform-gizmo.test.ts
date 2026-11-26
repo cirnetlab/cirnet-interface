@@ -1,3 +1,5 @@
+import {pathToFileURL} from 'node:url'
+import {resolve} from 'node:path'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { Group, Mesh, MeshBasicMaterial, PerspectiveCamera, Raycaster, Vector2, Vector3 } from 'three'
@@ -173,8 +175,8 @@ test('the overlay stays anchored to the object pivot instead of seeking a free a
 test('the transparent grid sorts before every visible gizmo surface in the actual renderer render list', async () => {
   // Characterize the queue boundary that caused this regression: renderOrder
   // cannot move an opaque material after the separate transparent render pass.
-  const rendererLists = new URL('../../node_modules/three/src/renderers/webgl/WebGLRenderLists.js', import.meta.url)
-  const { WebGLRenderList } = await import(rendererLists.href)
+  const rendererLists = resolve('node_modules/three/src/renderers/webgl/WebGLRenderLists.js')
+  const { WebGLRenderList } = await import(pathToFileURL(rendererLists).href)
   const list = new WebGLRenderList(), h = setup(), grid = createTechnicalGrid()
   try {
     list.push(grid, grid.geometry, grid.material, 0, 0, null)

@@ -1,7 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import captureConformance from '@cirnet/contracts/fixtures/capture-conformance.json' with { type: 'json' }
-import {readContractsResource} from '../../scripts/contracts/contracts-resources.mjs'
+import {resolve} from 'node:path'
+import {pathToFileURL} from 'node:url'
 import { createHash } from 'node:crypto'
 import { decodeDigitalCapture } from '../../src/services/captures/digital'
 import { calibratedValue, decodeAnalogCapture, frameTimeNs } from '../../src/domain/capture/ncap'
@@ -11,6 +12,8 @@ import type { CaptureMetadata, CaptureResult } from '../../src/types/lab'
 import {parseLab,ContractValidationError} from '../../src/contracts/validation'
 import {captureLayout} from '@cirnet/contracts/capture-layout'
 import { captureFixture } from '../helpers/capture'
+
+const {readContractsResource}=await import(pathToFileURL(resolve('scripts/contracts/contracts-resources.mjs')).href) as typeof import('../../scripts/contracts/contracts-resources.mjs')
 
 test('NCAP v1 rejects nonintegral lexical count and duration tokens consistently with Python',()=>{
   for(const [count,duration] of [['1e0','0'],['1.0','0'],['1.0000000000000000001','0'],['1','0e0'],['1','0.0000000000000000001']]){

@@ -6,7 +6,9 @@ export function environmentValue(name, environment=process.env) {
 export function synchronizeEnvironment(environment=process.env) {
   for(const name of Object.keys(environment)) {
     if(!/^(CIRNET|NETCIRCUIT)_/.test(name))continue
-    const canonical=name.replace(/^NETCIRCUIT_/, 'CIRNET_'),value=environmentValue(canonical,environment)
+    const canonical=name.replace(/^NETCIRCUIT_/, 'CIRNET_')
+    if(canonical==='CIRNET_LOCAL_STORAGE_ROOT')continue
+    const value=environmentValue(canonical,environment)
     if(value!==undefined)environment[canonical]=environment[canonical.replace(/^CIRNET_/, 'NETCIRCUIT_')]=value
   }
   return environment

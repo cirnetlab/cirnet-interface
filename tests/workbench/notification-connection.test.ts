@@ -12,7 +12,7 @@ import type {SocketLike} from '../../src/services/websocket/client'
 import {stationFixture,runningExperiment} from '../helpers/station'
 
 const runtime=(async()=>{
- const outfile=resolve('.test-build',`${process.pid}-notification-connection-runtime.mjs`)
+ const outfile=resolve(process.env.CIRNET_INTERFACE_TEST_OUTPUT!,`${process.pid}-notification-connection-runtime.mjs`)
  await build({stdin:{contents:`export {useLabConnection} from './src/composables/lab/useLabConnection';export {useWorkspaceMessages} from './src/composables/workbench/useWorkspaceMessages';export {useAuthStore} from './src/stores/auth';export {useWorkspaceMessageStore} from './src/stores/workbench/workspaceMessages';export {useInstrumentStore} from './src/stores/lab/instrument';export {useStationStore} from './src/stores/lab/station';export {useExperimentStore} from './src/stores/lab/experiment';export {useUiStore} from './src/stores/workbench/ui';export {configureApiClient} from './src/services/api/client'`,resolveDir:process.cwd(),loader:'ts'},outfile,bundle:true,platform:'node',format:'esm',packages:'external',define:{'import.meta.env':'{}'}})
  return await import(pathToFileURL(outfile).href) as typeof import('../../src/composables/lab/useLabConnection')&typeof import('../../src/composables/workbench/useWorkspaceMessages')&typeof import('../../src/stores/auth')&typeof import('../../src/stores/workbench/workspaceMessages')&typeof import('../../src/stores/lab/instrument')&typeof import('../../src/stores/lab/station')&typeof import('../../src/stores/lab/experiment')&typeof import('../../src/stores/workbench/ui')&typeof import('../../src/services/api/client')
 })()

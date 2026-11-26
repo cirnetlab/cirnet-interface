@@ -7,7 +7,9 @@ import {getArtifactDirectory} from '../utilities/artifact-paths.mjs'
 
 const label=process.argv[2]??'current'
 if(!/^[a-z0-9-]+$/i.test(label))throw new Error('Use an alphanumeric measurement label.')
-const distribution=resolve(dirname(fileURLToPath(import.meta.url)),'../../dist')
+const distribution=process.env.CIRNET_LOCAL_STORAGE_ROOT === undefined
+  ? resolve(dirname(fileURLToPath(import.meta.url)),'../../dist')
+  : getArtifactDirectory('dist')
 const manifest=JSON.parse(readFileSync(join(distribution,'.vite/manifest.json'),'utf8'))
 const visited=new Set()
 function walk(key){if(visited.has(key))return;visited.add(key);for(const dependency of manifest[key]?.imports??[])walk(dependency)}

@@ -22,9 +22,10 @@ function recordingLogger(level: 'info' | 'error' | 'silent' = 'info') {
 }
 
 async function configuredServer(logger: Logger) {
+  const config = await appConfig({ command: 'serve', mode: 'test' })
   return createServer({
-    ...appConfig, configFile: false, customLogger: logger,
-    server: { ...appConfig.server, middlewareMode: true, hmr: false, watch: null },
+    ...config, configFile: false, customLogger: logger,
+    server: { ...config.server, middlewareMode: true, hmr: false, watch: null },
     optimizeDeps: { noDiscovery: true, include: [] },
   })
 }
@@ -124,7 +125,7 @@ test('actual Vite proxy survives browser write aborts, forwards denied handshake
     assert.ok(address && typeof address !== 'string')
     const { logger, calls } = recordingLogger()
     server = await createServer({
-      ...appConfig, configFile: false, customLogger: logger,
+      ...await appConfig({ command: 'serve', mode: 'test' }), configFile: false, customLogger: logger,
       optimizeDeps: { noDiscovery: true, include: [] },
       server: { middlewareMode: { server: frontend }, hmr: false, watch: null, proxy: {
         '/ws': { target: `ws://127.0.0.1:${address.port}`, ws: true, configure(proxy) {

@@ -3,6 +3,8 @@ import { readdir, mkdir, readFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { posix, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
+import { realpathSync } from 'node:fs'
 
 async function discoverTests(directory, suffix) {
   const entries = await readdir(directory, { withFileTypes: true })
@@ -44,6 +46,7 @@ const scriptFiles = (allScriptTests || selectors.length) && existsSync('scripts'
 const selected = selectTests([...unitFiles, ...scriptFiles], selectors)
 const files = selectors.length ? unitFiles.filter(file => selected.has(file)) : unitFiles
 const selectedScripts = scriptFiles.filter(file => selected.has(file))
+const localProject = realpathSync(process.cwd()) === realpathSync(fileURLToPath(new URL('..', import.meta.url)))
 const productContracts = existsSync(resolve('src/contracts/structural.ts'))
 const contractProfiles = resolve('tests/helpers/contractProfiles.ts')
 const defaultScripts = productContracts && (!selectors.length || files.length)
@@ -54,6 +57,17 @@ const scripts = allScriptTests ? scriptFiles : [...new Set([...defaultScripts, .
 if (!files.length && !scripts.length) throw new Error('No matching tests.')
 if (files.length && productContracts && !existsSync(contractProfiles)) {
   throw new Error('Product tests require the offline contract profile preparation helper.')
+}
+const output = localProject
+  ? (await import('./utilities/artifact-paths.mjs')).getArtifactDirectory('interface-tests')
+  : resolve('.test-build')
+if (localProject) {
+  process.env.CIRNET_INTERFACE_TEST_OUTPUT = output
+  const scratch = resolve(output, 'tmp')
+  await mkdir(scratch, { recursive: true })
+  Object.assign(process.env, { TEMP: scratch, TMP: scratch, TMPDIR: scratch })
+  const preload = new URL('./verification/test-module-resolution.mjs', import.meta.url)
+  process.env.NODE_OPTIONS = [process.env.NODE_OPTIONS, '--import=' + preload.href].filter(Boolean).join(' ')
 }
 if (scripts.length) runTests(scripts)
 if (!files.length) process.exit(0)
@@ -67,14 +81,14 @@ const workflowPlugins=productContracts?[{name:'unit-contract-workflow',setup(bui
 // Bound both compilation and runtime workers independently of the host CPU count.
 const buildBatchSize = 8
 const testConcurrency = 2
-await mkdir('.test-build', { recursive: true })
+await mkdir(output, { recursive: true })
 for (let offset = 0; offset < files.length; offset += buildBatchSize) {
   const batch = files.slice(offset, offset + buildBatchSize)
   console.log(JSON.stringify({ phase: 'build-tests', files: batch.length, completed: offset, total: files.length }))
   await build({
     entryPoints: batch,
     outbase: 'tests',
-    outdir: '.test-build',
+    outdir: output,
     outExtension: { '.js': '.mjs' },
     bundle: true,
     platform: 'node',
@@ -85,5 +99,5 @@ for (let offset = 0; offset < files.length; offset += buildBatchSize) {
   })
 }
 console.log(JSON.stringify({ phase: 'run-tests', files: files.length, concurrency: testConcurrency }))
-const bundles = files.map(file => `.test-build/${file.slice('tests/'.length, -'.ts'.length)}.mjs`)
+const bundles = files.map(file => resolve(output, file.slice('tests/'.length, -'.ts'.length) + '.mjs'))
 runTests([`--test-concurrency=${testConcurrency}`, ...bundles])

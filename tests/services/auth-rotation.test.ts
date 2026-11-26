@@ -11,7 +11,7 @@ import {sessionFixture} from '../helpers/auth'
 import type {SocketLike} from '../../src/services/websocket/client'
 
 async function connectionRuntime(){
- const outfile=resolve('.test-build',`${process.pid}-auth-rotation-runtime.mjs`)
+ const outfile=resolve(process.env.CIRNET_INTERFACE_TEST_OUTPUT!,`${process.pid}-auth-rotation-runtime.mjs`)
  await build({stdin:{contents:`export {useLabConnection} from './src/composables/lab/useLabConnection';export {useAuthStore} from './src/stores/auth';export {configureApiClient} from './src/services/api/client'`,resolveDir:process.cwd(),loader:'ts'},outfile,bundle:true,platform:'node',format:'esm',packages:'external',define:{'import.meta.env':'{}'}})
  return await import(pathToFileURL(outfile).href) as typeof import('../../src/composables/lab/useLabConnection')&typeof import('../../src/stores/auth')&typeof import('../../src/services/api/client')
 }

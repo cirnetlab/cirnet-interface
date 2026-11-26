@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process'
 
 const gate=resolve('scripts/verification/check-boundaries.mjs')
 function audit(files:Record<string,string>) {
-  const workspace=resolve('.test-build/boundary-fixtures');mkdirSync(workspace,{recursive:true})
+  const workspace=resolve(process.env.CIRNET_INTERFACE_TEST_OUTPUT!, 'boundary-fixtures');mkdirSync(workspace,{recursive:true})
   const directory=mkdtempSync(resolve(workspace,'case-'))
   try {
     for(const [file,contents] of Object.entries(files)) {

@@ -18,7 +18,7 @@ import { SCOPE_LAYOUT, scopeLegendsArtwork } from '../../src/three/instruments/O
 // Render the actual SFCs using Vue/esbuild already supplied by this project.
 // No browser, sample source or separate test framework is needed.
 async function windowComponent(name: string): Promise<Component> {
-  const outfile = resolve('.test-build', `${name}.ssr.mjs`)
+  const outfile = resolve(process.env.CIRNET_INTERFACE_TEST_OUTPUT!, `${name}.ssr.mjs`)
   await build({ entryPoints: [resolve('src/components/instruments', `${name}.vue`)], outfile, bundle: true, platform: 'node', format: 'esm', packages: 'external', plugins: [{
     name: 'instrument-sfc', setup(builder) {
       builder.onLoad({ filter: /\.vue$/ }, async ({ path }) => {

@@ -7,10 +7,13 @@ import {getArtifactContext,getArtifactDirectory,cleanupArtifactSession} from './
 
 for(const empty of [false,true])test(`pinned allocator output aliases stay stable (empty current session: ${empty})`,()=>{
  const keys=['CIRNET_','NETCIRCUIT_'].flatMap(prefix=>['ARTIFACTS_SESSION','ARTIFACTS_CONTEXT','ARTIFACTS_DIR'].map(suffix=>prefix+suffix))
+ keys.push('CIRNET_LOCAL_STORAGE_ROOT')
  const previous=Object.fromEntries(keys.map(key=>[key,process.env[key]]))
  const context=getArtifactContext()
  const parent=getArtifactDirectory('allocator-compat-'+randomUUID())
  try{
+  // This test exercises the portable legacy override behavior.
+  delete process.env.CIRNET_LOCAL_STORAGE_ROOT
   process.env.CIRNET_ARTIFACTS_DIR=parent
   if(empty)process.env.CIRNET_ARTIFACTS_SESSION=''
   const selected=getArtifactDirectory('',empty?{}:{directory:parent})
@@ -21,7 +24,7 @@ for(const empty of [false,true])test(`pinned allocator output aliases stay stabl
   assert.equal(dirname(getArtifactDirectory('evidence')),resolve(active))
  }finally{
   // Clean only directly allocated disposable children, even after a regression.
-  for(const child of readdirSync(parent,{withFileTypes:true}))if(child.isDirectory()&&/^netcircuit-[A-Za-z0-9]+$/.test(child.name)){
+  for(const child of readdirSync(parent,{withFileTypes:true}))if(child.isDirectory()&&/^(?:cirnet|netcircuit)-[A-Za-z0-9]+$/.test(child.name)){
    const path=resolve(parent,child.name)
    assert.equal(dirname(path),parent)
    cleanupArtifactSession(path,{context})

@@ -2,18 +2,19 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync,readdirSync} from 'node:fs'
 import {createHash} from 'node:crypto'
-import {dirname,resolve,relative} from 'node:path'
-import {fileURLToPath} from 'node:url'
+import {resolve,relative} from 'node:path'
+import {pathToFileURL} from 'node:url'
 import catalog from '@cirnet/contracts/data/editorCatalog.json' with {type:'json'}
 import physical from '@cirnet/contracts/data/physicalParts.json' with {type:'json'}
 import lean from '@cirnet/contracts/data/editorParts.json' with {type:'json'}
-import {readContractsResource,type ContractsResourceName} from '../../scripts/contracts/contracts-resources.mjs'
+import type {ContractsResourceName} from '../../scripts/contracts/contracts-resources.mjs'
 
 // These assertions preserve the consumer-facing checks previously run by
 // Remote tests/frontend. Generator mutation assertions remain with their
 // existing owner; Interface consumes the released data and never generates it.
 type Bag=Record<string,any>
-const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..')
+const root=process.cwd()
+const {readContractsResource}=await import(pathToFileURL(resolve(root,'scripts/contracts/contracts-resources.mjs')).href) as typeof import('../../scripts/contracts/contracts-resources.mjs')
 const text=(path:string)=>readFileSync(resolve(root,path),'utf8')
 const json=(path:string):any=>JSON.parse(text(path))
 const original=(name:ContractsResourceName):Bag=>readContractsResource(name) as Bag

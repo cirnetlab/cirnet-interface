@@ -45,3 +45,7 @@ node scripts/e2e.mjs test-packaged --forbid-only --grep 'real login|administrato
 ```
 
 Trình chạy kiểm tra metadata được phục vụ trước khi chạy. Bộ kiểm thử trình duyệt đầy đủ còn cần cơ chế khởi động lại và dữ liệu kiểm thử do Remote quản lý. Xem [hướng dẫn triển khai](../operations/deployment.md).
+
+## Lưu trữ phát triển cục bộ
+
+Khi đặt `CIRNET_LOCAL_STORAGE_ROOT`, dùng bộ cấp phát Contracts DEV đã xác minh có hỗ trợ cấu hình này. Chọn mô-đun nguồn đã review qua `CIRNET_ARTIFACT_PATHS_MODULE` nếu gói DEV đã cài cũ hơn. Bundle test, fixture runtime và build production trực tiếp dùng phiên ngoài repo. Giữ `CIRNET_ARTIFACTS_SESSION` cho các lần chạy liên quan. Gói candidate giữ dist trong snapshot nguồn bên ngoài. Đầu vào phụ thuộc vẫn ở node_modules và .artifacts.

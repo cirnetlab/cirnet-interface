@@ -2,6 +2,7 @@ import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync,writeFileSync,mkdirSync,existsSync,readdirSync,mkdtempSync} from 'node:fs'
 import {resolve} from 'node:path'
+import {pathToFileURL} from 'node:url'
 import {spawnSync} from 'node:child_process'
 import {build} from 'esbuild'
 import {getArtifactDirectory,cleanupArtifactSession} from '@cirnet/artifact-paths'
@@ -20,8 +21,9 @@ test('resource consumers reject unapproved member names and altered release byte
   assert.throws(()=>verifyBytes(Buffer.from('altered'),'not-a-digest'),/SHA256/)
 })
 test('bundled resource readers have no bootstrap CLI side effects',async()=>{
-  const outfile=resolve(root,'.test-build/contracts/resources-only.mjs')
-  await build({stdin:{contents:"import {readContractsResource} from './scripts/contracts/contracts-resources.mjs';readContractsResource('physical-hc08-led');console.log('RESOURCE_ONLY')",resolveDir:root,loader:'js'},outfile,bundle:true,platform:'node',format:'esm',packages:'external'})
+  const outfile=resolve(getArtifactDirectory('contracts-bootstrap-tests'),'resources-only.mjs')
+  const source=pathToFileURL(resolve(root,'scripts/contracts/contracts-artifacts.mjs')).href
+  await build({stdin:{contents:"import {readContractsResource} from './scripts/contracts/contracts-resources.mjs';readContractsResource('physical-hc08-led');console.log('RESOURCE_ONLY')",resolveDir:root,loader:'js'},outfile,bundle:true,platform:'node',format:'esm',packages:'external',define:{'import.meta.url':JSON.stringify(source)}})
   const result=spawnSync(process.execPath,[outfile,'--resource-only-probe'],{encoding:'utf8',cwd:root,windowsHide:true})
   assert.equal(result.status,0,result.stderr+result.stdout)
   assert.equal(result.stdout.trim(),'RESOURCE_ONLY')
