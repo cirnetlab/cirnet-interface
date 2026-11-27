@@ -2,6 +2,9 @@
 defineProps<{ name: string }>()
 const historyArrow = 'M9 2 3.5 7.5 9 13V9h5a4 4 0 0 1 0 8h-3v3h3a7 7 0 0 0 0-14H9z'
 const paths: Record<string, string> = {
+  search: 'M15.5 15.5 21 21 M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0',
+  explorer: 'M4 4h5l2 2h9v5H4z M7 11v8h6 M7 15h6 M14 14h5 M14 19h5',
+  component: 'M7 7h10v10H7z M9 3v4 M15 3v4 M9 17v4 M15 17v4 M3 9h4 M3 15h4 M17 9h4 M17 15h4',
   new: 'M6 3h8l4 4v14H6z M14 3v5h5 M9 14h6 M12 11v6',
   open: 'M3 7h7l2 3h9l-3 10H3z M3 7V4h7l2 3h7v3',
   save: 'M4 3h14l3 3v15H3V3z M7 3v6h10V3 M7 21v-8h10v8',

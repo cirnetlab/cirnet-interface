@@ -56,3 +56,32 @@ Tài nguyên cảnh nằm ngoài Pinia. Bộ dựng hình gộp thay đổi đ�
 Mã nguồn hiện tại bỏ qua cấu hình camera định sẵn nếu góc nhìn tương đương. Khi lần vẽ trước mất ít nhất bằng thời lượng chuyển cảnh, bộ dựng hình áp dụng trực tiếp tư thế cuối. Hai quy tắc giảm lượt vẽ dư thừa và giữ lệnh đồ thị cùng kết nối điện độc lập với trạng thái hiển thị. [Bộ quản lý cảnh](../../../src/three/scene/SceneManager.ts)
 
 Xem [hướng dẫn bàn làm việc](../guides/workbench.md) về cách chỉnh sửa và [kiểm chứng](../contributing/verification.md) về hai phạm vi kiểm thử trình duyệt.
+
+## Workbench giao diện sáng
+
+`src/workbench-light.css` sở hữu token cho khung sáng. Navy `#102c50` tạo
+khung ứng dụng, cyan `#5ce6fb` nhận diện CIRNET và xanh `#184f9d` đánh dấu
+điều khiển tương tác. Panel trung tính và nền 3D xanh xám giúp tập trung vào
+mạch. Segoe UI cục bộ hỗ trợ tiếng Việt. Số đo và ô nhập dùng chữ số đều chiều
+rộng khi hữu ích. Lệnh chung và lệnh kỹ thuật dùng nét SVG chung trong
+`WorkbenchIcon`. Hình thư viện và thiết bị giữ manifest và nguồn gốc hiện có.
+
+Project Explorer chọn linh kiện trong graph và mở thư viện hoặc lịch sử
+thí nghiệm hiện có. Nút Inspector mở PropertyManager bên phải. Các mục có thể thu gọn và thao tác
+sửa vẫn dùng lệnh tài liệu hiện có. Nút trên header hiện lại từng panel.
+Focus Mode tạm ẩn panel, công cụ và Ribbon, rồi khôi phục trạng thái hiển thị
+trước đó. Chiều rộng panel thích ứng viewport. Canvas giữ nguyên và lệnh fit
+dùng vùng thao tác không bị che. Ctrl+Q mở tìm kiếm các lệnh File hiện có.
+
+Bảy concept CIRNET LAB định hướng bố cục. Trình chỉnh sửa hiện tại cung cấp
+Workbench 3D. Chỉnh sửa schematic cần mô hình sản phẩm và bề mặt kết xuất.
+Mạch và số đo trong concept là tham chiếu hình ảnh.
+
+### Biểu tượng Workbench
+
+Dùng bộ biểu tượng chung [WorkbenchIcon](../../../src/components/workbench/chrome/WorkbenchIcon.vue)
+cho các lệnh. Biểu tượng nét dùng viewBox 24 × 24, nét đầu tròn rộng 1,6 đơn vị
+và `currentColor`. Search và Project Explorer thể hiện phong cách điều hướng.
+Wire, Probe và Scope áp dụng cùng phong cách cho lệnh kỹ thuật. Đặt nhãn cho
+nút hoặc điều khiển và giữ SVG ở vai trò trang trí. Dùng hình minh họa hiện có
+để xem trước linh kiện và thiết bị, với nguồn gốc ghi trong [manifest tài sản](../../../src/assets/icons/manifest.json).

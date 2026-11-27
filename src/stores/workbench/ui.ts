@@ -11,7 +11,7 @@ function bound(window: WorkspaceWindow, width: number, height: number, insets: {
 }
 
 export const useUiStore = defineStore('ui', {
-  state: () => ({ activeRibbonTab: 'component' as 'component' | 'run', activeRibbonGroup: null as string | null, componentToolbarCollapsed: false, toolsSidebarCollapsed: false, workbenchSize: { width: 900, height: 600 }, windows: [] as WorkspaceWindow[], viewport: { width: 900, height: 500 }, connectionState: 'idle' as ConnectionState }),
+  state: () => ({ activeRibbonTab: 'component' as 'component' | 'run', activeRibbonGroup: null as string | null, componentToolbarCollapsed: false, toolsSidebarCollapsed: false, explorerVisible: true, focusRestore: null as { ribbon: boolean; tools: boolean } | null, workbenchSize: { width: 900, height: 600 }, windows: [] as WorkspaceWindow[], viewport: { width: 900, height: 500 }, connectionState: 'idle' as ConnectionState }),
   getters: {
     componentOverlayHeight: () => 96,
     toolsOverlayWidth: (state) => state.workbenchSize.width <= 560 ? 54 : 66,
@@ -20,18 +20,33 @@ export const useUiStore = defineStore('ui', {
     },
   },
   actions: {
+    toggleWorkspaceFocus() {
+      if (this.focusRestore) {
+        this.componentToolbarCollapsed = this.focusRestore.ribbon
+        this.toolsSidebarCollapsed = this.focusRestore.tools
+        this.focusRestore = null
+        this.boundWindows()
+      } else {
+        this.focusRestore = { ribbon: this.componentToolbarCollapsed, tools: this.toolsSidebarCollapsed }
+        this.componentToolbarCollapsed = true
+        this.toolsSidebarCollapsed = true
+        this.activeRibbonGroup = null
+      }
+    },
     selectRibbonTab(tab: 'component' | 'run') {
+      if (this.focusRestore) this.toggleWorkspaceFocus()
       if(this.activeRibbonTab!==tab)this.activeRibbonGroup=null
       this.activeRibbonTab=tab
       if(this.componentToolbarCollapsed){this.componentToolbarCollapsed=false;this.boundWindows()}
     },
     toggleRibbon(id: string) { if (!this.componentToolbarCollapsed && this.activeRibbonTab==='component') this.activeRibbonGroup = this.activeRibbonGroup === id ? null : id },
     toggleComponentToolbar() {
+      if (this.focusRestore) { this.toggleWorkspaceFocus(); return }
       this.componentToolbarCollapsed = !this.componentToolbarCollapsed
       this.activeRibbonGroup = null
       if (!this.componentToolbarCollapsed) this.boundWindows()
     },
-    toggleToolsSidebar() { this.toolsSidebarCollapsed = !this.toolsSidebarCollapsed; if (!this.toolsSidebarCollapsed) this.boundWindows() },
+    toggleToolsSidebar() { if (this.focusRestore) { this.toggleWorkspaceFocus(); return }; this.toolsSidebarCollapsed = !this.toolsSidebarCollapsed; if (!this.toolsSidebarCollapsed) this.boundWindows() },
     boundWindows() { for (const window of this.windows) bound(window, this.viewport.width, this.viewport.height, this.drawerInsets) },
     setWorkbenchSize(width: number, height: number) {
       if (!Number.isFinite(width) || !Number.isFinite(height)) return
@@ -48,6 +63,7 @@ export const useUiStore = defineStore('ui', {
       this.boundWindows()
     },
     openWindow(kind: WindowKind, options: { activate?: boolean } = {}) {
+      if (kind === 'inspector' && this.focusRestore) this.toggleWorkspaceFocus()
       let window = this.windows.find((entry) => entry.kind === kind)
       if (!window) {
         const index = this.windows.length

@@ -4,6 +4,10 @@
 
 ## Unreleased
 
+### Added
+
+- Introduce the CIRNET LAB Light Workbench with a Project Explorer, docked PropertyManager, command search and reversible Focus Mode.
+
 ### Changed
 
 - Group Interface source, tests, scripts and browser suites by responsibility. Discover nested tests and accept unambiguous targeted selectors.

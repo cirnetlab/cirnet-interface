@@ -9,3 +9,6 @@ export const MIN_ZOOM_REFERENCE_DISTANCE = CAMERA_MIN_NEAR * 4 * ZOOM_MAX / ZOOM
 // Navigation standoff is independent of scene-adaptive rendering clips.
 export const navigationClearanceForDistance = (distance: number) => Math.min(.005, Math.max(CAMERA_MIN_NEAR, distance * .01))
 export const clampZoom = (value: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, value))
+
+// The canvas fallback in workbench-light.css uses the same neutral scene surface.
+export const WORKBENCH_SCENE_BACKGROUND = '#586575'

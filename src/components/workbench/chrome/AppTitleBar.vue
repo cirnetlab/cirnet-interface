@@ -18,6 +18,47 @@ const projects=useProjectStore()
 const messages = useWorkspaceMessageStore()
 const fileInput = ref<HTMLInputElement>()
 const error = ref('')
+const commandInput = ref<HTMLInputElement>()
+const commandDialog = ref<HTMLDialogElement>()
+const commandTrigger = ref<HTMLButtonElement>()
+const showCommands = ref(false)
+const commandQuery = ref('')
+const visibleCommands = computed(() => fileItems.value.filter(item =>
+  item.label.toLowerCase().includes(commandQuery.value.trim().toLowerCase())))
+function openCommands() {
+  if (showCommands.value) {
+    commandInput.value?.focus()
+    return
+  }
+  commandQuery.value = ''
+  showCommands.value = true
+  void nextTick(() => {
+    commandDialog.value?.showModal()
+    commandInput.value?.focus()
+  })
+}
+function closeCommands(restore = true) {
+  commandDialog.value?.close()
+  showCommands.value = false
+  if (restore) commandTrigger.value?.focus()
+}
+function runSearchCommand(item: FileMenuItem) {
+  if (item.disabled) return
+  closeCommands(item.restoreFocus !== false)
+  fileCommand(item.id)
+}
+function runFirstCommand() {
+  const first = visibleCommands.value.find(item => !item.disabled)
+  if (first) runSearchCommand(first)
+}
+function toggleExplorer() {
+  if (ui.focusRestore) {
+    ui.toggleWorkspaceFocus()
+    ui.explorerVisible = true
+    return
+  }
+  ui.explorerVisible = !ui.explorerVisible
+}
 let readVersion = 0, disposed = false
 let errorCommand: 'import' | 'export' | null = null
 function clearError() { error.value = ''; errorCommand = null; messages.clearSource('file') }
@@ -94,9 +135,11 @@ function tabKey(event: KeyboardEvent) {
   void nextTick(() => tablist?.querySelector<HTMLButtonElement>(`#workbench-tab-${focusedTab.value}`)?.focus())
 }
 function shortcuts(event: KeyboardEvent) {
-  const target = event.target as HTMLElement | null
-  if (target?.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])') || !(event.ctrlKey || event.metaKey)) return
+  if (!(event.ctrlKey || event.metaKey)) return
   const key = event.key.toLowerCase()
+  if (key === 'q') { event.preventDefault(); openCommands(); return }
+  const target = event.target as HTMLElement | null
+  if (target?.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return
   if (!['n', 'o', 's', 'z', 'y'].includes(key)) return
   event.preventDefault()
   if (key === 'n') fileCommand('new')
@@ -110,7 +153,7 @@ onUnmounted(() => { disposed = true; readVersion++; window.removeEventListener('
 </script>
 <template>
   <header class="app-titlebar">
-    <div class="brand" aria-label="CIRNET Remote"><span class="brand-mark"><img :src="iconUrl('favicon')" alt="CIRNET Remote" width="38" height="38" /></span><strong><span class="brand-circuit">CIRNET</span> <span class="brand-remote">Remote</span></strong></div>
+    <div class="brand" aria-label="CIRNET LAB"><span class="brand-mark"><img :src="iconUrl('favicon')" alt="" width="38" height="38" /></span><strong><span class="brand-circuit">CIRNET</span> <span class="brand-remote">LAB</span></strong></div>
     <div class="header-command-strip">
       <div class="quick-actions" role="group" aria-label="Edit history">
       <button aria-label="Undo" title="Undo (Ctrl+Z)" :disabled="!circuit.canUndo" @click="circuit.undo()"><WorkbenchIcon name="undo" /></button>
@@ -123,7 +166,34 @@ onUnmounted(() => { disposed = true; readVersion++; window.removeEventListener('
       </div>
     </div>
     <div class="project-title" :title="circuit.current?.name || 'No circuit'"><span class="dirty-dot" v-if="projects.saveState.dirty" aria-label="Unsaved changes" /><span class="project-name">{{ circuit.current?.name || 'No circuit open' }}</span><small>{{ projects.saveState.binding ? 'SERVER · '+projects.saveState.phase : 'LOCAL DRAFT' }}</small></div>
+    <button ref="commandTrigger" type="button" class="command-trigger" :aria-expanded="showCommands"
+      aria-label="Search commands" title="Search commands (Ctrl+Q)" @click="showCommands ? closeCommands() : openCommands()">
+      <WorkbenchIcon name="search" /><span>Search commands</span><kbd>Ctrl+Q</kbd>
+    </button>
+    <dialog v-if="showCommands" ref="commandDialog" class="command-palette" aria-label="Search commands"
+      data-workspace-text-input @pointerdown.self="closeCommands()" @keydown.esc.stop.prevent="closeCommands()"
+      @cancel.prevent="closeCommands()">
+      <div class="command-palette-content">
+        <input ref="commandInput" v-model="commandQuery" type="search" aria-label="Filter commands"
+          placeholder="Type a command" @keydown.enter.prevent="runFirstCommand" />
+        <p v-if="!visibleCommands.length">No matching commands</p>
+        <ul v-else>
+          <li v-for="item in visibleCommands" :key="item.id">
+            <button type="button" :disabled="item.disabled" @click="runSearchCommand(item)">
+              {{ item.label }} <kbd v-if="item.shortcut">{{ item.shortcut }}</kbd>
+            </button>
+          </li>
+        </ul>
+        <button type="button" @click="closeCommands()">Close search</button>
+      </div>
+    </dialog>
     <AccountMenu />
+    <button type="button" class="header-icon-button" aria-label="Project Explorer"
+      :aria-pressed="ui.explorerVisible && !ui.focusRestore" aria-controls="project-explorer"
+      title="Toggle Project Explorer" @click="toggleExplorer"><WorkbenchIcon name="explorer" /></button>
+    <button type="button" class="header-icon-button" aria-label="Focus Mode"
+      :aria-pressed="!!ui.focusRestore" :title="ui.focusRestore ? 'Exit Focus Mode' : 'Focus Mode'"
+      @click="ui.toggleWorkspaceFocus()"><WorkbenchIcon name="reset" /></button>
     <button class="inspector-toggle" title="Open Inspector" aria-label="Open Inspector" @click="ui.openWindow('inspector')"><WorkbenchIcon name="inspector" /><span>Inspector</span></button>
     <input ref="fileInput" class="visually-hidden" type="file" accept=".json,application/json" aria-label="Open circuit file" @change="openFile" />
   </header>

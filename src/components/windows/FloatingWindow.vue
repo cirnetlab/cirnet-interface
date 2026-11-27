@@ -3,14 +3,14 @@ import { nextTick, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { useUiStore } from '../../stores/workbench/ui'
 import { windowDefinitions, type WorkspaceWindow } from '../../types/windows'
 import WorkbenchIcon from '../workbench/chrome/WorkbenchIcon.vue'
-const props = defineProps<{ window: WorkspaceWindow }>()
+const props = defineProps<{ window: WorkspaceWindow; docked?: boolean }>()
 const ui = useUiStore()
 const root = ref<HTMLElement>()
 const header = ref<HTMLElement>()
 let opener: HTMLElement | null = null
 let drag: { x: number; y: number; left: number; top: number; pointer: number } | null = null
 function start(event: PointerEvent) {
-  if (event.button !== 0 || (event.target as HTMLElement).closest('button')) return
+  if (props.docked || event.button !== 0 || (event.target as HTMLElement).closest('button')) return
   event.preventDefault()
   header.value?.focus()
   header.value?.setPointerCapture(event.pointerId)
@@ -20,7 +20,7 @@ function move(event: PointerEvent) { if (drag && drag.pointer === event.pointerI
 function end() { drag = null }
 function key(event: KeyboardEvent) {
   if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); ui.closeWindow(props.window.kind) }
-  if (event.target !== header.value) return
+  if (props.docked || event.target !== header.value) return
   const offset = event.shiftKey ? 30 : 10
   const directions: Record<string, [number, number]> = { ArrowLeft: [-offset, 0], ArrowRight: [offset, 0], ArrowUp: [0, -offset], ArrowDown: [0, offset] }
   const delta = directions[event.key]
@@ -43,8 +43,8 @@ onBeforeUnmount(() => {
 })
 </script>
 <template>
-  <section ref="root" class="floating-window" role="dialog" :aria-labelledby="'window-title-' + window.kind" :style="{ left: window.x + 'px', top: window.y + 'px', width: window.width + 'px', height: window.height + 'px', zIndex: window.z }" @pointerdown="ui.focusWindow(window.kind)" @focusin="ui.focusWindow(window.kind)" @keydown="key">
-    <header ref="header" class="floating-header" tabindex="0" :aria-label="windowDefinitions[window.kind].title + ' window. Drag or use arrow keys to move; Escape to close.'" @pointerdown="start" @pointermove="move" @pointerup="end" @pointercancel="end" @lostpointercapture="end"><span class="window-grip" aria-hidden="true">⠿</span><strong :id="'window-title-' + window.kind">{{ windowDefinitions[window.kind].title }}</strong><button :aria-label="'Close ' + windowDefinitions[window.kind].title" @click="ui.closeWindow(window.kind)"><WorkbenchIcon name="close" /></button></header>
+  <section ref="root" class="floating-window" :class="{ 'property-manager': docked }" :id="docked ? 'property-manager' : undefined" role="dialog" :aria-labelledby="'window-title-' + window.kind" :style="docked ? { zIndex: window.z } : { left: window.x + 'px', top: window.y + 'px', width: window.width + 'px', height: window.height + 'px', zIndex: window.z }" @pointerdown="ui.focusWindow(window.kind)" @focusin="ui.focusWindow(window.kind)" @keydown="key">
+    <header ref="header" class="floating-header" tabindex="0" :aria-label="docked ? 'PropertyManager. Escape to close.' : windowDefinitions[window.kind].title + ' window. Drag or use arrow keys to move; Escape to close.'" @pointerdown="start" @pointermove="move" @pointerup="end" @pointercancel="end" @lostpointercapture="end"><span v-if="!docked" class="window-grip" aria-hidden="true">⠿</span><strong :id="'window-title-' + window.kind">{{ docked ? 'PropertyManager' : windowDefinitions[window.kind].title }}</strong><button :aria-label="'Close ' + windowDefinitions[window.kind].title" @click="ui.closeWindow(window.kind)"><WorkbenchIcon name="close" /></button></header>
     <div class="floating-body"><slot /></div>
   </section>
 </template>

@@ -51,7 +51,7 @@ async function singleRow(page: Page) {
   await expect(footer(page).locator('.execution-buttons,.simulation-state,.mode,.verification,.connection-status,.component-count,.wire-count')).toHaveCount(0)
   await expect(footer(page).getByRole('button', { name: 'Zoom In', exact: true })).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-  await expect(message(page)).toHaveCSS('color', 'rgb(255, 255, 255)')
+  await expect(message(page)).toHaveCSS('color', 'rgb(24, 42, 67)')
   await expect(message(page)).toHaveCSS('opacity', '1')
 }
 

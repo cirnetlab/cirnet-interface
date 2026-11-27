@@ -40,6 +40,8 @@ import { projectedTranslationDelta } from '../../geometry/placement/transformDra
 import { projectedBreadboardEnclosedInRect, projectedObjectIntersectsRect, type ScreenRect } from '../selection/ProjectedSelection'
 import { CAMERA_NEAR, CAMERA_FAR, navigationClearanceForDistance } from '../../config/workbenchViewport'
 
+import { WORKBENCH_SCENE_BACKGROUND } from '../../config/workbenchViewport'
+
 export interface SceneRenderer { readonly isWebGLRenderer?: boolean; setSize(width: number, height: number, updateStyle?: boolean): void; render(scene: Scene, camera: PerspectiveCamera): void; dispose(): void }
 interface SceneOptions { renderer: SceneRenderer; canvas?: HTMLCanvasElement; onBeforeRender?: () => void; onRender?: () => void; onZoomChange?: (percent: number) => void; onNavigationChange?: (snapshot:NavigationSnapshot) => void; requestFrame?: (callback: FrameRequestCallback) => number; cancelFrame?: (id: number) => void }
 export type PickResult = ({ kind: 'module'; id: string } | { kind: 'control'; id: string; control: SupplyControl } | { kind: 'port'; id: string; endpoint: string } | { kind: 'wire'; source: string; destination: string }) & { point: Vector3 }
@@ -50,7 +52,7 @@ export type FlexibleHandle = {id:string;handle:'pin-0'|'pin-1';point:Vector3}
 
 // Geometry is a projection of graph IDs and named logical ports, never a source of nets.
 export function createSceneManager({ renderer, canvas, onBeforeRender, onRender, onZoomChange, onNavigationChange, requestFrame = requestAnimationFrame, cancelFrame = cancelAnimationFrame }: SceneOptions) {
-  const scene = new Scene(); scene.background = new Color('#101925')
+  const scene = new Scene(); scene.background = new Color(WORKBENCH_SCENE_BACKGROUND)
   const studio = renderer.isWebGLRenderer ? createStudioEnvironment(renderer as WebGLRenderer) : null
   if (studio) { scene.environment = studio.texture; scene.environmentIntensity = .55 }
   const camera = new PerspectiveCamera(42, 1, CAMERA_NEAR, CAMERA_FAR); camera.position.set(0, 11, 10); camera.lookAt(0, 0, 0); camera.updateMatrixWorld()

@@ -56,3 +56,35 @@ Scene resources stay outside Pinia. The renderer coalesces graph, camera and ges
 The current source skips an equivalent camera preset. When the previous draw took at least as long as the transition, the renderer applies the final pose directly. Both choices limit redundant rendering while keeping graph commands and electrical connectivity independent of view state. [Scene manager](../../../src/three/scene/SceneManager.ts)
 
 See the [workbench guide](../guides/workbench.md) for editor behavior and [verification](../contributing/verification.md) for the two browser test boundaries.
+
+## Light Workbench
+
+`src/workbench-light.css` owns the light chrome tokens. Navy `#102c50` frames
+the app, cyan `#5ce6fb` identifies CIRNET, and blue `#184f9d` identifies
+interactive controls. Neutral panels and a slate 3D background keep focus on
+the circuit. Local Segoe UI supports Vietnamese glyphs. Measurements and inputs
+use tabular figures where useful. Generic and custom commands use the shared
+`WorkbenchIcon` SVG paths. Library and instrument artwork retains its existing
+asset manifest and provenance.
+
+Project Explorer selects graph components and opens the existing libraries
+and experiment history. The Inspector button opens the right-hand PropertyManager.
+Sections are collapsible and edits still use the existing document commands. Header buttons restore either
+panel. Focus Mode temporarily hides the docks, tools and Ribbon and restores
+their previous visibility. Dock widths adapt to the viewport. The canvas
+stays mounted and the fit command uses the unobstructed work area. Ctrl+Q
+opens search for the available File commands.
+
+The seven CIRNET LAB concepts guide the layout. The current editor provides
+a 3D Workbench. Schematic editing requires a product model and rendering
+surface. The concept circuits and instrument readings are visual references.
+
+### Workbench icons
+
+Use the shared [WorkbenchIcon](../../../src/components/workbench/chrome/WorkbenchIcon.vue)
+registry for commands. Its outline icons use a 24 × 24 viewBox, a 1.6-unit
+rounded stroke and `currentColor`. Search and Project Explorer show the
+shared style for navigation, and Wire, Probe and Scope show the same style
+for engineering actions. Label the button or control, then keep its SVG
+decorative. Use the existing illustrated artwork separately for part and
+instrument previews, with provenance recorded in the [asset manifest](../../../src/assets/icons/manifest.json).

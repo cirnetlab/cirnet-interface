@@ -44,7 +44,7 @@ function updateGizmoObstacles() {
   if (manager && origin && stage) {
     obstaclesDirty = false
     const layout = stage.closest('.workbench-layout') ?? stage
-    const obstacles = [...new Set(layout.querySelectorAll<HTMLElement>('.contextual-panel, .component-information, .floating-window, .workspace-navigator, .wire-options'))].map((element) => {
+    const obstacles = [...new Set(layout.querySelectorAll<HTMLElement>('.contextual-panel, .component-information, .floating-window, .workspace-navigator, .wire-options, .workspace-caption, .project-explorer'))].filter(element => element.getClientRects().length).map((element) => {
       const r = element.getBoundingClientRect(); return { left: r.left - origin.left, top: r.top - origin.top, right: r.right - origin.left, bottom: r.bottom - origin.top }
     })
     // Reserve the entire swept area, using known sizes rather than measuring
@@ -59,10 +59,16 @@ function updateGizmoObstacles() {
     // The canvas fills the stage underneath the persistent drawers. Framing
     // reserves their real layout in CSS pixels, while transient selection
     // panels, tooltips and floating windows remain outside overview policy.
+    const explorer = stage.querySelector('.project-explorer')?.getBoundingClientRect()
+    const properties = stage.querySelector('.property-manager')?.getBoundingClientRect()
+    const railLeft = layout.querySelector('.tools-panel[data-drawer-occupied=true]') ? ui.toolsOverlayWidth : 0
+    const left = explorer?.width ? Math.max(railLeft, explorer.right - origin.left) : railLeft
+    const right = properties?.width ? properties.left - origin.left : origin.width
+    // Narrow windows can show overlapping panels. Preserve a valid camera region.
     manager.setUsableViewport({
-      left: layout.querySelector('.tools-panel[data-drawer-occupied=true]') ? ui.toolsOverlayWidth : 0,
+      left: right - left >= 120 ? left : railLeft,
       top: layout.querySelector('.component-panel[data-drawer-occupied=true]') ? ui.componentOverlayHeight : 0,
-      right: origin.width,
+      right: right - left >= 120 ? right : origin.width,
       bottom: origin.height,
     })
   }
@@ -132,7 +138,7 @@ watch(() => [circuit.physicalStates, circuit.physicalPreview?.pin_values] as con
 watch(() => workspace.showPins, value => manager?.setShowPins(value))
 // Component Info can change height on selection without changing window state.
 watch([() => ui.windows, () => circuit.graph?.modules.find((module) => module.id === workspace.selectedModuleId)?.type], invalidateObstacles, { deep: true, flush: 'post' })
-watch([() => ui.drawerInsets.left, () => ui.drawerInsets.top, () => ui.componentOverlayHeight, () => ui.toolsOverlayWidth], invalidateObstacles, { flush: 'post' })
+watch([() => ui.drawerInsets.left, () => ui.drawerInsets.top, () => ui.componentOverlayHeight, () => ui.toolsOverlayWidth, () => ui.explorerVisible, () => ui.focusRestore], invalidateObstacles, { flush: 'post' })
 watch([() => workspace.tool, () => workspace.selectedWire, () => workspace.placementType, () => workspace.zoomAreaActive, () => workspace.marqueeActive, () => workspace.wireOptionsActive, () => editor.wireRouting.hint.value], invalidateObstacles, { flush: 'post' })
 onUnmounted(() => { navigationActive = false; workspace.cancelZoomRequest(); observer?.disconnect(); drawerObserver?.disconnect(); manager?.dispose(); canvas.value?.removeEventListener('webglcontextlost', lost); canvas.value?.removeEventListener('webglcontextrestored', restored); document.removeEventListener('visibilitychange', visibility) })
 </script>

@@ -1,0 +1,270 @@
+/* CIRNET Engineering Design Language. Scope light chrome to the workbench. */
+.single-workspace-shell {
+  --cedl-navy: #102c50;
+  --cedl-navy-hover: #244872;
+  --cedl-cyan: #5ce6fb;
+  --cedl-ink: #182a43;
+  --cedl-muted: #465b73;
+  --cedl-canvas: #586575;
+  --cedl-white: #fff;
+  --cedl-panel: #f5f8fc;
+  --cedl-chrome: #e8eff8;
+  --cedl-line: #c6d2e2;
+  --cedl-hover: #e3edf9;
+  --cedl-blue: #184f9d;
+  --cedl-focus: #0063c9;
+  --cedl-selected: #d8eaff;
+  --cedl-danger: #9d3043;
+  --cedl-danger-bg: #fbe9ed;
+  --cedl-success: #216343;
+  --cedl-warning: #774417;
+  --cedl-radius: 4px;
+  --cedl-control: 28px;
+  --cedl-icon: 18px;
+  --cedl-left: clamp(148px, 16vw, 234px);
+  --cedl-right: clamp(238px, 22vw, 332px);
+  --cedl-gap: 6px;
+  --surface: var(--cedl-panel);
+  --ribbon-surface: var(--cedl-panel);
+  --line: var(--cedl-line);
+  --accent: var(--cedl-focus);
+  --muted: var(--cedl-muted);
+  color: var(--cedl-ink);
+  background: var(--cedl-chrome);
+  color-scheme: light;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+}
+.single-workspace-shell .app-titlebar {
+  color: var(--cedl-white);
+  background: var(--cedl-navy);
+  border-bottom: 1px solid var(--cedl-navy-hover);
+  box-shadow: none;
+  gap: clamp(5px, 1vw, 14px);
+}
+.app-titlebar .brand-circuit { color: var(--cedl-cyan); }
+.app-titlebar .brand-remote { color: var(--cedl-white); font-weight: 650; }
+.app-titlebar .brand-mark, .app-titlebar .brand-mark img { width: 30px; height: 30px; }
+.app-titlebar .project-title, .app-titlebar .project-title small { color: var(--cedl-white); }
+.app-titlebar .project-title small { background: var(--cedl-navy-hover); }
+.app-titlebar .ribbon-tabs button[aria-selected=true] { color: var(--cedl-blue); }
+.app-titlebar .file-menu-trigger:hover,
+.app-titlebar .quick-actions button:hover:not(:disabled) { background: var(--cedl-navy-hover); }
+.app-titlebar .command-trigger, .app-titlebar .header-icon-button {
+  display: flex;
+  align-items: center;
+  gap: var(--cedl-gap);
+  min-height: var(--cedl-control);
+  padding: 4px 7px;
+  white-space: nowrap;
+  color: var(--cedl-white);
+  background: var(--cedl-navy);
+  border-color: var(--cedl-navy-hover);
+}
+.app-titlebar .command-trigger { background: var(--cedl-navy-hover); }
+.app-titlebar :is(.command-trigger, .header-icon-button) .workbench-icon {
+  width: var(--cedl-icon);
+  height: var(--cedl-icon);
+}
+.command-trigger kbd { font-size: 10px; margin-inline-start: 7px; opacity: .83; }
+.app-titlebar .header-icon-button[aria-pressed='true'] {
+  color: var(--cedl-navy);
+  background: var(--cedl-selected);
+}
+.app-titlebar .header-icon-button:focus-visible, .app-titlebar .command-trigger:focus-visible {
+  outline-color: var(--cedl-cyan);
+}
+.command-palette::backdrop { background: rgb(16 44 80 / 35%); }
+.command-palette {
+  margin: 64px auto 12px;
+  width: min(430px, calc(100% - 24px));
+  max-height: 80vh;
+  overflow: auto;
+  color: var(--cedl-ink);
+  background: var(--cedl-white);
+  border: 1px solid var(--cedl-line);
+  border-radius: var(--cedl-radius);
+  padding: 0;
+}
+.command-palette-content { padding: 12px; }
+.command-palette ul { list-style: none; padding: 0; margin: 8px 0; }
+.command-palette li button { display: flex; justify-content: space-between; width: 100%; }
+.single-workspace-shell :is(.component-ribbon, .run-ribbon, .tool-rail, .simulation-statusbar) {
+  color: var(--cedl-ink);
+  background: var(--cedl-panel);
+  border-color: var(--cedl-line);
+}
+.single-workspace-shell .ribbon-scroll { scrollbar-color: var(--cedl-line) transparent; }
+.single-workspace-shell .ribbon-scroll > button { border-right-color: var(--cedl-line); }
+.single-workspace-shell :is(.ribbon-art > svg, .ribbon-chevron, .tool-rail button, .rail-label, .status-viewport-tools output) {
+  color: var(--cedl-blue);
+}
+.single-workspace-shell :is(.ribbon-scroll > button.active, .tool-rail button[aria-pressed=true], .status-viewport-tools button[aria-pressed=true]) {
+  color: var(--cedl-blue);
+  background: var(--cedl-selected);
+  border-color: var(--cedl-focus);
+}
+.single-workspace-shell :is(.run-command-buttons button, .toolbar-collapse-toggle, .property-manager button, .project-explorer button, .command-palette button) {
+  color: var(--cedl-ink);
+  background: var(--cedl-white);
+  border-color: var(--cedl-line);
+  border-radius: var(--cedl-radius);
+}
+.single-workspace-shell :is(.ribbon-scroll, .tool-rail, .run-ribbon, .simulation-statusbar, .ribbon-palette, .property-manager, .project-explorer, .command-palette) button:hover:not(:disabled) {
+  color: var(--cedl-blue);
+  background: var(--cedl-hover);
+  border-color: var(--cedl-line);
+}
+.single-workspace-shell :is(.run-capability-help, .snap-toggle) { color: var(--cedl-muted); }
+.single-workspace-shell .system-message { color: var(--cedl-muted); }
+.single-workspace-shell .system-message-text { color: var(--cedl-ink); }
+.single-workspace-shell .system-message > button { color: var(--cedl-blue); }
+.single-workspace-shell .ribbon-palette { background: var(--cedl-panel); color: var(--cedl-ink); border-color: var(--cedl-line); }
+.single-workspace-shell .palette-items button { background: var(--cedl-white); border-color: var(--cedl-line); }
+.single-workspace-shell :is(.palette-items small, .palette-empty, .palette-art svg) { color: var(--cedl-muted); }
+.single-workspace-shell :is(.ribbon-palette, .property-manager, .command-palette) :is(input:not([type=checkbox]), select, textarea) {
+  color: var(--cedl-ink);
+  background: var(--cedl-white);
+  border-color: var(--cedl-line);
+  font-variant-numeric: tabular-nums;
+}
+.single-workspace-shell .circuit-workspace { background: var(--cedl-canvas); }
+.single-workspace-shell :is(.workspace-empty p, .workspace-empty > span:last-of-type, .empty-cross) { color: var(--cedl-white); }
+.workspace-caption {
+  position: absolute;
+  z-index: 3;
+  top: calc(var(--drawer-top) + var(--cedl-gap));
+  left: calc(var(--drawer-left) + 32px + var(--cedl-gap));
+  display: flex;
+  align-items: center;
+  gap: var(--cedl-gap);
+  padding: 5px 8px;
+  border: 1px solid var(--cedl-line);
+  border-radius: var(--cedl-radius);
+  background: var(--cedl-chrome);
+  font-weight: 600;
+  pointer-events: none;
+}
+.explorer-open .workspace-caption { left: calc(var(--drawer-left) + var(--cedl-left) + 2 * var(--cedl-gap)); }
+.workspace-caption .workbench-icon, .dock-heading .workbench-icon { color: var(--cedl-blue); }
+.project-explorer, .single-workspace-shell .property-manager {
+  position: absolute;
+  top: calc(var(--drawer-top) + var(--cedl-gap));
+  bottom: var(--cedl-gap);
+  display: flex;
+  flex-direction: column;
+  color: var(--cedl-ink);
+  background: var(--cedl-panel);
+  border: 1px solid var(--cedl-line);
+  border-radius: var(--cedl-radius);
+  box-shadow: none;
+}
+.project-explorer { left: calc(var(--drawer-left) + var(--cedl-gap)); width: var(--cedl-left); z-index: 4; }
+.single-workspace-shell .property-manager { right: var(--cedl-gap); width: var(--cedl-right); }
+.dock-heading, .single-workspace-shell .property-manager .floating-header {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--cedl-gap);
+  height: 35px;
+  flex: 0 0 35px;
+  padding: 0 9px;
+  color: var(--cedl-ink);
+  background: var(--cedl-chrome);
+  border-bottom: 1px solid var(--cedl-line);
+  cursor: default;
+}
+.dock-heading h2, .property-manager .floating-header strong { font-size: 13px; font-weight: 650; margin: 0; }
+.explorer-content { overflow: auto; min-height: 0; padding: 8px; }
+.explorer-content details { margin-inline-start: 5px; }
+.explorer-content summary { padding: 4px 0; cursor: pointer; overflow-wrap: anywhere; }
+.explorer-content > details > summary { font-weight: 650; }
+.explorer-components { list-style: none; margin: 3px 0; padding: 0; }
+.explorer-components button, .explorer-projects {
+  display: flex;
+  align-items: center;
+  gap: var(--cedl-gap);
+  width: 100%;
+  padding: 3px 5px;
+  text-align: left;
+}
+.explorer-components button { border-color: transparent; background: transparent; }
+.explorer-components button[aria-pressed='true'] { color: var(--cedl-blue); background: var(--cedl-selected); }
+.explorer-components span { min-width: 0; overflow-wrap: anywhere; }
+.explorer-components small { display: block; }
+.explorer-empty { color: var(--cedl-muted); margin: 4px 0 8px; font-size: 11px; }
+.explorer-projects { margin-top: 8px; }
+.property-manager .floating-body { padding: 9px; scrollbar-color: var(--cedl-line) var(--cedl-panel); }
+.property-manager .inspector-section { border-color: var(--cedl-line); }
+.property-manager .inspector-section h2 { color: var(--cedl-ink); background: var(--cedl-chrome); padding: 4px 6px; margin-bottom: 8px; }
+.property-manager :is(label, .window-note, .inspector-counts, .event-console time) { color: var(--cedl-muted); }
+.property-manager .event-console { color: var(--cedl-ink); background: var(--cedl-chrome); }
+.property-manager :is(.notice.error, .event-console .error) { color: var(--cedl-danger); }
+.property-manager .notice.error { background: var(--cedl-danger-bg); border-color: var(--cedl-danger); }
+.property-manager .notice:not(.error) { background: var(--cedl-white); color: var(--cedl-success); border-color: var(--cedl-line); }
+.property-manager .status-badge { color: var(--cedl-success); }
+.property-manager .status-badge.hardware_busy { color: var(--cedl-warning); }
+.property-manager .status-badge:is(.hardware_offline, .fault) { color: var(--cedl-danger); }
+.properties-open .workspace-navigator { right: calc(var(--cedl-right) + 2 * var(--cedl-gap)); }
+/* Keep contextual controls usable beside the property dock. */
+.properties-open :is(.component-information, .wire-options) {
+  right: calc(var(--cedl-right) + 2 * var(--cedl-gap));
+  width: min(300px, calc(100% - var(--drawer-left) - var(--cedl-right) - 4 * var(--cedl-gap)));
+}
+.single-workspace-shell .component-information {
+  color: var(--cedl-ink);
+  background: var(--cedl-panel);
+  border-color: var(--cedl-line);
+  border-radius: var(--cedl-radius);
+}
+.component-information :is(.component-information-header, .component-information-footer, .component-information-art) {
+  color: var(--cedl-ink);
+  background: var(--cedl-chrome);
+  border-color: var(--cedl-line);
+}
+.component-information :is(.component-information-header button, .component-information-header > .workbench-icon, .component-information-art > .workbench-icon) {
+  color: var(--cedl-blue);
+}
+.component-information .component-information-heading h2 { color: var(--cedl-ink); }
+.component-information :is(.component-information-heading small, .component-information-introduction, .component-information-note, .component-information-status) {
+  color: var(--cedl-muted);
+}
+.component-information .component-information-header button:hover { background: var(--cedl-hover); }
+.component-information :is(input:not([type=checkbox]), select, textarea) {
+  color: var(--cedl-ink);
+  background: var(--cedl-white);
+  border-color: var(--cedl-line);
+}
+@media (max-width: 560px) {
+  .properties-open :is(.component-information, .wire-options) {
+    top: calc(var(--drawer-top) + 42px);
+    right: var(--cedl-gap);
+    width: min(var(--cedl-right), calc(100% - var(--drawer-left) - 2 * var(--cedl-gap)));
+  }
+}
+/* Instrument displays and floating legacy tools keep their own dark controls. */
+.floating-window:not(.property-manager), .wire-options {
+  color: #d5dfe9;
+  color-scheme: dark;
+  --muted: #8e9fb1;
+  --accent: #5ccbb8;
+}
+@media (max-width: 1100px) {
+  .app-titlebar .command-trigger kbd { display: none; }
+}
+@media (max-width: 850px) {
+  .app-titlebar .command-trigger span { display: none; }
+  .single-workspace-shell { --cedl-left: clamp(124px, 26vw, 166px); --cedl-right: clamp(202px, 40vw, 262px); }
+}
+@media (max-width: 560px) {
+  .workspace-caption { display: none; }
+  .single-workspace-shell .app-titlebar { gap: 4px; padding-inline: 5px; }
+}
+
+.property-manager .inspector-section > summary {
+  background: var(--cedl-chrome);
+  color: var(--cedl-blue);
+  cursor: pointer;
+  padding: 3px 6px;
+  margin-bottom: 8px;
+}
+.property-manager .inspector-section > summary h2 { display: inline; padding: 0; }
