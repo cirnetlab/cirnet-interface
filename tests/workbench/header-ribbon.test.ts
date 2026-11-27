@@ -30,7 +30,10 @@ test('header tabs use manual keyboard activation and preserve the document and h
     assert.equal(ui.activeRibbonTab,'run');assert.equal(ui.componentToolbarCollapsed,false)
     assert.equal(component.props['aria-selected'],false);assert.equal(run.props['aria-selected'],true)
     assert.equal(circuit.snapshot(),graph);assert.equal(circuit.past.length,history)
-    assert.equal(view.find('button','id','workbench-file-trigger').props['aria-haspopup'],'menu')
+    assert.equal(view.find('button','id','workbench-file-trigger'),undefined)
+    const file = view.find('button','id','workbench-tab-file')
+    assert.equal(file.props.role,'tab')
+    assert.equal(file.props['aria-controls'],'workbench-panel-file')
     assert.equal(view.all().some(node=>node.props.class==='file-error'),false)
   } finally {view.app.unmount();if(previous)Object.defineProperty(globalThis,'window',previous);else Reflect.deleteProperty(globalThis,'window')}
 })

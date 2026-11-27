@@ -10,7 +10,6 @@ import WorkbenchIcon from './WorkbenchIcon.vue'
 import AccountMenu from '../../account/AccountMenu.vue'
 import { useProjectStore } from '../../../stores/documents/projects'
 import { useWorkspaceMessageStore } from '../../../stores/workbench/workspaceMessages'
-import FileMenu from './FileMenu.vue'
 import { executeFileCommand, type FileCommand, type FileMenuItem } from './fileCommands'
 import { editingTools, focusWorkbenchCanvas, tabIndexForKey } from './workspaceCommands'
 import { ribbonTabs, type RibbonTab } from '../../../config/workbenchChrome'
@@ -210,7 +209,6 @@ onUnmounted(() => {
       <button aria-label="Undo" title="Undo (Ctrl+Z)" :disabled="!circuit.canUndo" @click="circuit.undo()"><WorkbenchIcon name="undo" /></button>
       <button aria-label="Redo" title="Redo (Ctrl+Shift+Z)" :disabled="!circuit.canRedo" @click="circuit.redo()"><WorkbenchIcon name="redo" /></button>
       </div>
-      <FileMenu :items="fileItems" :dismiss-key="ui.activeRibbonTab" @command="fileCommand" />
     </div>
     <div class="project-title" :title="circuit.current?.name || 'No circuit'"><span class="dirty-dot" v-if="projects.saveState.dirty" aria-label="Unsaved changes" /><span class="project-name">{{ circuit.current?.name || 'No circuit open' }}</span><small>{{ projects.saveState.binding ? 'SERVER · '+projects.saveState.phase : 'LOCAL DRAFT' }}</small></div>
     <button ref="commandTrigger" type="button" class="command-trigger" :aria-expanded="showCommands"

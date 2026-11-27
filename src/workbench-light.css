@@ -77,7 +77,6 @@
 .single-workspace-shell > .ribbon-tabs.is-collapsed > button[aria-selected=true] {
   box-shadow: inset 0 -1px var(--cedl-line);
 }
-.app-titlebar .file-menu-trigger:hover,
 .app-titlebar .quick-actions button:hover:not(:disabled) { background: var(--cedl-navy-hover); }
 .app-titlebar .command-trigger, .app-titlebar .header-icon-button {
   display: flex;

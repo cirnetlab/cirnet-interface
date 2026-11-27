@@ -354,18 +354,16 @@ test('native held tactile input stays out of checkpoint, Export and server Save'
     try{return await new Promise<unknown>((resolve,reject)=>{const request=database.transaction('drafts','readonly').objectStore('drafts').getAll();request.onsuccess=()=>{const row=request.result.find((row:{value:{name:string}})=>row.value.name===name);resolve(row?{pressed:row.value.graph.modules[0].properties.pressed,fresh:row.value.updatedAt>=holdStarted+350}:null)};request.onerror=()=>reject(request.error)})}
     finally{database.close()}
   },{name,holdStarted})).toEqual({pressed:false,fresh:true})
-  // Keyboard menu activation preserves the real held pointer while making the
+  // Keyboard command activation preserves the real held pointer while making the
   // saved status visible again; a mouse click would release the tactile input.
-  await page.getByRole('button',{name:'File',exact:true}).press('Enter')
-  await page.getByRole('menuitem',{name:'Open Project',exact:true}).press('Enter')
+  await fileCommand(page,'Open Project')
   await expect(projects(page).getByLabel('Server save status',{exact:true})).toContainText('saved')
   const saved=page.waitForResponse(response=>response.request().method()==='PUT'&&response.url().endsWith(`/api/v2/circuits/${id}`))
   await page.keyboard.press('Control+s');expect((await saved).ok()).toBe(true)
   expect((await(await context.request.get(`/api/v2/circuits/${id}`)).json()).graph.modules[0].properties.pressed).toBe(false)
   await expect.poll(async()=>(await actuatorPoint(page,'T')).worldY).toBeLessThan(point.worldY-.0001)
   const pending=page.waitForEvent('download')
-  await page.getByRole('button',{name:'File',exact:true}).press('Enter')
-  await page.getByRole('menuitem',{name:'Export',exact:true}).press('Enter')
+  await fileCommand(page,'Export')
   const stream=await(await pending).createReadStream();expect(stream).not.toBeNull()
   const chunks:Buffer[]=[];for await(const chunk of stream!)chunks.push(Buffer.from(chunk))
   expect(JSON.parse(Buffer.concat(chunks).toString('utf8')).modules[0].properties.pressed).toBe(false)
@@ -401,15 +399,16 @@ test('server route hydration blocks premature Export until the real saved tactil
   })
   try{
     await page.reload();await responseReceived;await sceneReady(page)
-    await page.getByRole('button',{name:'File',exact:true}).click()
-    const exportItem=page.getByRole('menuitem',{name:'Export',exact:true})
+    await page.getByRole('tab',{name:'File',exact:true}).click()
+    const filePanel=page.getByRole('tabpanel',{name:'File',exact:true})
+    const exportItem=filePanel.getByRole('button',{name:'Export',exact:true})
     await expect(exportItem).toBeDisabled()
-    await expect(page.getByRole('menuitem',{name:'Save',exact:true})).toBeDisabled()
-    await expect(page.getByRole('menuitem',{name:'Save As',exact:true})).toBeDisabled()
+    await expect(filePanel.getByRole('button',{name:'Save',exact:true})).toBeDisabled()
+    await expect(filePanel.getByRole('button',{name:'Save As',exact:true})).toBeDisabled()
     await expect(projects(page).getByRole('button',{name:'Save server circuit',exact:true})).toBeDisabled()
     await expect(projects(page).getByRole('button',{name:'Save circuit as new server document',exact:true})).toBeDisabled()
     expect(downloads).toEqual([])
-    release();await expect(exportItem).toBeEnabled();await page.keyboard.press('Escape')
+    release();await expect(exportItem).toBeEnabled()
     expect(moduleById(await exportedNativeGraph(page),'T').properties?.pressed).toBe(false)
   }finally{release()}
 })

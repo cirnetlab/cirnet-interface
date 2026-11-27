@@ -2,10 +2,12 @@ import { expect, type Page } from '@playwright/test'
 
 export type FileCommand = 'New' | 'Open Project' | 'Save' | 'Save As' | 'Import' | 'Export' | 'History' | 'Assignment'
 
-/** Use the same public menu path as a person; never revive removed header controls. */
+/** Run a File command without changing the active Ribbon tab or pointer position. */
 export async function fileCommand(page: Page, name: FileCommand) {
-  await page.getByRole('button', { name: 'File', exact: true }).click()
-  await page.getByRole('menu', { name: 'File', exact: true }).getByRole('menuitem', { name, exact: true }).click()
+  await page.keyboard.press('Control+q')
+  const search = page.getByRole('dialog', { name: 'Search commands', exact: true })
+  await search.getByRole('searchbox', { name: 'Filter commands' }).fill(name)
+  await search.getByRole('button', { name: new RegExp('^' + name + '(?: Ctrl\\+\\w+)?$') }).press('Enter')
 }
 
 export async function selectRun(page: Page) {

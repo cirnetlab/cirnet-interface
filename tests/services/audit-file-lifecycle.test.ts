@@ -54,7 +54,7 @@ function pendingFile(name: string) {
 const graph = (name: string) => JSON.stringify({ schema_version: '1.0', circuit_id: name, modules: [], connections: [], metadata: { name } })
 const image = (byte: number) => JSON.stringify({ version: '1.0', word_bits: 8, depth: 1, data: [byte] })
 
-test('Ctrl+S respects the same saving guard as the File menu command',()=>{
+test('Ctrl+S respects the same saving guard as the File command',()=>{
  const previous=Object.getOwnPropertyDescriptor(globalThis,'window')
  const keyboardWindow=Object.assign(new EventTarget(),{closest:()=>null})
  Object.defineProperty(globalThis,'window',{configurable:true,value:keyboardWindow})

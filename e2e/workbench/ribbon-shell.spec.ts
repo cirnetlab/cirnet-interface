@@ -4,13 +4,11 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { getArtifactDirectory } from '../../scripts/utilities/artifact-paths.mjs'
 import { resolve } from 'node:path'
 import { exportedNativeGraph, nativeShellEvidence, observeNativeScene, sceneReady, workspaceCanvas } from '../helpers/native-scene'
-import { fileCommand } from '../helpers/workbench-ui'
 
 const directory = getArtifactDirectory('ribbon-shell')
 const fileItems = ['New', 'Open Project', 'Save', 'Save As', 'Import', 'Export', 'History', 'Assignment']
-const tab = (page: Page, name: 'Component' | 'Simulate') => page.getByRole('tab', { name, exact: true })
-const file = (page: Page) => page.getByRole('button', { name: 'File', exact: true })
-const menu = (page: Page) => page.getByRole('menu', { name: 'File', exact: true })
+const tab = (page: Page, name: 'Component' | 'Simulate' | 'File') => page.getByRole('tab', { name, exact: true })
+const filePanel = (page: Page) => page.getByRole('tabpanel', { name: 'File', exact: true })
 const message = (page: Page) => page.locator('.system-message-text:not(:empty)')
 const footer = (page: Page) => page.locator('.simulation-statusbar')
 const graph = { schema_version: '1.2', circuit_id: 'ribbon-native', modules: [
@@ -55,39 +53,37 @@ async function singleRow(page: Page) {
   await expect(message(page)).toHaveCSS('opacity', '1')
 }
 
-test('Header order, File menu keyboard focus and manual Component/Simulate tab activation', async ({ page }) => {
+test('Header order, File Ribbon keyboard focus and manual Component/Simulate tab activation', async ({ page }) => {
   test.setTimeout(90_000)
   await start(page)
   await expect(tab(page, 'Component')).toHaveAttribute('aria-selected', 'true')
-  await expect(file(page)).toHaveAttribute('aria-haspopup', 'menu')
   const header = page.locator('.app-titlebar')
-  const ordered = [header.locator('.brand'), header.getByRole('button', { name: 'Undo', exact: true }), header.getByRole('button', { name: 'Redo', exact: true }), file(page), header.locator('.project-title'), header.getByRole('button', { name: 'Open account', exact: true }), header.getByRole('button', { name: 'Open Inspector', exact: true })]
+  await expect(header.getByRole('button', { name: 'File', exact: true })).toHaveCount(0)
+  const ordered = [header.locator('.brand'), header.getByRole('button', { name: 'Undo', exact: true }), header.getByRole('button', { name: 'Redo', exact: true }), header.locator('.project-title'), header.getByRole('button', { name: 'Open account', exact: true }), header.getByRole('button', { name: 'Open Inspector', exact: true })]
   const boxes = await Promise.all(ordered.map(item => item.boundingBox()))
   for (let index = 1; index < boxes.length; index++) {
     expect(boxes[index]!.x).toBeGreaterThanOrEqual(boxes[index - 1]!.x)
     expect(Math.abs(boxes[index]!.y + boxes[index]!.height / 2 - boxes[0]!.y - boxes[0]!.height / 2)).toBeLessThan(15)
     expect(await ordered[index - 1]!.evaluate((element, next) => !!(element.compareDocumentPosition(next as Node) & Node.DOCUMENT_POSITION_FOLLOWING), await ordered[index]!.elementHandle())).toBe(true)
   }
-  await file(page).focus(); await page.keyboard.press('Enter')
-  await expect(menu(page).getByRole('menuitem').locator('span')).toHaveText(fileItems)
-  await expect(menu(page).getByRole('menuitem', { name: 'New', exact: true })).toBeFocused()
-  await page.keyboard.press('End'); await expect(menu(page).getByRole('menuitem', { name: 'Assignment', exact: true })).toBeFocused()
-  await page.keyboard.press('Home'); await page.keyboard.press('ArrowDown')
-  await expect(menu(page).getByRole('menuitem', { name: 'Open Project', exact: true })).toBeFocused()
+  await tab(page, 'Component').press('Home')
+  await expect(tab(page, 'File')).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(tab(page, 'File')).toHaveAttribute('aria-selected', 'true')
+  await expect(filePanel(page).getByRole('button')).toHaveText(fileItems)
+  await page.keyboard.press('Tab')
+  await expect(filePanel(page).getByRole('button', { name: 'New', exact: true })).toBeFocused()
   await screenshot(page, 'after-file')
-  await page.keyboard.press('Escape'); await expect(menu(page)).toBeHidden(); await expect(file(page)).toBeFocused()
-  await page.keyboard.press('Space'); await expect(menu(page)).toBeVisible(); await page.keyboard.press('Tab'); await expect(menu(page)).toBeHidden()
-  await file(page).click(); await tab(page, 'Component').click(); await expect(menu(page)).toBeHidden()
+  await tab(page, 'Component').click(); await expect(filePanel(page)).toBeHidden()
   await tab(page, 'Component').focus(); await page.keyboard.press('ArrowRight')
   await expect(tab(page, 'Simulate')).toBeFocused(); await expect(tab(page, 'Component')).toHaveAttribute('aria-selected', 'true')
   await page.keyboard.press('Enter'); await expect(tab(page, 'Simulate')).toHaveAttribute('aria-selected', 'true')
   await expect(page.locator('#workbench-panel-run')).toHaveAttribute('aria-labelledby', 'workbench-tab-run')
-  await file(page).click(); await expect(tab(page, 'Simulate')).toHaveAttribute('aria-selected', 'true'); await page.keyboard.press('Escape')
-  await fileCommand(page, 'Open Project')
+  await tab(page, 'File').click()
+  await filePanel(page).getByRole('button', { name: 'Open Project', exact: true }).press('Enter')
   const projects = page.getByRole('region', { name: 'Project Manager', exact: true })
   await expect(projects).toBeVisible()
   expect(await projects.evaluate(element => element.closest('[role="dialog"]')?.contains(document.activeElement) ?? element.contains(document.activeElement))).toBe(true)
-  await expect(file(page)).not.toBeFocused()
   await singleRow(page)
 })
 
@@ -107,8 +103,8 @@ test('native canvas identity, camera, graph, selection and undo survive tabs, Fi
   page.on('request', request => { if (request.method() === 'POST' && /\/api\/experiments(?:\/|$)/.test(new URL(request.url()).pathname)) mutations++ })
   page.on('websocket', () => sockets++)
   for (let index = 0; index < 8; index++) {
+    await tab(page, 'File').click()
     await tab(page, index % 2 ? 'Component' : 'Simulate').click()
-    await file(page).click(); await page.keyboard.press('Escape')
   }
   await screenshot(page, 'after-component')
   await tab(page, 'Simulate').click()
@@ -197,10 +193,9 @@ for (const dpr of [1, 2]) test(`responsive native Ribbon at DPR ${dpr}, reduced 
       await page.setViewportSize({ width, height: 1000 }); await tab(page, 'Component').click(); await stable(page)
       await singleRow(page)
       const before = await nativeShellEvidence(page), footerBefore = await footer(page).boundingBox()
-      await file(page).click()
-      const menuBounds = await menu(page).boundingBox()
-      expect(menuBounds!.x).toBeGreaterThanOrEqual(0); expect(menuBounds!.x + menuBounds!.width).toBeLessThanOrEqual(width)
-      await page.keyboard.press('Escape')
+      await tab(page, 'File').click()
+      const fileBounds = await filePanel(page).boundingBox()
+      expect(fileBounds!.x).toBeGreaterThanOrEqual(0); expect(fileBounds!.x + fileBounds!.width).toBeLessThanOrEqual(width)
       for (let index = 0; index < 5; index++) {
         await tab(page, index % 2 ? 'Component' : 'Simulate').click()
         await page.getByRole('button', { name: 'Collapse Ribbon', exact: true }).click()
