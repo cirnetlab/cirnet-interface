@@ -6,4 +6,4 @@
 - [Use the workbench](guides/workbench.md) for circuit editing and [instrument models](guides/instrument-models.md).
 - [Read the workbench architecture](architecture/workbench.md).
 - [Verify](contributing/verification.md) and [package](operations/deployment.md) the browser application.
-- Follow the [writing rules](contributing/writing-documentation.md) and update the [changelog](../changelogs/README.md).
+- Follow the [writing rules](contributing/writing-documentation.md) and update the [changelog](../../CHANGELOG.md).

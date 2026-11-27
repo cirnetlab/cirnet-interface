@@ -1,3 +1,3 @@
-# CIRNET Interface changelog
+# CIRNET Interface changelog index
 
-[Changelog / Nhật ký thay đổi](CHANGELOG_V0.md)
+- [Version 0](CHANGELOG_V0.md)
