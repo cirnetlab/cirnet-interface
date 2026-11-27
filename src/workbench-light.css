@@ -161,7 +161,6 @@
   font-variant-numeric: tabular-nums;
 }
 .single-workspace-shell .circuit-workspace { background: var(--cedl-canvas); }
-.single-workspace-shell :is(.workspace-empty p, .workspace-empty > span:last-of-type, .empty-cross) { color: var(--cedl-white); }
 .workspace-view-bar {
   --view-left: calc(var(--drawer-left) + var(--cedl-gap));
   --view-right: var(--cedl-gap);
