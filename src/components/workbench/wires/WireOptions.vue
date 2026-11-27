@@ -48,8 +48,9 @@ function routeKey(event: KeyboardEvent) {
 </script>
 
 <template>
-  <section class="wire-options contextual-panel" aria-label="Jumper wire options" @pointerdown.stop @keydown.stop="routeKey">
-    <div class="wire-options-heading">WIRE <span>JUMPER</span></div>
+  <section class="wire-options contextual-panel overlay-surface overlay-controls" aria-label="Jumper wire options" data-workspace-text-input @pointerdown.stop @keydown.stop="routeKey">
+    <header class="overlay-header"><WorkbenchIcon name="wire" /><strong>Wire options</strong></header>
+    <div class="overlay-body">
     <div class="wire-palette" role="group" aria-label="Wire colors">
       <button
         v-for="swatch in JUMPER_COLORS"
@@ -156,200 +157,25 @@ function routeKey(event: KeyboardEvent) {
       </div>
 
     </div>
+    </div>
   </section>
 </template>
 
 <style scoped>
-.wire-options {
-  padding: 14px 16px;
-  border: 1px solid #36495a;
-  border-radius: 6px;
-  background: #101923;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-  color: #d7dce2;
-  z-index: 4;
-  font-size: 11px;
-  pointer-events: auto;
-  max-height: calc(100% - var(--drawer-top) - 142px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: #3b5066 #101923;
-}
-
-.wire-options-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 1.2px;
-  color: #f0b13d;
-  margin-bottom: 12px;
-}
-
-.wire-options-heading span {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 1px;
-  color: #8da2b5;
-}
-
-.wire-palette {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px 6px;
-  justify-items: center;
-  margin: 0 0 16px;
-}
-
-.wire-palette button {
-  width: 32px;
-  height: 32px;
-  background: var(--swatch);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 2px 4px rgba(0, 0, 0, 0.4);
-  cursor: pointer;
-  padding: 0;
-  transition: transform 0.1s ease, outline 0.1s ease;
-}
-
-.wire-palette button:hover {
-  transform: scale(1.06);
-  border-color: #f0b13d;
-}
-
-.wire-palette button[aria-pressed="true"] {
-  outline: 2px solid #f0b13d;
-  outline-offset: 2px;
-  border-color: #f0b13d;
-}
-
-.wire-instructions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.wire-instruction-line {
-  margin: 0;
-  font-size: 11px;
-  line-height: 1.45;
-  color: #8ea1b4;
-}
-
-.wire-divider {
-  border: none;
-  border-top: 1px solid #233242;
-  margin: 0 0 12px;
-}
-
-.wire-tool-section {
-  display: flex;
-  flex-direction: column;
-}
-
-.wire-tool-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 10px;
-}
-
-.wire-tool-heading strong {
-  font-size: 13px;
-  font-weight: 600;
-  color: #f0b13d;
-}
-
-.wire-priority {
-  font-size: 11.5px;
-  color: #8ea1b4;
-}
-
-.wire-route-buttons {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.wire-mode-btn {
-  flex: 1;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #14202c;
-  border: 1px solid #2d3e4f;
-  border-radius: 5px;
-  color: #cdd5dd;
-  font-size: 11.5px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.wire-mode-btn:hover:not(.active) {
-  background: #1a2a3a;
-  border-color: #485f75;
-  color: #ffffff;
-}
-
-.wire-mode-btn.active {
-  border-color: #f0b13d;
-  color: #ffffff;
-  background: #182837;
-  box-shadow: 0 0 0 1px #f0b13d44;
-}
-
-.wire-action-buttons {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-  margin-bottom: 2px;
-}
-
-.wire-icon-btn {
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #14202c;
-  border: 1px solid #2d3e4f;
-  border-radius: 5px;
-  color: #d7dce2;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.15s ease;
-}
-
-.wire-icon-btn:hover:not(:disabled) {
-  background: #1c2c3c;
-  border-color: #4a6278;
-  color: #ffffff;
-}
-
-.wire-icon-btn:active:not(:disabled) {
-  background: #101a24;
-}
-
-.wire-icon-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  border-color: #202b36;
-  color: #526373;
-}
-
-.wire-icon-btn :deep(.workbench-icon) {
-  width: 18px;
-  height: 18px;
-}
-
-.wire-options button:focus-visible {
-  outline: 2px solid #f0b13d;
-  outline-offset: 2px;
-}
-
+.wire-options { z-index: var(--cedl-layer-context); display: flex; flex-direction: column; pointer-events: auto; font-size: 11px; }
+.wire-palette { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); justify-items: center; gap: var(--cedl-gap); }
+.wire-palette button { aspect-ratio: 1; width: min(100%, var(--cedl-control)); min-height: 0; padding: 0; border-radius: 50%; background: var(--swatch); }
+.wire-palette button:hover:not(:disabled), .wire-palette button[aria-pressed=true] { background: var(--swatch); border-color: var(--cedl-focus); }
+.wire-palette button[aria-pressed=true] { outline: 2px solid var(--cedl-focus); outline-offset: 2px; }
+.wire-instructions { display: grid; gap: var(--cedl-gap); margin-block: var(--overlay-space); }
+.wire-instruction-line { margin: 0; color: var(--cedl-muted); }
+.wire-divider { border: 0; border-top: 1px solid var(--cedl-line); margin: 0 0 var(--cedl-gap); }
+.wire-tool-heading { display: flex; justify-content: space-between; gap: var(--cedl-gap); margin-bottom: var(--cedl-gap); }
+.wire-tool-heading strong { font-size: 12px; }
+.wire-priority { color: var(--cedl-muted); }
+.wire-route-buttons, .wire-action-buttons { display: flex; flex-wrap: wrap; gap: var(--cedl-gap); }
+.wire-action-buttons { margin-top: var(--cedl-gap); }
+.wire-mode-btn { flex: 1; }
+.wire-icon-btn { display: grid; place-items: center; width: var(--cedl-control); padding: 0; }
+.wire-icon-btn :deep(.workbench-icon) { width: var(--cedl-icon); height: var(--cedl-icon); }
 </style>

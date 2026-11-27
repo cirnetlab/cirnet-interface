@@ -85,11 +85,11 @@ watch(() => window.value?.activation, activation => { if (activation) void nextT
 </script>
 <template>
   <aside v-if="window?.open && type && !workspace.wireOptionsActive"
-    class="component-information contextual-panel" aria-labelledby="component-information-title"
+    class="component-information contextual-panel overlay-surface overlay-controls" data-workspace-text-input aria-labelledby="component-information-title"
     :style="{ zIndex: window.z, display: ui.focusRestore && !isDraft ? 'none' : undefined }"
     @pointerdown="ui.focusWindow('component-info')" @focusin="ui.focusWindow('component-info')" @keydown.esc.stop.prevent="close">
-    <header ref="header" class="component-information-header" tabindex="0"><WorkbenchIcon name="chip" /><strong id="component-information-title">Component Info</strong><button aria-label="Close Component Info" @click="close"><WorkbenchIcon name="close" /></button></header>
-    <div class="component-information-content">
+    <header ref="header" class="component-information-header overlay-header" tabindex="0"><WorkbenchIcon name="chip" /><strong id="component-information-title">Component Info</strong><button aria-label="Close Component Info" @click="close"><WorkbenchIcon name="close" /></button></header>
+    <div class="component-information-content overlay-body">
       <div class="component-information-art"><ComponentThumbnail v-if="part" :type="type" :properties="properties" :module="isDraft ? undefined : selected" :modules="circuit.graph?.modules" :alt="name + ' preview'" :lazy="false" priority="high" /><img v-else-if="item?.icon" :src="iconUrl(item.icon)" :alt="name + ' preview'" width="250" height="110" /><WorkbenchIcon v-else :name="item?.glyph || 'chip'" /></div>
       <div class="component-information-heading"><h2>{{ name }}</h2></div>
       <ComponentPropertiesForm v-if="part && part.editor.parameters.length" ref="propertyForm" :type="type" :properties="properties" :context-key="contextKey" :descriptor="part" @update="updateProperties" />

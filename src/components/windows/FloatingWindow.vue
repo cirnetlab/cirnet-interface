@@ -35,11 +35,18 @@ function activate() {
 onMounted(activate)
 watch(() => props.window.activation, activate)
 function restoreOpener() {
-  if (root.value?.contains(document.activeElement) && opener?.isConnected) {
-    // A toolbar can be collapsed while its instrument window is still open.
-    const target = !opener.closest('[inert]') && opener.getClientRects().length ? opener : opener.closest('.component-panel, .tools-panel')?.querySelector<HTMLButtonElement>('.toolbar-collapse-toggle')
-    target?.focus()
+  if (!root.value?.contains(document.activeElement)) return
+  const switcherWillRemain = ui.floatingWindows.some(window => window.kind !== props.window.kind)
+  if (opener?.isConnected && !opener.closest('[inert]') && opener.getClientRects().length
+    && (switcherWillRemain || !opener.matches('.window-switcher-trigger'))) {
+    opener.focus()
+    return
   }
+  // A toolbar may have collapsed or the popup that opened this window may have closed.
+  const target = opener?.closest('.component-panel, .tools-panel')?.querySelector<HTMLElement>('.toolbar-collapse-toggle')
+    ?? (switcherWillRemain ? document.querySelector<HTMLElement>('.window-switcher-trigger') : null)
+    ?? document.getElementById('workspace')
+  target?.focus()
 }
 watch(() => props.window.open, open => {
   if (!open) restoreOpener()
@@ -50,12 +57,12 @@ onBeforeUnmount(() => {
 })
 </script>
 <template>
-  <section ref="root" class="floating-window" :class="{ 'property-manager': docked }" :id="docked ? 'property-manager' : undefined" role="dialog" :aria-labelledby="'window-title-' + window.kind" :style="docked ? { zIndex: window.z } : { left: window.x + 'px', top: window.y + 'px', width: window.width + 'px', height: window.height + 'px', zIndex: window.z }" @pointerdown="ui.focusWindow(window.kind)" @focusin="ui.focusWindow(window.kind)" @keydown="key">
-    <header ref="header" class="floating-header" tabindex="0"
+  <section ref="root" class="floating-window overlay-surface" :class="{ 'property-manager': docked, 'overlay-controls': docked || window.kind === 'hex-editor' }" :id="docked ? 'property-manager' : undefined" role="dialog" data-workspace-text-input :aria-labelledby="'window-title-' + window.kind" :style="docked ? { zIndex: window.z } : { left: window.x + 'px', top: window.y + 'px', width: window.width + 'px', height: window.height + 'px', zIndex: window.z }" @pointerdown="ui.focusWindow(window.kind)" @focusin="ui.focusWindow(window.kind)" @keydown="key">
+    <header ref="header" class="floating-header overlay-header" tabindex="0"
       :aria-label="docked ? 'PropertyManager. Escape to close.' : windowDefinitions[window.kind].title + ' window. Drag or use arrow keys to move; Escape to close.'"
       @pointerdown="start" @pointermove="move" @pointerup="end" @pointercancel="end" @lostpointercapture="end">
       <WorkbenchIcon v-if="docked" name="inspector" />
-      <span v-else class="window-grip" aria-hidden="true">⠿</span>
+      <WorkbenchIcon v-else class="window-grip" name="grip" />
       <strong :id="'window-title-' + window.kind">{{ docked ? 'PropertyManager' : windowDefinitions[window.kind].title }}</strong>
       <button v-if="docked" type="button" :aria-label="ui.pinnedDocks.properties ? 'Unpin PropertyManager' : 'Pin PropertyManager'"
         :title="ui.pinnedDocks.properties ? 'Unpin PropertyManager' : 'Pin PropertyManager'"
@@ -64,7 +71,7 @@ onBeforeUnmount(() => {
       </button>
       <button :aria-label="'Close ' + windowDefinitions[window.kind].title" @click="ui.closeWindow(window.kind)"><WorkbenchIcon name="close" /></button>
     </header>
-    <div class="floating-body"><slot /></div>
+    <div class="floating-body overlay-body"><slot /></div>
     <DockResizeHandle v-if="docked" dock="properties" label="Resize PropertyManager" controls="property-manager" />
   </section>
 </template>

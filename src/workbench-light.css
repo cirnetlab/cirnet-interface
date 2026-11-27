@@ -18,6 +18,15 @@
   --cedl-danger-bg: #fbe9ed;
   --cedl-success: #216343;
   --cedl-warning: #774417;
+  --cedl-warning-bg: #fff1dc;
+  --cedl-scrim: rgb(16 44 80 / 35%);
+  --cedl-layer-view: 3;
+  --cedl-layer-context: 4;
+  --cedl-layer-floating: 5;
+  --cedl-layer-overlay-dock: 8;
+  --cedl-layer-context-menu: 10;
+  --cedl-layer-ribbon: 20;
+  --cedl-layer-status-popup: 25;
   --cedl-radius: 4px;
   --cedl-control: 28px;
   --cedl-icon: 18px;
@@ -102,21 +111,6 @@
 .app-titlebar .header-icon-button:focus-visible, .app-titlebar .command-trigger:focus-visible {
   outline-color: var(--cedl-cyan);
 }
-.command-palette::backdrop { background: rgb(16 44 80 / 35%); }
-.command-palette {
-  margin: 64px auto 12px;
-  width: min(430px, calc(100% - 24px));
-  max-height: 80vh;
-  overflow: auto;
-  color: var(--cedl-ink);
-  background: var(--cedl-white);
-  border: 1px solid var(--cedl-line);
-  border-radius: var(--cedl-radius);
-  padding: 0;
-}
-.command-palette-content { padding: 12px; }
-.command-palette ul { list-style: none; padding: 0; margin: 8px 0; }
-.command-palette li button { display: flex; justify-content: space-between; width: 100%; }
 .single-workspace-shell :is(.component-ribbon, .run-ribbon, .tool-rail, .simulation-statusbar) {
   color: var(--cedl-ink);
   background: var(--cedl-panel);
@@ -138,13 +132,13 @@
   background: var(--cedl-selected);
   border-color: var(--cedl-focus);
 }
-.single-workspace-shell :is(.run-command-buttons button, .toolbar-collapse-toggle, .property-manager button, .project-explorer button, .command-palette button) {
+.single-workspace-shell :is(.run-command-buttons button, .toolbar-collapse-toggle, .project-explorer button) {
   color: var(--cedl-ink);
   background: var(--cedl-white);
   border-color: var(--cedl-line);
   border-radius: var(--cedl-radius);
 }
-.single-workspace-shell :is(.ribbon-scroll, .tool-rail, .run-ribbon, .simulation-statusbar, .ribbon-palette, .property-manager, .project-explorer, .command-palette) button:hover:not(:disabled) {
+.single-workspace-shell :is(.ribbon-scroll, .tool-rail, .run-ribbon, .simulation-statusbar, .project-explorer) button:hover:not(:disabled) {
   color: var(--cedl-blue);
   background: var(--cedl-hover);
   border-color: var(--cedl-line);
@@ -153,21 +147,12 @@
 .single-workspace-shell .system-message { color: var(--cedl-muted); }
 .single-workspace-shell .system-message-text { color: var(--cedl-ink); }
 .single-workspace-shell .system-message > button { color: var(--cedl-blue); }
-.single-workspace-shell .ribbon-palette { background: var(--cedl-panel); color: var(--cedl-ink); border-color: var(--cedl-line); }
-.single-workspace-shell .palette-items button { background: var(--cedl-white); border-color: var(--cedl-line); }
-.single-workspace-shell :is(.palette-items small, .palette-empty, .palette-art svg) { color: var(--cedl-muted); }
-.single-workspace-shell :is(.ribbon-palette, .property-manager, .command-palette) :is(input:not([type=checkbox]), select, textarea) {
-  color: var(--cedl-ink);
-  background: var(--cedl-white);
-  border-color: var(--cedl-line);
-  font-variant-numeric: tabular-nums;
-}
 .single-workspace-shell .circuit-workspace { background: var(--cedl-canvas); }
 .workspace-view-bar {
   --view-left: calc(var(--drawer-left) + var(--cedl-gap));
   --view-right: var(--cedl-gap);
   position: absolute;
-  z-index: 3;
+  z-index: var(--cedl-layer-view);
   top: calc(var(--drawer-top) + var(--cedl-gap));
   left: var(--view-left);
   right: var(--view-right);
@@ -237,9 +222,9 @@
   border-radius: var(--cedl-radius);
   box-shadow: none;
 }
-.project-explorer { left: calc(var(--drawer-left) + var(--cedl-gap)); width: var(--cedl-left); z-index: 4; }
+.project-explorer { left: calc(var(--drawer-left) + var(--cedl-gap)); width: var(--cedl-left); z-index: var(--cedl-layer-context); }
 .single-workspace-shell .property-manager { right: var(--cedl-gap); width: var(--cedl-right); }
-.dock-heading, .single-workspace-shell .property-manager .floating-header {
+.dock-heading {
   margin: 0;
   display: flex;
   align-items: center;
@@ -252,7 +237,7 @@
   border-bottom: 1px solid var(--cedl-line);
   cursor: default;
 }
-.dock-heading h2, .property-manager .floating-header strong { font-size: 13px; font-weight: 650; margin: 0; }
+.dock-heading h2 { font-size: 13px; font-weight: 650; margin: 0; }
 .dock-heading h2 { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dock-heading button { display: grid; place-items: center; flex-shrink: 0; margin-inline-end: 3px; padding: 2px; }
 .dock-heading button .workbench-icon { width: 14px; height: 14px; }
@@ -307,42 +292,11 @@
   right: calc(var(--cedl-right) + 2 * var(--cedl-gap));
   width: min(300px, calc(100% - var(--drawer-left) - var(--cedl-right) - 4 * var(--cedl-gap)));
 }
-.single-workspace-shell .component-information {
-  color: var(--cedl-ink);
-  background: var(--cedl-panel);
-  border-color: var(--cedl-line);
-  border-radius: var(--cedl-radius);
-}
-.component-information :is(.component-information-header, .component-information-footer, .component-information-art) {
-  color: var(--cedl-ink);
-  background: var(--cedl-chrome);
-  border-color: var(--cedl-line);
-}
-.component-information :is(.component-information-header button, .component-information-header > .workbench-icon, .component-information-art > .workbench-icon) {
-  color: var(--cedl-blue);
-}
-.component-information .component-information-heading h2 { color: var(--cedl-ink); }
-.component-information :is(.component-information-heading small, .component-information-introduction, .component-information-note, .component-information-status) {
-  color: var(--cedl-muted);
-}
-.component-information .component-information-header button:hover { background: var(--cedl-hover); }
-.component-information :is(input:not([type=checkbox]), select, textarea) {
-  color: var(--cedl-ink);
-  background: var(--cedl-white);
-  border-color: var(--cedl-line);
-}
 @media (max-width: 560px) {
   .properties-open :is(.component-information, .wire-options) {
     right: var(--cedl-gap);
     width: min(var(--cedl-right), calc(100% - var(--drawer-left) - 2 * var(--cedl-gap)));
   }
-}
-/* Instrument displays and floating legacy tools keep their own dark controls. */
-.floating-window:not(.property-manager), .wire-options {
-  color: #d5dfe9;
-  color-scheme: dark;
-  --muted: #8e9fb1;
-  --accent: #5ccbb8;
 }
 @media (max-width: 1100px) {
   .app-titlebar .command-trigger kbd { display: none; }
@@ -406,8 +360,8 @@
 .single-workspace-shell .property-manager .floating-header { padding-inline: 10px 6px; }
 .property-manager .floating-header > .workbench-icon { color: var(--cedl-blue); }
 .property-manager .floating-header strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.properties-overlay .floating-window-manager { z-index: 8; }
-.explorer-overlay .project-explorer { z-index: 8; }
+.properties-overlay .floating-window-manager { z-index: var(--cedl-layer-overlay-dock); }
+.explorer-overlay .project-explorer { z-index: var(--cedl-layer-overlay-dock); }
 .explorer-overlay .project-explorer, .single-workspace-shell.properties-overlay .property-manager { box-shadow: var(--cedl-elevation); }
 .property-manager .floating-header button, .dock-heading button { flex: 0 0 20px; width: 20px; min-height: 24px; }
 .project-explorer .dock-heading > .workbench-icon { flex-shrink: 0; }
@@ -473,17 +427,6 @@
 }
 .tool-rail .activity-destinations button { height: 34px; padding: 4px; }
 .tool-rail [role=toolbar] { flex-shrink: 0; }
-.single-workspace-shell .system-message-details {
-  color: var(--cedl-ink);
-  background: var(--cedl-panel);
-  border-color: var(--cedl-line);
-  box-shadow: var(--cedl-elevation);
-}
-.single-workspace-shell .system-message-details :is(p, li, strong) { color: var(--cedl-ink); }
-.single-workspace-shell .system-message-details strong { font-weight: 650; }
-.single-workspace-shell .system-message-details header button { color: var(--cedl-blue); }
-.single-workspace-shell .system-message-details header button:hover { background: var(--cedl-hover); }
-
 .schematic-workspace {
   position: absolute;
   inset: var(--editor-top) var(--editor-right) var(--cedl-gap) var(--editor-left);

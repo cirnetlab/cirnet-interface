@@ -86,6 +86,14 @@ báo trong đồ thị, hỗ trợ chọn đối tượng, thu phóng và cuộn
 sơ đồ và khai triển kết nối chân vật lý hoặc breadboard nằm ngoài chế độ này.
 Ctrl+Q tìm lệnh File, chỉnh sửa, Ribbon và bố cục.
 
+Hộp thoại, cửa sổ nổi và popup của Workbench dùng chung token và kiểu giao diện
+sáng. Account và tìm lệnh mở dưới dạng hộp thoại modal của trình duyệt.
+Workbench ưu tiên đặt cửa sổ mới vào vùng còn trống và giữ vị trí khi kích hoạt
+lại. Dùng **Open windows** trên thanh trạng thái để đưa cửa sổ bị che lên trước.
+Có thể kéo thanh tiêu đề, dùng phím mũi tên để di chuyển hoặc nhấn Escape để
+đóng. Mặt thiết bị đo và bảng màu dây giữ màu dành cho phép đo và mạch điện.
+[Kiểu giao diện dùng chung](../../../src/workspace-overlays.css)
+
 ### Biểu tượng Workbench
 
 Dùng bộ biểu tượng chung [WorkbenchIcon](../../../src/components/workbench/chrome/WorkbenchIcon.vue)

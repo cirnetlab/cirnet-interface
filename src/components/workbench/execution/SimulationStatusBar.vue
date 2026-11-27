@@ -6,6 +6,7 @@ import { useUiStore } from '../../../stores/workbench/ui'
 import { ZOOM_STEP } from '../../../config/workbenchViewport'
 import WorkbenchIcon from '../chrome/WorkbenchIcon.vue'
 import SystemMessage from '../SystemMessage.vue'
+import WindowSwitcher from '../../windows/WindowSwitcher.vue'
 const circuit=useCircuitStore(),workspace=useWorkspaceStore(),ui=useUiStore()
 // Absorb numerical pose noise at the real camera limits.
 const zoomOutDisabled=computed(()=>workspace.zoom<=workspace.minZoom+Math.max(1,workspace.minZoom)*1e-10)
@@ -32,6 +33,7 @@ function marqueeSelect() {
       <button aria-label="Zoom To Area" title="Zoom To Area" :aria-pressed="workspace.zoomAreaActive" @click="zoomToArea"><WorkbenchIcon name="zoom-area" /></button>
     </div>
     <div v-else class="status-schematic">Schematic · Read-only · {{ ui.schematicZoom }}%</div>
+    <WindowSwitcher />
     <span id="workspace-snap-help" class="visually-hidden">Workspace Object Snap aligns placement and movement to 0.5-unit spacing, docks modular breadboards during free movement and snaps gizmo rotation to 15 degrees. Turn off for fine positioning and continuous rotation.</span>
   </footer>
 </template>

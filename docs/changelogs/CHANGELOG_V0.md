@@ -12,6 +12,7 @@
 
 ### Changed
 
+- Unify dialogs, workbench popups and floating windows with the light theme. Place new windows in available workspace and expose open windows in the status bar.
 - Extend command search to editor and layout actions and standardize Ribbon group icons around the existing instrument artwork.
 - Group Interface source, tests, scripts and browser suites by responsibility. Discover nested tests and accept unambiguous targeted selectors.
 - Group the procedural Three.js instrument models, artwork and chassis in `src/three/instruments/` and document workbench source ownership.

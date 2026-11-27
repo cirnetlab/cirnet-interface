@@ -49,5 +49,10 @@ watch(()=>instrument.principalId,()=>{error.value='';vectorTime.value='0';vector
  </section>
 </template>
 <style scoped>
-.run-configuration{font-size:12px}.run-configuration h3{font-size:13px;margin:14px 0 8px}.run-configuration fieldset{border:1px solid #42576b;margin:12px 0;padding:8px}.run-configuration label{margin:8px 0}.run-configuration .check{display:flex;flex-direction:row;align-items:center;gap:6px}.check input{width:auto}.run-configuration ul{padding-left:16px}.run-configuration li{margin:5px 0}.run-configuration p{line-height:1.5}[role=alert]{color:#ffb7a6}
+.run-configuration { font-size: 12px; }
+.run-configuration h3 { margin-block: var(--overlay-space) var(--cedl-gap); font-size: 13px; }
+.run-configuration fieldset, .run-configuration label { margin-block: var(--cedl-gap); }
+.run-configuration .check { display: flex; flex-direction: row; align-items: center; gap: var(--cedl-gap); }
+.run-configuration ul { padding-inline-start: var(--cedl-icon); }
+.run-configuration li { margin-block: var(--cedl-gap); }
 </style>

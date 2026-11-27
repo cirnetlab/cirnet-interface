@@ -25,8 +25,11 @@ const hasOpenedSchematic = ref(false)
 watch(() => ui.activeEditor, editor => {
   if (editor === 'schematic') hasOpenedSchematic.value = true
 }, { immediate: true })
-function dismissUnpinnedDocks(event: PointerEvent) {
+function dismissWorkspaceOverlays(event: PointerEvent) {
   if (!(event.target instanceof Element)) return
+  if (ui.notificationsOpen && !event.target.closest('#system-message-details, [aria-controls="system-message-details"]')) {
+    ui.notificationsOpen = false
+  }
   if (ui.explorerOpen && !ui.pinnedDocks.explorer && !event.target.closest('#project-explorer, [data-dock-trigger="explorer"]')) {
     ui.explorerVisible = false
   }
@@ -54,12 +57,13 @@ useLabNavigation()
     'explorer-overlay': ui.explorerOpen && !ui.pinnedDocks.explorer,
     'properties-overlay': ui.propertiesOpen && !ui.pinnedDocks.properties,
     'schematic-editor-active': ui.activeEditor === 'schematic',
-  }" @pointerdown.capture="dismissUnpinnedDocks">
+  }" @pointerdown.capture="dismissWorkspaceOverlays">
     <a class="skip-link" href="#workspace">Skip to workspace</a>
     <AppTitleBar ref="titleBar" />
     <div ref="layout" class="workbench-layout" :style="{
       '--drawer-top': ui.drawerInsets.top + 'px',
       '--drawer-left': ui.drawerInsets.left + 'px',
+      '--ribbon-popup-space': Math.max(0, ui.workbenchSize.height - ui.drawerInsets.top) + 'px',
       '--cedl-left': ui.dockLayout('explorer').width + 'px',
       '--cedl-right': ui.dockLayout('properties').width + 'px',
     }">

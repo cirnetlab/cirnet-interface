@@ -34,6 +34,6 @@ defineExpose({ readDraft, focusText })
   </section>
 </template>
 <style scoped>
-.label-properties textarea { width: 100%; min-height: 5em; resize: vertical; font: inherit; color: inherit; background: var(--input-background, #172331); border: 1px solid #405267; border-radius: 3px; padding: 6px; box-sizing: border-box; }
-.label-properties small { color: #a3b2c1; }
+.label-properties textarea { min-height: 5em; }
+.label-properties small { color: var(--cedl-muted); }
 </style>

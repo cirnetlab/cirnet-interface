@@ -102,11 +102,13 @@ onUnmounted(() => { if(listening){document.removeEventListener('pointerdown', ou
       </button>
     </div>
     </section>
-  <div v-if="active" id="ribbon-palette" class="ribbon-palette" :style="paletteStyle" :aria-label="active.label + ' components'">
-   <div class="palette-heading"><strong>{{ query.trim() ? 'Search results' : active.label }}</strong><small>{{ results.length }} components</small></div>
+  <div v-if="active" id="ribbon-palette" class="ribbon-palette overlay-surface overlay-controls" :style="paletteStyle" :aria-label="active.label + ' components'">
+   <header class="palette-heading overlay-header"><strong>{{ query.trim() ? 'Search results' : active.label }}</strong><small>{{ results.length }} components</small></header>
+   <div class="overlay-body">
    <div v-if="searchEnabled" class="palette-search"><input ref="searchInput" aria-label="Search components" placeholder="Search code, alias or function…" type="search" :value="query" @input="query = ($event.target as HTMLInputElement).value" @keydown.stop="searchKey" /><button aria-label="Clear component search" :disabled="!query" @click="clearSearch">Clear</button></div>
    <p v-if="!results.length" class="palette-empty" role="status">No components match “{{ query }}”.</p>
    <div ref="paletteItems" class="palette-items" @keydown="gridKey"><button v-for="card in results" :key="card.item.type" :title="card.item.description" :data-component-type="card.item.type" :draggable="card.placeable" @dragstart="drag($event, card)" @click="choose(card)"><span class="palette-art"><ComponentThumbnail v-if="card.thumbnail" :type="card.item.type" :alt="card.item.name + ' preview'" lazy :visibility-root="paletteItems" :fallback-icon="card.iconSrc" /><img v-else-if="card.iconSrc" :src="card.iconSrc" alt="" width="58" height="58" /><WorkbenchIcon v-else :name="card.item.glyph || 'chip'" /></span><strong>{{ card.item.name }}</strong><small>{{ card.support }}</small></button></div>
+   </div>
     </div>
   </div>
 </template>

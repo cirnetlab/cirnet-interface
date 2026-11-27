@@ -26,7 +26,7 @@ void experiment.refreshHistory()
 onBeforeUnmount(()=>referenceRequest?.abort())
 </script>
 <template>
- <section class="history-manager" aria-label="Experiment history and queue">
+ <section class="history-manager lab-window overlay-controls" aria-label="Experiment history and queue">
   <section aria-label="Current owned execution"><h3>Current owned execution</h3>
    <p role="status" aria-label="Owned execution status">{{experiment.pending?experiment.requestStatus:experiment.executionState}}</p><p v-if="current"><code>{{current.experiment_id}}</code> · {{current.station_id}}<span v-if="current.queue_position!==null"> · queue position {{current.queue_position}}</span></p>
    <p v-if="current?.lease_expires_at!==null&&current?.lease_expires_at!==undefined">Lease expires {{new Date(current.lease_expires_at*1000).toLocaleString()}} (server authority).</p>
@@ -51,6 +51,3 @@ onBeforeUnmount(()=>referenceRequest?.abort())
   </section>
  </section>
 </template>
-<style scoped>
-.history-manager{height:100%;overflow:auto;padding:14px;color:#dbe6f0;font-size:13px}.history-manager section+section{border-top:1px solid #516273;margin-top:16px;padding-top:8px}.history-manager h3{font-size:15px;margin:8px 0}.history-manager ul{padding-left:18px}.history-manager li{margin:5px 0}.history-manager button{background:#263b50;color:inherit;border:1px solid #526a80;border-radius:3px;padding:5px 9px;cursor:pointer;overflow-wrap:anywhere}.history-manager button:disabled{opacity:.45;cursor:default}.history-manager button[aria-pressed=true]{background:#315d7c}.history-manager code{overflow-wrap:anywhere}.actions{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.queue-summary{padding:7px;background:#172d3b;margin:6px 0}[role=alert],.source-error{color:#ffc5b9}
-</style>

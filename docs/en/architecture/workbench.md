@@ -87,6 +87,14 @@ connections, supports selection and has independent zoom and scroll. Schematic
 editing and physical pin or breadboard net expansion are outside this view.
 Ctrl+Q searches File, editing, Ribbon and layout commands.
 
+Dialogs, floating windows, and workbench popups use the light chrome tokens and
+shared overlay styles. Account and command search open as browser modal dialogs.
+The workspace places new floating windows in free space when they fit, and
+keeps their positions when reactivated. Use **Open windows** in the status bar
+to bring a covered window to the front. Floating window headers support dragging,
+arrow keys, and Escape. Instrument faceplates and wire swatches keep their
+measurement and circuit colors. [Shared overlay styles](../../../src/workspace-overlays.css)
+
 ### Workbench icons
 
 Use the shared [WorkbenchIcon](../../../src/components/workbench/chrome/WorkbenchIcon.vue)

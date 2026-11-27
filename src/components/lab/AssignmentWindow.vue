@@ -42,7 +42,7 @@ watch(()=>author.draft?.assignment_id,()=>{resetPrivateFields();feedback.value=a
 watch([()=>author.principalId,()=>author.role,()=>author.draft?.assignment_id,()=>author.binding,()=>author.selectionVersion],()=>{assignmentIdText.value=null},{flush:'sync'})
 </script>
 <template>
- <section class="assignment-manager" aria-label="Assignments">
+ <section class="assignment-manager lab-window overlay-controls" aria-label="Assignments">
   <section aria-label="Published exercises"><h3>Published exercises</h3><p>Choose an assignment for the next Run. Your open circuit stays in the editor.</p>
    <button aria-label="Refresh published assignments" @click="experiment.loadAssignments()">Refresh exercises</button>
    <ul><li v-for="item in experiment.assignments" :key="item.assignment_id"><button :aria-label="`Use assignment ${item.title}`" :aria-pressed="experiment.assignmentId===item.assignment_id" @click="experiment.assignmentId=item.assignment_id">{{item.title}}</button></li></ul>
@@ -83,5 +83,6 @@ watch([()=>author.principalId,()=>author.role,()=>author.draft?.assignment_id,()
  </section>
 </template>
 <style scoped>
-.assignment-manager{height:100%;overflow:auto;padding:14px;color:#dbe6f0;font-size:13px}.assignment-manager section+section{border-top:1px solid #516273;margin-top:16px;padding-top:8px}.assignment-manager h3{font-size:15px;margin:8px 0}.assignment-manager ul{padding-left:18px}.assignment-manager li{margin:5px 0}.assignment-manager label{display:grid;gap:4px;margin:8px 0}.assignment-manager input,.assignment-manager select,.assignment-manager textarea{box-sizing:border-box;width:100%;padding:6px;background:#14202c;color:inherit;border:1px solid #516273;border-radius:3px}.assignment-manager input[type=checkbox]{width:auto;justify-self:start}.assignment-manager textarea{font-family:monospace}.assignment-manager button{background:#263b50;color:inherit;border:1px solid #526a80;border-radius:3px;padding:5px 9px;cursor:pointer}.assignment-manager button:disabled{opacity:.45;cursor:default}.assignment-manager button[aria-pressed=true]{background:#315d7c}.assignment-manager fieldset{margin:12px 0;border:1px solid #516273;padding:8px}.actions{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.confirmation{padding:10px;border:1px solid #bd9451;background:#45361f;margin:10px 0}[role=alert]{color:#ffc5b9}
+.assignment-manager textarea { font-family: Consolas, monospace; }
+.assignment-manager input[type=checkbox] { align-self: start; }
 </style>

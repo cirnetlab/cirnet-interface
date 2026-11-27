@@ -43,9 +43,9 @@ test('reopening responsive drawers bounds windows without changing the canvas vi
   ui.setWorkbenchSize(560, 300); ui.openWindow('oscilloscope')
   ui.moveWindow('oscilloscope', 0, 0)
   ui.toggleToolsSidebar(); ui.toggleComponentToolbar()
-  assert.equal(ui.windows[0].x, 54); assert.equal(ui.windows[0].y, 96)
+  assert.equal(ui.windows[0].x, 54 + 38); assert.equal(ui.windows[0].y, 96)
   ui.setWorkbenchSize(561, 300)
-  assert.equal(ui.windows[0].x, 66); assert.equal(ui.windows[0].y, 96)
+  assert.equal(ui.windows[0].x, 66 + 38); assert.equal(ui.windows[0].y, 96)
   const position = [ui.windows[0].x, ui.windows[0].y]
   for (let i = 0; i < 20; i++) { ui.toggleToolsSidebar(); ui.toggleComponentToolbar() }
   assert.deepEqual([ui.windows[0].x, ui.windows[0].y], position)
@@ -177,6 +177,21 @@ test('floating windows are unique, reusable and reordered when focused', () => {
   ui.openWindow('oscilloscope')
   assert.equal(ui.windows[0].open, true)
   assert.equal(ui.windows.length, 2)
+})
+
+test('new floating windows use free space and retain their position when reactivated', () => {
+  const ui = useUiStore(createPinia())
+  ui.setViewport(1900, 900)
+  ui.openWindow('projects')
+  ui.openWindow('assignments')
+  const project = ui.windows[0]!, assignment = ui.windows[1]!
+  const disjoint = project.x + project.width <= assignment.x || assignment.x + assignment.width <= project.x
+    || project.y + project.height <= assignment.y || assignment.y + assignment.height <= project.y
+  assert.ok(disjoint, 'two Lab windows fit without covering each other')
+  const position = [project.x, project.y]
+  ui.openWindow('projects')
+  assert.deepEqual([project.x, project.y], position)
+  assert.ok(project.z > assignment.z)
 })
 
 test('drag and viewport shrink keep every window and its controls inside the workspace', () => {

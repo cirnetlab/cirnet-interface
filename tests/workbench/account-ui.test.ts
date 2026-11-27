@@ -14,12 +14,12 @@ test('account opens a labelled login dialog and preserves a role-restricted acco
   const view=mountSfc(await loadSfc('components/account/AccountMenu.vue'),pinia)
   try {
     const open=view.find('button','aria-label','Open account');assert.ok(open);dispatch(open,'onClick');await nextTick()
-    assert.ok(view.find('section','role','dialog'));assert.ok(view.find('input','aria-label','Username'))
+    assert.ok(view.find('dialog','role','dialog'));assert.ok(view.find('input','aria-label','Username'))
     assert.equal(view.find('input','aria-label','Password').props.type,'password')
     assert.equal(view.find('section','aria-label','User administration'),undefined)
     auth.error='Username or password is incorrect.';await nextTick();assert.match(view.text(),/incorrect/)
     dispatch(view.find('button','aria-label','Close account'),'onClick');await nextTick()
-    assert.equal(view.find('section','role','dialog'),undefined)
+    assert.equal(view.find('dialog','role','dialog'),undefined)
   } finally {view.app.unmount()}
 })
 

@@ -90,12 +90,12 @@ const values = (signals: Record<string, number | string | null>) => Object.entri
 
 <style scoped>
 .lab-feedback { font-size: 11px; overflow-wrap: anywhere; }
-.lab-feedback section { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--border-subtle, #40505e); }
+.lab-feedback section { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--cedl-line); }
 .lab-feedback h3 { font-size: 11px; margin: 0 0 6px; }
 .lab-feedback ul { padding-left: 18px; margin: 6px 0; }
 .lab-feedback li { margin: 4px 0; }
 .lab-table { max-width: 100%; overflow-x: auto; margin: 8px 0; }
 .lab-table table { width: 100%; border-collapse: collapse; font-size: 10px; }
 .lab-table caption { text-align: left; font-weight: 600; margin-bottom: 4px; }
-.lab-table th, .lab-table td { padding: 4px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-subtle, #40505e); }
+.lab-table th, .lab-table td { padding: 4px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--cedl-line); }
 </style>

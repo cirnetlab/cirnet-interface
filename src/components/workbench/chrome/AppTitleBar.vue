@@ -63,6 +63,8 @@ function openCommands() {
     return
   }
   commandQuery.value = ''
+  ui.notificationsOpen = false
+  ui.activeRibbonGroup = null
   showCommands.value = true
   void nextTick(() => {
     commandDialog.value?.showModal()
@@ -173,8 +175,10 @@ async function toggleFullscreen() {
 function shortcuts(event: KeyboardEvent) {
   if (!(event.ctrlKey || event.metaKey)) return
   const key = event.key.toLowerCase()
-  if (key === 'q') { event.preventDefault(); openCommands(); return }
   const target = event.target as HTMLElement | null
+  if (typeof document !== 'undefined' && document.querySelector('.account-dialog[open]')) return
+  if (key === 'q') { event.preventDefault(); openCommands(); return }
+  if (target?.closest?.('.command-palette')) return
   if (target?.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return
   if (!['n', 'o', 's', 'z', 'y'].includes(key)) return
   event.preventDefault()
@@ -215,10 +219,11 @@ onUnmounted(() => {
       aria-label="Search commands" title="Search commands (Ctrl+Q)" @click="showCommands ? closeCommands() : openCommands()">
       <WorkbenchIcon name="search" /><span>Search commands</span><kbd>Ctrl+Q</kbd>
     </button>
-    <dialog v-if="showCommands" ref="commandDialog" class="command-palette" aria-label="Search commands"
+    <dialog v-if="showCommands" ref="commandDialog" class="command-palette overlay-modal overlay-surface overlay-controls" aria-label="Search commands"
       data-workspace-text-input @pointerdown.self="closeCommands()" @keydown.esc.stop.prevent="closeCommands()"
       @cancel.prevent="closeCommands()">
-      <div class="command-palette-content">
+      <header class="overlay-header"><WorkbenchIcon name="search" /><strong>Search commands</strong><button type="button" aria-label="Close search" @click="closeCommands()"><WorkbenchIcon name="close" /></button></header>
+      <div class="command-palette-content overlay-body">
         <input ref="commandInput" v-model="commandQuery" type="search" aria-label="Filter commands"
           placeholder="Type a command" @keydown.enter.prevent="runFirstCommand" />
         <p v-if="!visibleCommands.length">No matching commands</p>
@@ -229,7 +234,7 @@ onUnmounted(() => {
             </button>
           </li>
         </ul>
-        <button type="button" @click="closeCommands()">Close search</button>
+
       </div>
     </dialog>
     <AccountMenu />

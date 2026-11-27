@@ -22,6 +22,47 @@ function bound(window: WorkspaceWindow, width: number, height: number, insets: {
   window.y = Math.max(top, Math.min(window.y, height - window.height))
 }
 
+const windowGap = 6
+const editorChromeHeight = 62
+const railToggleClearance = 4 + 28 + windowGap
+
+function placeWindow(window: WorkspaceWindow, viewport: { width: number; height: number },
+  insets: { left: number; top: number }, rightDock: number, openWindows: readonly WorkspaceWindow[]) {
+  const right = viewport.width - window.width
+  const bottom = viewport.height - window.height
+  const clampX = (x: number) => Math.max(insets.left, Math.min(right, x))
+  const clampY = (y: number) => Math.max(insets.top, Math.min(bottom, y))
+  const x = clampX(right - rightDock - windowGap)
+  const y = clampY(insets.top + editorChromeHeight + 2 * windowGap)
+  const columns = [x, clampX(insets.left + windowGap), clampX(right - windowGap)]
+  const rows = [y, clampY(insets.top + windowGap), clampY(bottom - windowGap)]
+
+  for (const other of openWindows) {
+    columns.push(clampX(other.x - window.width - windowGap), clampX(other.x + other.width + windowGap))
+    rows.push(clampY(other.y - window.height - windowGap), clampY(other.y + other.height + windowGap))
+  }
+
+  let leastOverlap = Infinity
+  let shortestDistance = Infinity
+  for (const left of new Set(columns)) {
+    for (const top of new Set(rows)) {
+      const overlap = openWindows.reduce((area, other) => {
+        const w = Math.max(0, Math.min(left + window.width, other.x + other.width) - Math.max(left, other.x))
+        const h = Math.max(0, Math.min(top + window.height, other.y + other.height) - Math.max(top, other.y))
+        return area + w * h
+      }, 0)
+      const distance = Math.abs(left - x) + Math.abs(top - y)
+      if (overlap < leastOverlap || (overlap === leastOverlap && distance < shortestDistance)) {
+        leastOverlap = overlap
+        shortestDistance = distance
+        window.x = left
+        window.y = top
+      }
+    }
+  }
+  bound(window, viewport.width, viewport.height, insets)
+}
+
 export const useUiStore = defineStore('ui', {
   state: () => ({
     activeRibbonTab: 'component' as RibbonTab,
@@ -45,6 +86,7 @@ export const useUiStore = defineStore('ui', {
     toolsOverlayWidth: (state) => state.workbenchSize.width <= 560 ? 54 : 66,
     explorerOpen: state => state.explorerVisible && !state.focusRestore,
     propertiesOpen: state => !state.focusRestore && state.windows.some(window => window.kind === 'inspector' && window.open),
+    floatingWindows: state => state.windows.filter(window => window.open && window.kind !== 'inspector' && window.kind !== 'component-info'),
     dockLayout: (state) => (dock: WorkspaceDock) => {
       const limits = dockLimits(dock, state.workbenchSize.width)
       const width = state.dockWidths[dock] ?? limits.width
@@ -52,6 +94,11 @@ export const useUiStore = defineStore('ui', {
     },
     drawerInsets(): { left: number; top: number } {
       return { left: this.toolsSidebarCollapsed ? 0 : this.toolsOverlayWidth, top: this.componentToolbarCollapsed ? 0 : this.componentOverlayHeight }
+    },
+    floatingInsets(): { left: number; top: number } {
+      const { left, top } = this.drawerInsets
+      const spare = Math.max(0, this.viewport.width - left - 240)
+      return { left: left + Math.min(spare, railToggleClearance), top }
     },
   },
   actions: {
@@ -121,7 +168,7 @@ export const useUiStore = defineStore('ui', {
       this.toolsSidebarCollapsed = !this.toolsSidebarCollapsed
       if (!this.toolsSidebarCollapsed) this.boundWindows()
     },
-    boundWindows() { for (const window of this.windows) bound(window, this.viewport.width, this.viewport.height, this.drawerInsets) },
+    boundWindows() { for (const window of this.windows) bound(window, this.viewport.width, this.viewport.height, this.floatingInsets) },
     setWorkbenchSize(width: number, height: number) {
       if (!Number.isFinite(width) || !Number.isFinite(height)) return
       width = Math.max(0, width); height = Math.max(0, height)
@@ -140,12 +187,18 @@ export const useUiStore = defineStore('ui', {
       if (kind === 'inspector' && this.focusRestore) this.toggleWorkspaceFocus()
       let window = this.windows.find((entry) => entry.kind === kind)
       if (!window) {
-        const index = this.windows.length
-        window = { kind, open: true, x: 32 + index * 26, y: 36 + index * 22, width: windowDefinitions[kind].width, height: windowDefinitions[kind].height, z: 0, activation: 0 }
+        const { width, height } = windowDefinitions[kind]
+        window = { kind, open: false, x: 0, y: 0, width, height, z: 0, activation: 0 }
+        bound(window, this.viewport.width, this.viewport.height, this.floatingInsets)
+        if (kind !== 'inspector' && kind !== 'component-info') {
+          const rightDock = this.propertiesOpen && this.pinnedDocks.properties ? this.dockLayout('properties').width : 0
+          placeWindow(window, this.viewport, this.floatingInsets, rightDock, this.floatingWindows)
+        }
         this.windows.push(window)
+        window = this.windows[this.windows.length - 1]!
       }
       window.open = true
-      bound(window, this.viewport.width, this.viewport.height, this.drawerInsets)
+      bound(window, this.viewport.width, this.viewport.height, this.floatingInsets)
       this.focusWindow(kind)
       if (options.activate !== false) window.activation++
     },
@@ -153,7 +206,7 @@ export const useUiStore = defineStore('ui', {
     focusWindow(kind: WindowKind) {
       const ordered = [...this.windows].sort((a, b) => a.z - b.z)
       const active = ordered.find((entry) => entry.kind === kind)
-      if (!active) return
+      if (!active || (active.z > 0 && active === ordered.at(-1))) return
       const rest = ordered.filter((entry) => entry !== active)
       rest.push(active)
       rest.forEach((entry, index) => { entry.z = index + 1 })
@@ -162,7 +215,7 @@ export const useUiStore = defineStore('ui', {
       const window = this.windows.find((entry) => entry.kind === kind)
       if (!window || !Number.isFinite(x) || !Number.isFinite(y)) return
       window.x = x; window.y = y
-      bound(window, this.viewport.width, this.viewport.height, this.drawerInsets)
+      bound(window, this.viewport.width, this.viewport.height, this.floatingInsets)
     },
   },
 })

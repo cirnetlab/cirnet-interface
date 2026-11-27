@@ -25,7 +25,7 @@ async function confirm(){
 function rename(event:Event){circuit.renameCurrent((event.target as HTMLInputElement).value);circuitName.value=circuit.current?.name??''}
 </script>
 <template>
-  <section class="project-manager" aria-label="Project Manager">
+  <section class="project-manager lab-window overlay-controls" aria-label="Project Manager">
     <p>Server documents are private to this account. Export JSON downloads a separate local file.</p>
     <p class="save-status" role="status" aria-label="Server save status">Server save: <strong>{{ projects.saveState.phase }}</strong><span v-if="projects.saveState.binding"> · revision {{ projects.saveState.binding.serverRevision }}</span></p>
     <p v-if="projects.error || projects.saveState.error" role="alert">{{ projects.error || projects.saveState.error }}</p>
@@ -72,5 +72,8 @@ function rename(event:Event){circuit.renameCurrent((event.target as HTMLInputEle
   </section>
 </template>
 <style scoped>
-.project-manager{height:100%;overflow:auto;padding:14px;color:#dbe6f0;font-size:13px}.project-manager p{margin:6px 0 10px}.project-columns{display:grid;grid-template-columns:minmax(180px,1fr) minmax(260px,1.5fr);gap:18px}.project-manager h3{font-size:14px;margin:12px 0 8px}.project-manager ul{list-style:none;padding:0;margin:8px 0}.project-manager li{margin:4px 0}.project-manager label{display:grid;gap:4px;margin:8px 0}.project-manager input,.project-manager textarea{width:100%;box-sizing:border-box;background:#14202c;color:inherit;border:1px solid #516273;border-radius:3px;padding:6px}.project-manager button{background:#263b50;color:inherit;border:1px solid #526a80;border-radius:3px;padding:5px 9px;cursor:pointer}.project-manager button:disabled{opacity:.45;cursor:default}.project-manager button[aria-pressed=true]{background:#315d7c}.actions,.document-row{display:flex;gap:6px;flex-wrap:wrap}.document-row>button:first-child{flex:1;text-align:left}.confirmation{padding:10px;border:1px solid #bd9451;background:#45361f;margin:10px 0}.confirmation button{margin-right:6px}.save-status{padding:7px;background:#172d3b}[role=alert]{color:#ffc5b9}@media(max-width:600px){.project-columns{grid-template-columns:1fr}}
+.project-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: var(--overlay-space); }
+.project-manager ul { list-style: none; padding: 0; margin: var(--cedl-gap) 0; }
+.document-row { display: flex; gap: var(--cedl-gap); flex-wrap: wrap; }
+.document-row > button:first-child { flex: 1; text-align: start; }
 </style>
