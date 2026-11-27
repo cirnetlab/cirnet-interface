@@ -13,27 +13,34 @@ import { GENERATOR_LAYOUT, GENERATOR_CH1, GENERATOR_CH2, GENERATOR_SYNC } from '
 import { loadSfc, mountSfc, dispatch } from '../helpers/vueSfc'
 import { useWireRouting } from '../../src/composables/editor/useWireRouting'
 
-test('sidebar separates four persistent editing tools from four ordered instrument launchers', async () => {
+test('workspace toolbar keeps editing modes separate from the ordered instrument launchers', async () => {
   const oldWindow = Object.getOwnPropertyDescriptor(globalThis, 'window')
   const listeners = new Set<unknown>()
   Object.defineProperty(globalThis, 'window', { configurable: true, value: { matchMedia: () => ({ matches: false, addEventListener: (_: string, f: unknown) => listeners.add(f), removeEventListener: (_: string, f: unknown) => listeners.delete(f) }) } })
   const pinia = createPinia(), workspace = useWorkspaceStore(pinia), ui = useUiStore(pinia), circuit = useCircuitStore(pinia)
   circuit.createDraft()
   const view = mountSfc(await loadSfc('components/workbench/chrome/ToolRail.vue'), pinia)
+  const toolbar = mountSfc(await loadSfc('components/workbench/chrome/WorkspaceViewBar.vue'), pinia)
   try {
     assert.ok(!view.find('button', 'aria-label', 'Delete'), 'Delete button must be absent from the sidebar')
-    const names = ['Select', 'Wire', 'Move', 'Rotate', 'Power Supply', 'Probe', 'Scope', 'Function Generator']
-    assert.deepEqual(view.all().filter(node => node.tag === 'button' && names.includes(String(node.props['aria-label']))).map(node => node.props['aria-label']), names)
-    const launchers = names.slice(4).map(name => view.find('button', 'aria-label', name))
+    const labels = (surface: typeof view) => surface.all().filter(node => node.tag === 'button').map(node => node.props['aria-label'])
+    const tools = ['Select', 'Wire', 'Move', 'Rotate']
+    const instruments = ['Power Supply', 'Probe', 'Scope', 'Function Generator']
+    assert.deepEqual(labels(toolbar).filter(Boolean), tools)
+    assert.deepEqual(labels(view).slice(0, 4), instruments)
+    const launchers = instruments.map(name => view.find('button', 'aria-label', name))
     for (const launcher of launchers) { assert.ok(launcher); assert.equal(launcher.props['aria-pressed'], undefined) }
-    assert.equal(view.all().filter(node => node.tag === 'button' && node.props['aria-pressed'] !== undefined).length, 4)
     const [supply, , , generator] = launchers
     const iconPath = (button: typeof supply) => button.children.find(node => node.tag === 'svg')!.children.find(node => node.tag === 'path')!.props.d
     assert.notEqual(iconPath(supply), iconPath(generator))
     for (const tool of ['select', 'wire', 'move', 'rotate'] as const) {
-      workspace.tool = tool; workspace.selectedModuleId = 'selected'; workspace.pendingPort = 'selected.OUT'; workspace.zoomAreaActive = true
+      workspace.tool = tool; workspace.selectedModuleId = 'selected'; workspace.pendingPort = 'selected.OUT'; workspace.zoomAreaActive = false
       await nextTick()
-      assert.equal(view.find('button', 'aria-label', tool[0].toUpperCase() + tool.slice(1)).props['aria-pressed'], true)
+      const toolButton = toolbar.find('button', 'aria-label', tool[0].toUpperCase() + tool.slice(1))
+      assert.equal(toolButton.props['aria-pressed'], true)
+      workspace.zoomAreaActive = true
+      await nextTick()
+      assert.equal(toolButton.props['aria-pressed'], false)
       const before = JSON.stringify(workspace.$state), graph = JSON.stringify(circuit.$state)
       for (const launcher of launchers) {
         dispatch(launcher, 'onClick'); await nextTick()
@@ -43,6 +50,7 @@ test('sidebar separates four persistent editing tools from four ordered instrume
     assert.deepEqual(ui.windows.map(window => window.kind), ['power-supply', 'monitor', 'oscilloscope', 'generator'])
     for (const window of ui.windows) { assert.equal(window.activation, 4); assert.equal(window.open, true) }
   } finally {
+    toolbar.app.unmount()
     view.app.unmount(); assert.equal(listeners.size, 0)
     if (oldWindow) Object.defineProperty(globalThis, 'window', oldWindow); else Reflect.deleteProperty(globalThis, 'window')
   }

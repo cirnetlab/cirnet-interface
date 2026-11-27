@@ -7,9 +7,11 @@
 ### Added
 
 - Introduce the CIRNET LAB Light Workbench with a Project Explorer, docked PropertyManager, command search and reversible Focus Mode.
+- Add keyboard and pointer resizing for both docks and a 3D view tab with an editing toolbar.
 
 ### Changed
 
+- Extend command search to editor and layout actions and standardize Ribbon group icons around the existing instrument artwork.
 - Group Interface source, tests, scripts and browser suites by responsibility. Discover nested tests and accept unambiguous targeted selectors.
 - Group the procedural Three.js instrument models, artwork and chassis in `src/three/instruments/` and document workbench source ownership.
 - Standardize English major-version changelog navigation.

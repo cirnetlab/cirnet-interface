@@ -3,6 +3,7 @@ import { nextTick, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { useUiStore } from '../../stores/workbench/ui'
 import { windowDefinitions, type WorkspaceWindow } from '../../types/windows'
 import WorkbenchIcon from '../workbench/chrome/WorkbenchIcon.vue'
+import DockResizeHandle from '../workbench/chrome/DockResizeHandle.vue'
 const props = defineProps<{ window: WorkspaceWindow; docked?: boolean }>()
 const ui = useUiStore()
 const root = ref<HTMLElement>()
@@ -46,5 +47,6 @@ onBeforeUnmount(() => {
   <section ref="root" class="floating-window" :class="{ 'property-manager': docked }" :id="docked ? 'property-manager' : undefined" role="dialog" :aria-labelledby="'window-title-' + window.kind" :style="docked ? { zIndex: window.z } : { left: window.x + 'px', top: window.y + 'px', width: window.width + 'px', height: window.height + 'px', zIndex: window.z }" @pointerdown="ui.focusWindow(window.kind)" @focusin="ui.focusWindow(window.kind)" @keydown="key">
     <header ref="header" class="floating-header" tabindex="0" :aria-label="docked ? 'PropertyManager. Escape to close.' : windowDefinitions[window.kind].title + ' window. Drag or use arrow keys to move; Escape to close.'" @pointerdown="start" @pointermove="move" @pointerup="end" @pointercancel="end" @lostpointercapture="end"><span v-if="!docked" class="window-grip" aria-hidden="true">⠿</span><strong :id="'window-title-' + window.kind">{{ docked ? 'PropertyManager' : windowDefinitions[window.kind].title }}</strong><button :aria-label="'Close ' + windowDefinitions[window.kind].title" @click="ui.closeWindow(window.kind)"><WorkbenchIcon name="close" /></button></header>
     <div class="floating-body"><slot /></div>
+    <DockResizeHandle v-if="docked" dock="properties" label="Resize PropertyManager" controls="property-manager" />
   </section>
 </template>

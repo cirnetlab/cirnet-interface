@@ -44,7 +44,7 @@ function updateGizmoObstacles() {
   if (manager && origin && stage) {
     obstaclesDirty = false
     const layout = stage.closest('.workbench-layout') ?? stage
-    const obstacles = [...new Set(layout.querySelectorAll<HTMLElement>('.contextual-panel, .component-information, .floating-window, .workspace-navigator, .wire-options, .workspace-caption, .project-explorer'))].filter(element => element.getClientRects().length).map((element) => {
+    const obstacles = Array.from(layout.querySelectorAll<HTMLElement>('.contextual-panel, .component-information, .floating-window, .workspace-navigator, .wire-options, .workspace-view-bar, .project-explorer')).filter(element => element.getClientRects().length).map((element) => {
       const r = element.getBoundingClientRect(); return { left: r.left - origin.left, top: r.top - origin.top, right: r.right - origin.left, bottom: r.bottom - origin.top }
     })
     // Reserve the entire swept area, using known sizes rather than measuring
@@ -64,10 +64,12 @@ function updateGizmoObstacles() {
     const railLeft = layout.querySelector('.tools-panel[data-drawer-occupied=true]') ? ui.toolsOverlayWidth : 0
     const left = explorer?.width ? Math.max(railLeft, explorer.right - origin.left) : railLeft
     const right = properties?.width ? properties.left - origin.left : origin.width
-    // Narrow windows can show overlapping panels. Preserve a valid camera region.
+    const viewBar = stage.querySelector('.workspace-view-bar')?.getBoundingClientRect()
+    const ribbonTop = layout.querySelector('.component-panel[data-drawer-occupied=true]') ? ui.componentOverlayHeight : 0
+    // Preserve a valid camera region when very little desktop space remains.
     manager.setUsableViewport({
       left: right - left >= 120 ? left : railLeft,
-      top: layout.querySelector('.component-panel[data-drawer-occupied=true]') ? ui.componentOverlayHeight : 0,
+      top: Math.max(ribbonTop, (viewBar?.bottom ?? origin.top) - origin.top),
       right: right - left >= 120 ? right : origin.width,
       bottom: origin.height,
     })
@@ -138,7 +140,11 @@ watch(() => [circuit.physicalStates, circuit.physicalPreview?.pin_values] as con
 watch(() => workspace.showPins, value => manager?.setShowPins(value))
 // Component Info can change height on selection without changing window state.
 watch([() => ui.windows, () => circuit.graph?.modules.find((module) => module.id === workspace.selectedModuleId)?.type], invalidateObstacles, { deep: true, flush: 'post' })
-watch([() => ui.drawerInsets.left, () => ui.drawerInsets.top, () => ui.componentOverlayHeight, () => ui.toolsOverlayWidth, () => ui.explorerVisible, () => ui.focusRestore], invalidateObstacles, { flush: 'post' })
+watch([
+  () => ui.drawerInsets.left, () => ui.drawerInsets.top, () => ui.componentOverlayHeight,
+  () => ui.toolsOverlayWidth, () => ui.explorerVisible, () => ui.focusRestore,
+  () => ui.dockLayout('explorer').width, () => ui.dockLayout('properties').width,
+], invalidateObstacles, { flush: 'post' })
 watch([() => workspace.tool, () => workspace.selectedWire, () => workspace.placementType, () => workspace.zoomAreaActive, () => workspace.marqueeActive, () => workspace.wireOptionsActive, () => editor.wireRouting.hint.value], invalidateObstacles, { flush: 'post' })
 onUnmounted(() => { navigationActive = false; workspace.cancelZoomRequest(); observer?.disconnect(); drawerObserver?.disconnect(); manager?.dispose(); canvas.value?.removeEventListener('webglcontextlost', lost); canvas.value?.removeEventListener('webglcontextrestored', restored); document.removeEventListener('visibilitychange', visibility) })
 </script>

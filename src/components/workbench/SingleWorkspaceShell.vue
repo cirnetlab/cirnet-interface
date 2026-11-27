@@ -16,7 +16,7 @@ import CircuitWorkspace3D from './CircuitWorkspace3D.vue'
 import SimulationStatusBar from './execution/SimulationStatusBar.vue'
 import FloatingWindowManager from '../windows/FloatingWindowManager.vue'
 import ProjectExplorer from './chrome/ProjectExplorer.vue'
-import WorkbenchIcon from './chrome/WorkbenchIcon.vue'
+import WorkspaceViewBar from './chrome/WorkspaceViewBar.vue'
 const circuit = useCircuitStore(), workspace = useWorkspaceStore()
 const ui = useUiStore(), layout = ref<HTMLElement>()
 let layoutObserver: ReturnType<typeof observeElementSize> | undefined
@@ -32,4 +32,30 @@ useLabConnection()
 useProjectWorkspace()
 useLabNavigation()
 </script>
-<template><div class="single-workspace-shell" :class="{ 'explorer-open': ui.explorerVisible && !ui.focusRestore, 'properties-open': !ui.focusRestore && ui.windows.some(window => window.kind === 'inspector' && window.open) }"><a class="skip-link" href="#workspace">Skip to workspace</a><AppTitleBar /><div ref="layout" class="workbench-layout" :style="{ '--drawer-top': ui.drawerInsets.top + 'px', '--drawer-left': ui.drawerInsets.left + 'px' }"><WorkbenchRibbon /><div class="workbench-body"><ToolRail /><main id="workspace" class="workspace-stage" tabindex="-1" aria-label="Circuit workbench"><div class="workspace-caption"><WorkbenchIcon name="component" />3D Workbench</div><CircuitWorkspace3D /><FloatingWindowManager /><ProjectExplorer /></main></div></div><SimulationStatusBar /></div></template>
+<template>
+  <div class="single-workspace-shell" :class="{
+    'explorer-open': ui.explorerVisible && !ui.focusRestore,
+    'properties-open': !ui.focusRestore && ui.windows.some(window => window.kind === 'inspector' && window.open),
+  }">
+    <a class="skip-link" href="#workspace">Skip to workspace</a>
+    <AppTitleBar />
+    <div ref="layout" class="workbench-layout" :style="{
+      '--drawer-top': ui.drawerInsets.top + 'px',
+      '--drawer-left': ui.drawerInsets.left + 'px',
+      '--cedl-left': ui.dockLayout('explorer').width + 'px',
+      '--cedl-right': ui.dockLayout('properties').width + 'px',
+    }">
+      <WorkbenchRibbon />
+      <div class="workbench-body">
+        <ToolRail />
+        <main id="workspace" class="workspace-stage" tabindex="-1" aria-label="Circuit workbench">
+          <WorkspaceViewBar />
+          <CircuitWorkspace3D id="workbench-view-3d" role="tabpanel" aria-labelledby="workbench-view-tab-3d" />
+          <FloatingWindowManager />
+          <ProjectExplorer />
+        </main>
+      </div>
+    </div>
+    <SimulationStatusBar />
+  </div>
+</template>

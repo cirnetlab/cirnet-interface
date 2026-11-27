@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { nextTick } from 'vue'
 import { useCircuitStore } from '../../../stores/documents/circuit'
 import { useWorkspaceStore } from '../../../stores/workbench/workspace'
 import { useUiStore } from '../../../stores/workbench/ui'
 import { getDefinition } from '../../../data/editorCatalog'
 import { ribbonGroups } from '../../../data/ribbon'
 import WorkbenchIcon from './WorkbenchIcon.vue'
+import DockResizeHandle from './DockResizeHandle.vue'
 
 const circuit = useCircuitStore()
 const workspace = useWorkspaceStore()
@@ -14,6 +16,11 @@ function openLibrary(group: string) {
   ui.selectRibbonTab('component')
   if (ui.activeRibbonGroup !== group) ui.toggleRibbon(group)
 }
+
+function closeExplorer() {
+  ui.explorerVisible = false
+  void nextTick(() => document.getElementById('toggle-project-explorer')?.focus())
+}
 </script>
 
 <template>
@@ -21,6 +28,8 @@ function openLibrary(group: string) {
     class="project-explorer" aria-labelledby="project-explorer-title" data-workspace-text-input>
     <header class="dock-heading"><WorkbenchIcon name="explorer" />
       <h2 id="project-explorer-title">Project Explorer</h2>
+      <button type="button" aria-label="Close Project Explorer" title="Close Project Explorer"
+        @click="closeExplorer"><WorkbenchIcon name="close" /></button>
     </header>
     <div class="explorer-content">
       <details open>
@@ -58,5 +67,6 @@ function openLibrary(group: string) {
         <WorkbenchIcon name="open" /> Browse projects
       </button>
     </div>
+    <DockResizeHandle dock="explorer" label="Resize Project Explorer" controls="project-explorer" />
   </aside>
 </template>

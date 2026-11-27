@@ -2,6 +2,17 @@ import { defineStore } from 'pinia'
 import type { ConnectionState } from '../../services/websocket/client'
 import { windowDefinitions, type WindowKind, type WorkspaceWindow } from '../../types/windows'
 
+export type WorkspaceDock = 'explorer' | 'properties'
+
+function dockLimits(dock: WorkspaceDock, viewport: number) {
+  const explorer = dock === 'explorer'
+  const max = Math.floor(Math.min(explorer ? 420 : 500, viewport * (explorer ? .28 : .37)))
+  const min = Math.min(explorer ? 144 : 210, max)
+  const preferred = viewport * (explorer ? .16 : .22)
+  const width = Math.min(max, Math.max(min, Math.round(Math.min(preferred, explorer ? 258 : 348))))
+  return { min, max, width }
+}
+
 function bound(window: WorkspaceWindow, width: number, height: number, insets: { left: number; top: number }) {
   const left = Math.min(insets.left, width), top = Math.min(insets.top, height)
   window.width = Math.min(windowDefinitions[window.kind].width, width - left)
@@ -11,15 +22,26 @@ function bound(window: WorkspaceWindow, width: number, height: number, insets: {
 }
 
 export const useUiStore = defineStore('ui', {
-  state: () => ({ activeRibbonTab: 'component' as 'component' | 'run', activeRibbonGroup: null as string | null, componentToolbarCollapsed: false, toolsSidebarCollapsed: false, explorerVisible: true, focusRestore: null as { ribbon: boolean; tools: boolean } | null, workbenchSize: { width: 900, height: 600 }, windows: [] as WorkspaceWindow[], viewport: { width: 900, height: 500 }, connectionState: 'idle' as ConnectionState }),
+  state: () => ({ activeRibbonTab: 'component' as 'component' | 'run', activeRibbonGroup: null as string | null, componentToolbarCollapsed: false, toolsSidebarCollapsed: false, explorerVisible: true, focusRestore: null as { ribbon: boolean; tools: boolean } | null, dockWidths: { explorer: null, properties: null } as Record<WorkspaceDock, number | null>, workbenchSize: { width: 900, height: 600 }, windows: [] as WorkspaceWindow[], viewport: { width: 900, height: 500 }, connectionState: 'idle' as ConnectionState }),
   getters: {
     componentOverlayHeight: () => 96,
     toolsOverlayWidth: (state) => state.workbenchSize.width <= 560 ? 54 : 66,
+    dockLayout: (state) => (dock: WorkspaceDock) => {
+      const limits = dockLimits(dock, state.workbenchSize.width)
+      const width = state.dockWidths[dock] ?? limits.width
+      return { ...limits, width: Math.min(limits.max, Math.max(limits.min, width)) }
+    },
     drawerInsets(): { left: number; top: number } {
       return { left: this.toolsSidebarCollapsed ? 0 : this.toolsOverlayWidth, top: this.componentToolbarCollapsed ? 0 : this.componentOverlayHeight }
     },
   },
   actions: {
+    setDockWidth(dock: WorkspaceDock, width: number | null) {
+      if (width === null) { this.dockWidths[dock] = null; return }
+      if (!Number.isFinite(width)) return
+      const { min, max } = this.dockLayout(dock)
+      this.dockWidths[dock] = Math.min(max, Math.max(min, Math.round(width)))
+    },
     toggleWorkspaceFocus() {
       if (this.focusRestore) {
         this.componentToolbarCollapsed = this.focusRestore.ribbon
@@ -41,12 +63,22 @@ export const useUiStore = defineStore('ui', {
     },
     toggleRibbon(id: string) { if (!this.componentToolbarCollapsed && this.activeRibbonTab==='component') this.activeRibbonGroup = this.activeRibbonGroup === id ? null : id },
     toggleComponentToolbar() {
-      if (this.focusRestore) { this.toggleWorkspaceFocus(); return }
+      if (this.focusRestore) {
+        this.toggleWorkspaceFocus()
+        if (!this.componentToolbarCollapsed) return
+      }
       this.componentToolbarCollapsed = !this.componentToolbarCollapsed
       this.activeRibbonGroup = null
       if (!this.componentToolbarCollapsed) this.boundWindows()
     },
-    toggleToolsSidebar() { if (this.focusRestore) { this.toggleWorkspaceFocus(); return }; this.toolsSidebarCollapsed = !this.toolsSidebarCollapsed; if (!this.toolsSidebarCollapsed) this.boundWindows() },
+    toggleToolsSidebar() {
+      if (this.focusRestore) {
+        this.toggleWorkspaceFocus()
+        if (!this.toolsSidebarCollapsed) return
+      }
+      this.toolsSidebarCollapsed = !this.toolsSidebarCollapsed
+      if (!this.toolsSidebarCollapsed) this.boundWindows()
+    },
     boundWindows() { for (const window of this.windows) bound(window, this.viewport.width, this.viewport.height, this.drawerInsets) },
     setWorkbenchSize(width: number, height: number) {
       if (!Number.isFinite(width) || !Number.isFinite(height)) return

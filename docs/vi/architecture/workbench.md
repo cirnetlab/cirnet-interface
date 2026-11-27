@@ -69,9 +69,12 @@ rộng khi hữu ích. Lệnh chung và lệnh kỹ thuật dùng nét SVG chung
 Project Explorer chọn linh kiện trong graph và mở thư viện hoặc lịch sử
 thí nghiệm hiện có. Nút Inspector mở PropertyManager bên phải. Các mục có thể thu gọn và thao tác
 sửa vẫn dùng lệnh tài liệu hiện có. Nút trên header hiện lại từng panel.
-Focus Mode tạm ẩn panel, công cụ và Ribbon, rồi khôi phục trạng thái hiển thị
-trước đó. Chiều rộng panel thích ứng viewport. Canvas giữ nguyên và lệnh fit
-dùng vùng thao tác không bị che. Ctrl+Q mở tìm kiếm các lệnh File hiện có.
+Focus Mode tạm ẩn các panel, thanh thiết bị và Ribbon, rồi khôi phục trạng thái
+hiển thị trước đó. Kéo mép trong của mỗi panel hoặc chuyển tiêu điểm vào mép và
+dùng phím mũi tên. Nhấp đúp vào mép để đặt lại chiều rộng. Tab 3D Workbench
+đưa tiêu điểm về canvas. Thanh công cụ bên dưới vẫn hỗ trợ chỉnh sửa trong
+Focus Mode. Canvas giữ nguyên và lệnh Fit dùng vùng thao tác không bị che.
+Ctrl+Q tìm các lệnh File, chỉnh sửa và bố cục.
 
 Bảy concept CIRNET LAB định hướng bố cục. Trình chỉnh sửa hiện tại cung cấp
 Workbench 3D. Chỉnh sửa schematic cần mô hình sản phẩm và bề mặt kết xuất.

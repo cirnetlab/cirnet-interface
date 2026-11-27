@@ -70,10 +70,12 @@ asset manifest and provenance.
 Project Explorer selects graph components and opens the existing libraries
 and experiment history. The Inspector button opens the right-hand PropertyManager.
 Sections are collapsible and edits still use the existing document commands. Header buttons restore either
-panel. Focus Mode temporarily hides the docks, tools and Ribbon and restores
-their previous visibility. Dock widths adapt to the viewport. The canvas
-stays mounted and the fit command uses the unobstructed work area. Ctrl+Q
-opens search for the available File commands.
+panel. Focus Mode temporarily hides the docks, instrument rail and Ribbon,
+then restores their previous visibility. Drag the inner edge of either dock
+or focus it and use the arrow keys. Double-click the edge to reset its width.
+The 3D Workbench tab returns focus to the canvas. The toolbar beneath it
+keeps editing tools available in Focus Mode. The canvas stays mounted and Fit
+uses the unobstructed work area. Ctrl+Q searches File, editing and layout commands.
 
 The seven CIRNET LAB concepts guide the layout. The current editor provides
 a 3D Workbench. Schematic editing requires a product model and rendering

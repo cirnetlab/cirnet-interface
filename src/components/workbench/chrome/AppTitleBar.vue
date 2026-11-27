@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useCircuitStore } from '../../../stores/documents/circuit'
 import { useUiStore } from '../../../stores/workbench/ui'
+import { useWorkspaceStore } from '../../../stores/workbench/workspace'
 import { useInstrumentStore } from '../../../stores/lab/instrument'
 import { MAX_CIRCUIT_FILE_BYTES, parseCircuitFile } from '../../../services/files/circuitFile'
 import { iconUrl } from '../../../data/ribbon'
@@ -11,8 +12,10 @@ import { useProjectStore } from '../../../stores/documents/projects'
 import { useWorkspaceMessageStore } from '../../../stores/workbench/workspaceMessages'
 import FileMenu from './FileMenu.vue'
 import { executeFileCommand, type FileCommand, type FileMenuItem } from './fileCommands'
+import { editingTools, focusWorkbenchCanvas } from './workspaceCommands'
 const circuit = useCircuitStore()
 const ui = useUiStore()
+const workspace = useWorkspaceStore()
 const instrument = useInstrumentStore()
 const projects=useProjectStore()
 const messages = useWorkspaceMessageStore()
@@ -23,8 +26,28 @@ const commandDialog = ref<HTMLDialogElement>()
 const commandTrigger = ref<HTMLButtonElement>()
 const showCommands = ref(false)
 const commandQuery = ref('')
-const visibleCommands = computed(() => fileItems.value.filter(item =>
-  item.label.toLowerCase().includes(commandQuery.value.trim().toLowerCase())))
+type SearchCommand = Pick<FileMenuItem, 'label' | 'disabled' | 'shortcut' | 'restoreFocus'> & {
+  id: string
+  activate: () => void
+}
+const visibleCommands = computed(() => {
+  const entries: SearchCommand[] = [
+    ...fileItems.value.map(item => ({ ...item, activate: () => fileCommand(item.id) })),
+    { id: 'undo', label: 'Undo', shortcut: 'Ctrl+Z', disabled: !circuit.canUndo, activate: () => circuit.undo() },
+    { id: 'redo', label: 'Redo', shortcut: 'Ctrl+Shift+Z', disabled: !circuit.canRedo, activate: () => circuit.redo() },
+    ...editingTools.map(tool => ({
+      id: tool.id, label: tool.name + ' tool', disabled: false, restoreFocus: false,
+      activate: () => { workspace.setTool(tool.id); focusWorkbenchCanvas() },
+    })),
+    { id: 'fit', label: 'Fit entire circuit', disabled: !circuit.graph?.modules.length, activate: () => workspace.fitEntireCircuit() },
+    { id: 'explorer', label: 'Toggle Project Explorer', disabled: false, activate: toggleExplorer },
+    { id: 'inspector', label: 'Open PropertyManager', disabled: false, restoreFocus: false, activate: () => ui.openWindow('inspector') },
+    { id: 'focus', label: ui.focusRestore ? 'Exit Focus Mode' : 'Enter Focus Mode', disabled: false, activate: () => ui.toggleWorkspaceFocus() },
+    { id: 'ribbon', label: ui.componentToolbarCollapsed ? 'Expand Ribbon' : 'Collapse Ribbon', disabled: false, activate: () => ui.toggleComponentToolbar() },
+  ]
+  const terms = commandQuery.value.trim().toLowerCase().split(/\s+/)
+  return entries.filter(item => terms.every(term => item.label.toLowerCase().includes(term)))
+})
 function openCommands() {
   if (showCommands.value) {
     commandInput.value?.focus()
@@ -42,10 +65,10 @@ function closeCommands(restore = true) {
   showCommands.value = false
   if (restore) commandTrigger.value?.focus()
 }
-function runSearchCommand(item: FileMenuItem) {
+function runSearchCommand(item: SearchCommand) {
   if (item.disabled) return
   closeCommands(item.restoreFocus !== false)
-  fileCommand(item.id)
+  item.activate()
 }
 function runFirstCommand() {
   const first = visibleCommands.value.find(item => !item.disabled)
@@ -188,7 +211,7 @@ onUnmounted(() => { disposed = true; readVersion++; window.removeEventListener('
       </div>
     </dialog>
     <AccountMenu />
-    <button type="button" class="header-icon-button" aria-label="Project Explorer"
+    <button type="button" id="toggle-project-explorer" class="header-icon-button" aria-label="Project Explorer"
       :aria-pressed="ui.explorerVisible && !ui.focusRestore" aria-controls="project-explorer"
       title="Toggle Project Explorer" @click="toggleExplorer"><WorkbenchIcon name="explorer" /></button>
     <button type="button" class="header-icon-button" aria-label="Focus Mode"

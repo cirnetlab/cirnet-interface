@@ -21,9 +21,10 @@
   --cedl-radius: 4px;
   --cedl-control: 28px;
   --cedl-icon: 18px;
-  --cedl-left: clamp(148px, 16vw, 234px);
-  --cedl-right: clamp(238px, 22vw, 332px);
   --cedl-gap: 6px;
+  --cedl-tab-height: 28px;
+  --cedl-view-tools-height: 32px;
+  --cedl-view-chrome-height: calc(var(--cedl-tab-height) + var(--cedl-view-tools-height) + 2px);
   --surface: var(--cedl-panel);
   --ribbon-surface: var(--cedl-panel);
   --line: var(--cedl-line);
@@ -94,6 +95,7 @@
   border-color: var(--cedl-line);
 }
 .single-workspace-shell .ribbon-scroll { scrollbar-color: var(--cedl-line) transparent; }
+.single-workspace-shell .ribbon-art > svg { width: 28px; height: 28px; }
 .single-workspace-shell .ribbon-scroll > button { border-right-color: var(--cedl-line); }
 .single-workspace-shell :is(.ribbon-art > svg, .ribbon-chevron, .tool-rail button, .rail-label, .status-viewport-tools output) {
   color: var(--cedl-blue);
@@ -129,23 +131,67 @@
 }
 .single-workspace-shell .circuit-workspace { background: var(--cedl-canvas); }
 .single-workspace-shell :is(.workspace-empty p, .workspace-empty > span:last-of-type, .empty-cross) { color: var(--cedl-white); }
-.workspace-caption {
+.workspace-view-bar {
+  --view-left: calc(var(--drawer-left) + var(--cedl-gap));
+  --view-right: var(--cedl-gap);
   position: absolute;
   z-index: 3;
   top: calc(var(--drawer-top) + var(--cedl-gap));
-  left: calc(var(--drawer-left) + 32px + var(--cedl-gap));
-  display: flex;
-  align-items: center;
-  gap: var(--cedl-gap);
-  padding: 5px 8px;
+  left: var(--view-left);
+  right: var(--view-right);
   border: 1px solid var(--cedl-line);
   border-radius: var(--cedl-radius);
-  background: var(--cedl-chrome);
-  font-weight: 600;
-  pointer-events: none;
+  overflow: hidden;
 }
-.explorer-open .workspace-caption { left: calc(var(--drawer-left) + var(--cedl-left) + 2 * var(--cedl-gap)); }
-.workspace-caption .workbench-icon, .dock-heading .workbench-icon { color: var(--cedl-blue); }
+.explorer-open .workspace-view-bar { --view-left: calc(var(--drawer-left) + var(--cedl-left) + 2 * var(--cedl-gap)); }
+.properties-open .workspace-view-bar { --view-right: calc(var(--cedl-right) + 2 * var(--cedl-gap)); }
+.workspace-view-tabs {
+  display: flex;
+  align-items: center;
+  height: var(--cedl-tab-height);
+  background: var(--cedl-chrome);
+}
+.workspace-view-tabs > button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cedl-gap);
+  height: 100%;
+  border-radius: 0;
+  padding-inline: 10px;
+  color: var(--cedl-white);
+  background: var(--cedl-navy);
+  white-space: nowrap;
+  font-weight: 600;
+}
+.workspace-editing-tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--cedl-view-tools-height);
+  padding-inline: 4px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  background: var(--cedl-panel);
+  border-top: 1px solid var(--cedl-line);
+}
+.workspace-editing-tools > button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 var(--cedl-control);
+  height: 25px;
+  padding: 0;
+  color: var(--cedl-blue);
+  background: transparent;
+  border-color: transparent;
+}
+.workspace-editing-tools > button:hover { background: var(--cedl-hover); }
+.workspace-editing-tools > button[aria-pressed=true] {
+  background: var(--cedl-selected);
+  border-color: var(--cedl-focus);
+}
+.workspace-view-bar button:focus-visible, .dock-resize-handle:focus-visible { outline-offset: -2px; }
+.workspace-view-tabs > button:focus-visible { outline-color: var(--cedl-cyan); }
+.dock-heading .workbench-icon { color: var(--cedl-blue); }
 .project-explorer, .single-workspace-shell .property-manager {
   position: absolute;
   top: calc(var(--drawer-top) + var(--cedl-gap));
@@ -174,6 +220,21 @@
   cursor: default;
 }
 .dock-heading h2, .property-manager .floating-header strong { font-size: 13px; font-weight: 650; margin: 0; }
+.dock-heading h2 { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dock-heading button { display: grid; place-items: center; flex-shrink: 0; margin-inline-end: 3px; padding: 2px; }
+.dock-heading button .workbench-icon { width: 14px; height: 14px; }
+.dock-resize-handle {
+  position: absolute;
+  z-index: 1;
+  inset-block: 0;
+  width: 7px;
+  cursor: col-resize;
+  touch-action: none;
+  background: transparent;
+}
+.resize-explorer { inset-inline-end: 0; }
+.resize-properties { inset-inline-start: 0; }
+.dock-resize-handle:is(:hover, :focus-visible, :active) { background: var(--cedl-selected); }
 .explorer-content { overflow: auto; min-height: 0; padding: 8px; }
 .explorer-content details { margin-inline-start: 5px; }
 .explorer-content summary { padding: 4px 0; cursor: pointer; overflow-wrap: anywhere; }
@@ -205,6 +266,9 @@
 .property-manager .status-badge.hardware_busy { color: var(--cedl-warning); }
 .property-manager .status-badge:is(.hardware_offline, .fault) { color: var(--cedl-danger); }
 .properties-open .workspace-navigator { right: calc(var(--cedl-right) + 2 * var(--cedl-gap)); }
+.single-workspace-shell :is(.component-information, .wire-options) {
+  top: calc(var(--drawer-top) + var(--cedl-view-chrome-height) + 2 * var(--cedl-gap));
+}
 /* Keep contextual controls usable beside the property dock. */
 .properties-open :is(.component-information, .wire-options) {
   right: calc(var(--cedl-right) + 2 * var(--cedl-gap));
@@ -236,7 +300,6 @@
 }
 @media (max-width: 560px) {
   .properties-open :is(.component-information, .wire-options) {
-    top: calc(var(--drawer-top) + 42px);
     right: var(--cedl-gap);
     width: min(var(--cedl-right), calc(100% - var(--drawer-left) - 2 * var(--cedl-gap)));
   }
@@ -253,11 +316,20 @@
 }
 @media (max-width: 850px) {
   .app-titlebar .command-trigger span { display: none; }
-  .single-workspace-shell { --cedl-left: clamp(124px, 26vw, 166px); --cedl-right: clamp(202px, 40vw, 262px); }
+}
+@media (max-width: 700px) {
+  .single-workspace-shell .workspace-view-bar {
+    left: calc(var(--drawer-left) + var(--cedl-gap));
+    right: var(--cedl-gap);
+  }
+  .project-explorer, .single-workspace-shell .property-manager {
+    top: calc(var(--drawer-top) + var(--cedl-view-chrome-height) + 2 * var(--cedl-gap));
+  }
 }
 @media (max-width: 560px) {
-  .workspace-caption { display: none; }
   .single-workspace-shell .app-titlebar { gap: 4px; padding-inline: 5px; }
+  .workspace-view-tabs > button { padding-inline: 4px; }
+  .workspace-view-tabs > button > .workbench-icon { display: none; }
 }
 
 .property-manager .inspector-section > summary {
