@@ -6,5 +6,5 @@ Keep current guides under `docs/en/` and `docs/vi/` at matching paths. Update bo
 
 Use [changelogs](../../changelogs/README.md) for verified version changes. Record changes since the last release under Unreleased. Give each released version a SemVer heading, a linked contents entry and a sourced publication date.
 
-For each AI task, save the plan in `.superpowers/plans/` and its matching spec, acceptance criteria and checklist in `.superpowers/specs/`. Tick only verified completions. These directories are ignored in this checkout.
+Use [Task Continuity](https://github.com/cirnetlab/cirnet-rules/blob/master/en/docs/distribution.md#task-continuity) for temporary plans, acceptance criteria and progress. Keep independent design specifications and durable plans with their owning repository and link them from the checkpoint. Mark items complete after verification.
 

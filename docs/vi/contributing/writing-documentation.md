@@ -6,5 +6,5 @@ Giữ hướng dẫn hiện hành ở cùng đường dẫn tương đối trong
 
 Dùng [changelog](../../changelogs/README.md) cho thay đổi phiên bản đã xác minh. Ghi thay đổi kể từ bản phát hành mới nhất dưới mục Unreleased. Mỗi bản phát hành có tiêu đề SemVer, liên kết trong mục lục và nguồn cho ngày công bố.
 
-Mỗi công việc AI lưu kế hoạch trong `.superpowers/plans/` và đặc tả tương ứng, tiêu chí nghiệm thu, checklist trong `.superpowers/specs/`. Chỉ đánh dấu mục đã kiểm chứng. Git bỏ qua hai thư mục này trong checkout.
+Dùng [Task Continuity](https://github.com/cirnetlab/cirnet-rules/blob/master/vi/docs/distribution.md#task-continuity) cho kế hoạch tạm thời, tiêu chí nghiệm thu và tiến độ. Giữ đặc tả thiết kế độc lập và kế hoạch dài hạn tại repo sở hữu rồi liên kết từ checkpoint. Đánh dấu hoàn tất sau khi kiểm chứng.
 
