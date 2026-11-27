@@ -67,19 +67,25 @@ use tabular figures where useful. Generic and custom commands use the shared
 `WorkbenchIcon` SVG paths. Library and instrument artwork retains its existing
 asset manifest and provenance.
 
-Project Explorer selects graph components and opens the existing libraries
-and experiment history. The Inspector button opens the right-hand PropertyManager.
-Sections are collapsible and edits still use the existing document commands. Header buttons restore either
-panel. Focus Mode temporarily hides the docks, instrument rail and Ribbon,
-then restores their previous visibility. Drag the inner edge of either dock
-or focus it and use the arrow keys. Double-click the edge to reset its width.
-The 3D Workbench tab returns focus to the canvas. The toolbar beneath it
-keeps editing tools available in Focus Mode. The canvas stays mounted and Fit
-uses the unobstructed work area. Ctrl+Q searches File, editing and layout commands.
+The Title Bar provides File shortcuts, notifications, Focus Mode and browser
+full screen where supported. The Ribbon groups existing actions under File,
+View, Component, Simulate, Library, Window and Help. The Activity Bar opens
+project navigation, circuit editing, libraries, results and lab execution.
 
-The seven CIRNET LAB concepts guide the layout. The current editor provides
-a 3D Workbench. Schematic editing requires a product model and rendering
-surface. The concept circuits and instrument readings are visual references.
+Project Explorer reflects graph components, views and session drafts.
+PropertyManager edits the current selection through existing graph commands.
+Each dock remembers its pin and width for the session. A pinned dock reserves
+editor space. An unpinned dock overlays the editor and closes on outside click
+or Escape. Drag the inner edge, use its arrow keys or double-click to reset
+the width. Focus Mode hides the docks, Activity Bar and Ribbon and restores
+their previous visibility.
+
+The editor tabs share the current graph and selection. 3D Simulation keeps
+its canvas, camera and scene instance while Schematic is active. The renderer
+pauses drawing until 3D Simulation returns. Schematic shows authored graph
+connections, supports selection and has independent zoom and scroll. Schematic
+editing and physical pin or breadboard net expansion are outside this view.
+Ctrl+Q searches File, editing, Ribbon and layout commands.
 
 ### Workbench icons
 

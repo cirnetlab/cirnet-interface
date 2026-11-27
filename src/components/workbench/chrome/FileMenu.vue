@@ -92,9 +92,9 @@ onUnmounted(() => {
   </Teleport>
 </template>
 <style scoped>
-.file-menu { position: fixed; z-index: 1500; width: 232px; padding: 5px; background: var(--panel, #202830); color: var(--text, #edf3f7); border: 1px solid var(--border, #45515e); box-shadow: 0 8px 22px #0008; max-height: calc(100dvh - 65px); overflow-y: auto; }
+.file-menu { position: fixed; z-index: 1500; width: 232px; padding: 5px; background: #f5f8fc; color: #182a43; border: 1px solid #c6d2e2; box-shadow: 0 7px 22px rgb(16 44 80 / 18%); max-height: calc(100dvh - 65px); overflow-y: auto; }
 .file-menu button { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 32px; padding: 6px 10px; border: 0; border-radius: 2px; background: transparent; color: inherit; text-align: left; cursor: pointer; font: inherit; }
-.file-menu button:hover:not(:disabled), .file-menu button:focus-visible { background: var(--hover, #354857); outline: 1px solid var(--accent, #5cc8ef); outline-offset: -1px; }
+.file-menu button:hover:not(:disabled), .file-menu button:focus-visible { background: #e3edf9; outline: 1px solid #0063c9; outline-offset: -1px; }
 .file-menu button:disabled { opacity: .4; cursor: default; }
 .file-menu small { color: inherit; opacity: .65; margin-left: 20px; font-size: 11px; }
 </style>

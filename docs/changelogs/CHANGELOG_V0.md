@@ -6,6 +6,7 @@
 
 ### Added
 
+- Add the seven-tab engineering Ribbon, Activity Bar, independently pinnable docks and a read-only Schematic view of authored circuit connections.
 - Introduce the CIRNET LAB Light Workbench with a Project Explorer, docked PropertyManager, command search and reversible Focus Mode.
 - Add keyboard and pointer resizing for both docks and a 3D view tab with an editing toolbar.
 

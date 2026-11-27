@@ -13,7 +13,8 @@
 
 | Control | Use |
 | --- | --- |
-| Component ribbon | Choose a component or instrument visual. For a supported flexible part, select both exact board holes. The Run tab opens execution controls and leaves the current document mounted. |
+| Component ribbon | Choose a component or instrument visual. For a supported flexible part, select both exact board holes. The Simulate tab opens execution controls and leaves the current document mounted. |
+| Editor tabs | Use 3D Simulation to edit the circuit. Use Schematic to inspect declared links and select components or connections. Each tab keeps its view settings when you switch. |
 | Drawers | Collapse Components or Tools to reveal the canvas underneath. Use the floating edge buttons to reopen them. The selected tool, zoom and draft stay active. |
 | Select | Click a model or wire to select it. Ctrl/Meta-click toggles multi-selection. Use Marquee Select to select an area, or the Inventory and Inspector for keyboard selection. Drag a model or empty space to pan XZ in Select mode. |
 | Move | Drag a visible model after the four-pixel threshold to preview its new position and attached wires. Release commits one move. The model retains its elevation and rotation. Escape cancels the preview. |

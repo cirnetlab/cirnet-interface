@@ -3,6 +3,18 @@ defineProps<{ name: string }>()
 const historyArrow = 'M9 2 3.5 7.5 9 13V9h5a4 4 0 0 1 0 8h-3v3h3a7 7 0 0 0 0-14H9z'
 const paths: Record<string, string> = {
   search: 'M15.5 15.5 21 21 M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0',
+  notification: 'M5 17h14c-2-2-2-3-2-7a5 5 0 0 0-10 0c0 4 0 5-2 7z M10 21h4 M12 3V2',
+  'full-window': 'M8 4H4v4 M16 4h4v4 M20 16v4h-4 M4 16v4h4',
+  'restore-window': 'M8 8H4 M8 8V4 M16 8h4 M16 8V4 M16 16h4 M16 16v4 M8 16H4 M8 16v4',
+  pin: 'M9 4h6 M10 4v6l-3 3v2h10v-2l-3-3V4 M12 15v6',
+  unpin: 'M8 5h7 M10 5v4 M14 5v5l3 3v2h-2 M12 15v6 M4 4l16 16',
+  library: 'M4 5h4v14H4z M10 5h4v14h-4z M16 6l4-1 3 13-4 1z',
+  schematic: 'M4 5h4v4H4z M16 15h4v4h-4z M8 7h4v10h4 M16 5h4v4h-4z M12 10h6V9',
+  import: 'M4 13v7h16v-7 M12 3v12 M8 11l4 4 4-4',
+  export: 'M4 13v7h16v-7 M12 15V3 M8 7l4-4 4 4',
+  history: 'M4 12a8 8 0 1 1 2 5 M4 5v7h6 M12 8v5l3 2',
+  assignment: 'M8 5H5v16h14V5h-3 M8 3h8v5H8z M9 12h6 M9 16h6',
+  capacitor: 'M2 12h8 M10 5v14 M14 5v14 M14 12h8',
   explorer: 'M4 4h5l2 2h9v5H4z M7 11v8h6 M7 15h6 M14 14h5 M14 19h5',
   component: 'M7 7h10v10H7z M9 3v4 M15 3v4 M9 17v4 M15 17v4 M3 9h4 M3 15h4 M17 9h4 M17 15h4',
   'view-3d': 'm12 2 9 5v10l-9 5-9-5V7z M3 7l9 5 9-5 M12 12v10',

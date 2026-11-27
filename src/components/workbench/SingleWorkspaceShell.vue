@@ -17,8 +17,23 @@ import SimulationStatusBar from './execution/SimulationStatusBar.vue'
 import FloatingWindowManager from '../windows/FloatingWindowManager.vue'
 import ProjectExplorer from './chrome/ProjectExplorer.vue'
 import WorkspaceViewBar from './chrome/WorkspaceViewBar.vue'
+import SchematicWorkspace from './SchematicWorkspace.vue'
 const circuit = useCircuitStore(), workspace = useWorkspaceStore()
 const ui = useUiStore(), layout = ref<HTMLElement>()
+const titleBar = ref<InstanceType<typeof AppTitleBar>>()
+const hasOpenedSchematic = ref(false)
+watch(() => ui.activeEditor, editor => {
+  if (editor === 'schematic') hasOpenedSchematic.value = true
+}, { immediate: true })
+function dismissUnpinnedDocks(event: PointerEvent) {
+  if (!(event.target instanceof Element)) return
+  if (ui.explorerOpen && !ui.pinnedDocks.explorer && !event.target.closest('#project-explorer, [data-dock-trigger="explorer"]')) {
+    ui.explorerVisible = false
+  }
+  if (ui.propertiesOpen && !ui.pinnedDocks.properties && !event.target.closest('#property-manager, [data-dock-trigger="properties"]')) {
+    ui.closeWindow('inspector')
+  }
+}
 let layoutObserver: ReturnType<typeof observeElementSize> | undefined
 onMounted(() => {
   if (layout.value) layoutObserver = observeElementSize(layout.value, ui.setWorkbenchSize)
@@ -34,23 +49,28 @@ useLabNavigation()
 </script>
 <template>
   <div class="single-workspace-shell" :class="{
-    'explorer-open': ui.explorerVisible && !ui.focusRestore,
-    'properties-open': !ui.focusRestore && ui.windows.some(window => window.kind === 'inspector' && window.open),
-  }">
+    'explorer-open': ui.explorerOpen && ui.pinnedDocks.explorer,
+    'properties-open': ui.propertiesOpen && ui.pinnedDocks.properties,
+    'explorer-overlay': ui.explorerOpen && !ui.pinnedDocks.explorer,
+    'properties-overlay': ui.propertiesOpen && !ui.pinnedDocks.properties,
+    'schematic-editor-active': ui.activeEditor === 'schematic',
+  }" @pointerdown.capture="dismissUnpinnedDocks">
     <a class="skip-link" href="#workspace">Skip to workspace</a>
-    <AppTitleBar />
+    <AppTitleBar ref="titleBar" />
     <div ref="layout" class="workbench-layout" :style="{
       '--drawer-top': ui.drawerInsets.top + 'px',
       '--drawer-left': ui.drawerInsets.left + 'px',
       '--cedl-left': ui.dockLayout('explorer').width + 'px',
       '--cedl-right': ui.dockLayout('properties').width + 'px',
     }">
-      <WorkbenchRibbon />
+      <WorkbenchRibbon :file-items="titleBar?.fileItems ?? []" @file-command="titleBar?.fileCommand($event)" />
       <div class="workbench-body">
         <ToolRail />
         <main id="workspace" class="workspace-stage" tabindex="-1" aria-label="Circuit workbench">
           <WorkspaceViewBar />
-          <CircuitWorkspace3D id="workbench-view-3d" role="tabpanel" aria-labelledby="workbench-view-tab-3d" />
+          <CircuitWorkspace3D id="workbench-view-3d" role="tabpanel" aria-labelledby="workbench-view-tab-3d"
+            :inert="ui.activeEditor !== '3d'" :class="{ 'editor-inactive': ui.activeEditor !== '3d' }" />
+          <SchematicWorkspace v-if="hasOpenedSchematic" />
           <FloatingWindowManager />
           <ProjectExplorer />
         </main>

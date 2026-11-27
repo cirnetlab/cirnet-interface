@@ -25,6 +25,7 @@
   --cedl-tab-height: 28px;
   --cedl-view-tools-height: 32px;
   --cedl-view-chrome-height: calc(var(--cedl-tab-height) + var(--cedl-view-tools-height) + 2px);
+  --cedl-elevation: 0 7px 22px rgb(16 44 80 / 18%);
   --surface: var(--cedl-panel);
   --ribbon-surface: var(--cedl-panel);
   --line: var(--cedl-line);
@@ -48,6 +49,31 @@
 .app-titlebar .project-title, .app-titlebar .project-title small { color: var(--cedl-white); }
 .app-titlebar .project-title small { background: var(--cedl-navy-hover); }
 .app-titlebar .ribbon-tabs button[aria-selected=true] { color: var(--cedl-blue); }
+.single-workspace-shell > .ribbon-tabs {
+  flex: 0 0 33px;
+  min-height: 0;
+  align-items: end;
+  gap: 3px;
+  padding: 0 9px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  color: var(--cedl-navy);
+  background: var(--cedl-chrome);
+  border-bottom: 1px solid var(--cedl-line);
+}
+.single-workspace-shell > .ribbon-tabs::before { display: none; }
+.single-workspace-shell > .ribbon-tabs > button {
+  align-items: center;
+  height: 29px;
+  padding: 0 clamp(8px, 1.2vw, 18px);
+  color: var(--cedl-ink);
+  font-weight: 650;
+}
+.single-workspace-shell > .ribbon-tabs > button:hover { background: var(--cedl-hover); }
+.single-workspace-shell > .ribbon-tabs > button[aria-selected=true] {
+  color: var(--cedl-blue);
+  background: var(--cedl-panel);
+}
 .app-titlebar .file-menu-trigger:hover,
 .app-titlebar .quick-actions button:hover:not(:disabled) { background: var(--cedl-navy-hover); }
 .app-titlebar .command-trigger, .app-titlebar .header-icon-button {
@@ -95,6 +121,11 @@
   border-color: var(--cedl-line);
 }
 .single-workspace-shell .ribbon-scroll { scrollbar-color: var(--cedl-line) transparent; }
+.component-drawer {
+  /* The settled Ribbon needs no transform layer over the WebGL viewport. */
+  transform: none;
+  will-change: auto;
+}
 .single-workspace-shell .ribbon-art > svg { width: 28px; height: 28px; }
 .single-workspace-shell .ribbon-scroll > button { border-right-color: var(--cedl-line); }
 .single-workspace-shell :is(.ribbon-art > svg, .ribbon-chevron, .tool-rail button, .rail-label, .status-viewport-tools output) {
@@ -158,11 +189,12 @@
   height: 100%;
   border-radius: 0;
   padding-inline: 10px;
-  color: var(--cedl-white);
-  background: var(--cedl-navy);
+  color: var(--cedl-blue);
+  background: var(--cedl-chrome);
   white-space: nowrap;
   font-weight: 600;
 }
+.workspace-view-tabs > button[aria-selected=true] { color: var(--cedl-white); background: var(--cedl-navy); }
 .workspace-editing-tools {
   display: flex;
   align-items: center;
@@ -317,7 +349,7 @@
 @media (max-width: 850px) {
   .app-titlebar .command-trigger span { display: none; }
 }
-@media (max-width: 700px) {
+@media (max-width: 900px) {
   .single-workspace-shell .workspace-view-bar {
     left: calc(var(--drawer-left) + var(--cedl-gap));
     right: var(--cedl-gap);
@@ -340,3 +372,167 @@
   margin-bottom: 8px;
 }
 .property-manager .inspector-section > summary h2 { display: inline; padding: 0; }
+
+.single-workspace-shell .workspace-stage {
+  --editor-left: calc(var(--drawer-left) + var(--cedl-gap));
+  --editor-right: var(--cedl-gap);
+  --editor-top: calc(var(--drawer-top) + var(--cedl-view-chrome-height) + var(--cedl-gap));
+  background: var(--cedl-chrome);
+}
+.explorer-open .workspace-stage { --editor-left: calc(var(--drawer-left) + var(--cedl-left) + 2 * var(--cedl-gap)); }
+.properties-open .workspace-stage { --editor-right: calc(var(--cedl-right) + 2 * var(--cedl-gap)); }
+.single-workspace-shell .circuit-workspace {
+  background: var(--cedl-chrome);
+}
+.workspace-3d-aperture {
+  position: absolute;
+  inset: var(--editor-top) var(--editor-right) var(--cedl-gap) var(--editor-left);
+  overflow: hidden;
+  border-radius: 0 0 var(--cedl-radius) var(--cedl-radius);
+  background: var(--cedl-canvas);
+}
+.workspace-3d-aperture > canvas {
+  /* Move the clipping container and preserve the camera's stage-sized projection. */
+  position: absolute;
+  top: calc(-1 * var(--editor-top));
+  left: calc(-1 * var(--editor-left));
+  width: calc(100% + var(--editor-left) + var(--editor-right));
+  height: calc(100% + var(--editor-top) + var(--cedl-gap));
+}
+.editor-inactive { visibility: hidden; pointer-events: none; }
+.schematic-editor-active .component-information { display: none; }
+.single-workspace-shell .floating-window[hidden] { display: none; }
+.single-workspace-shell .property-manager .floating-header { padding-inline: 10px 6px; }
+.property-manager .floating-header > .workbench-icon { color: var(--cedl-blue); }
+.property-manager .floating-header strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.properties-overlay .floating-window-manager { z-index: 8; }
+.explorer-overlay .project-explorer { z-index: 8; }
+.explorer-overlay .project-explorer, .single-workspace-shell.properties-overlay .property-manager { box-shadow: var(--cedl-elevation); }
+.property-manager .floating-header button, .dock-heading button { flex: 0 0 20px; width: 20px; min-height: 24px; }
+.project-explorer .dock-heading > .workbench-icon { flex-shrink: 0; }
+.dock-heading { padding-inline: 7px; }
+.dock-heading button { margin: 0; }
+.explorer-components button { padding: 3px 5px; line-height: 1.2; }
+.explorer-components span > small { display: inline; padding-inline-start: 4px; color: var(--cedl-muted); }
+
+.ribbon-command-groups {
+  display: flex;
+  height: 100%;
+  gap: 0;
+  padding: 5px 38px 4px 7px;
+  overflow-x: auto;
+  background: var(--cedl-panel);
+  border-bottom: 1px solid var(--cedl-line);
+}
+.ribbon-command-group {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  padding-inline: 8px;
+  border-right: 1px solid var(--cedl-line);
+}
+.ribbon-command-group:last-child { border-right: 0; }
+.ribbon-command-buttons { display: flex; align-items: stretch; gap: 3px; flex: 1; }
+.ribbon-command-buttons button {
+  display: flex;
+  flex: 0 0 76px;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+  border-color: transparent;
+  text-align: center;
+  background: transparent;
+  color: var(--cedl-ink);
+  font: inherit;
+  line-height: 1.15;
+}
+.ribbon-command-buttons button .workbench-icon { width: 23px; height: 23px; color: var(--cedl-blue); }
+.ribbon-command-buttons button img { width: 30px; height: 26px; object-fit: contain; }
+.ribbon-command-buttons button:hover:not(:disabled) { background: var(--cedl-hover); }
+.ribbon-command-buttons button[aria-pressed=true] { border-color: var(--cedl-focus); background: var(--cedl-selected); }
+.ribbon-command-group > small { color: var(--cedl-muted); font-size: 10px; }
+.ribbon-keyboard { justify-content: center; align-items: start; font-size: 10px; }
+.ribbon-keyboard kbd { margin-inline-end: 4px; color: var(--cedl-blue); }
+.tool-rail { padding: 5px 7px; overflow-y: auto; scrollbar-width: thin; }
+.activity-destinations {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--cedl-line);
+  padding-bottom: 7px;
+  margin-bottom: 7px;
+}
+.tool-rail .activity-destinations button { height: 34px; padding: 4px; }
+.tool-rail [role=toolbar] { flex-shrink: 0; }
+.single-workspace-shell .system-message-details {
+  color: var(--cedl-ink);
+  background: var(--cedl-panel);
+  border-color: var(--cedl-line);
+  box-shadow: var(--cedl-elevation);
+}
+.single-workspace-shell .system-message-details :is(p, li, strong) { color: var(--cedl-ink); }
+.single-workspace-shell .system-message-details strong { font-weight: 650; }
+.single-workspace-shell .system-message-details header button { color: var(--cedl-blue); }
+.single-workspace-shell .system-message-details header button:hover { background: var(--cedl-hover); }
+
+.schematic-workspace {
+  position: absolute;
+  inset: var(--editor-top) var(--editor-right) var(--cedl-gap) var(--editor-left);
+  overflow: auto;
+  padding: 12px 14px;
+  border: 1px solid var(--cedl-line);
+  border-radius: 0 0 var(--cedl-radius) var(--cedl-radius);
+  background-color: var(--cedl-white);
+  background-image: linear-gradient(#7593b21a 1px, transparent 1px), linear-gradient(90deg, #7593b21a 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: var(--cedl-ink);
+  overscroll-behavior: contain;
+}
+.schematic-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.schematic-heading span, .schematic-note { color: var(--cedl-muted); font-size: 11px; }
+.schematic-sheet { position: relative; }
+.schematic-links { position: absolute; inset: 0; width: 100%; height: 100%; }
+.schematic-link { fill: none; stroke: var(--cedl-blue); stroke-width: 2; cursor: pointer; }
+.schematic-link:is(:hover, .selected) { stroke: var(--cedl-focus); stroke-width: 4; }
+.schematic-node {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  text-align: start;
+  border-color: var(--cedl-blue);
+  background: var(--cedl-white);
+}
+.schematic-node .workbench-icon { flex: 0 0 23px; width: 23px; height: 23px; color: var(--cedl-blue); }
+.schematic-node span { min-width: 0; }
+.schematic-node :is(strong, small) { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.schematic-node small { color: var(--cedl-muted); }
+.schematic-node:is(:hover, [aria-pressed=true]), .schematic-connection-list button[aria-pressed=true] { background: var(--cedl-selected); }
+.schematic-connection-list { width: fit-content; max-width: 100%; }
+.schematic-connection-list ul { padding: 0; list-style: none; }
+.schematic-connection-list button { background: var(--cedl-panel); overflow-wrap: anywhere; }
+.schematic-tools { color: var(--cedl-muted); white-space: nowrap; }
+.schematic-tools output { min-width: 38px; text-align: center; font-variant-numeric: tabular-nums; }
+.status-schematic { font-size: 11px; white-space: nowrap; color: var(--cedl-muted); }
+
+@media (max-width: 1180px) {
+  .app-titlebar .quick-file-action { display: none; }
+}
+@media (max-width: 700px) {
+  .single-workspace-shell > .ribbon-tabs > button { padding-inline: 7px; }
+  .project-explorer .dock-heading > .workbench-icon, .property-manager .floating-header > .workbench-icon { display: none; }
+}
+@media (max-width: 560px) {
+  .app-titlebar .fullscreen-toggle { display: none; }
+  .single-workspace-shell .schematic-workspace { padding-inline: 8px; }
+  .schematic-heading span { display: block; }
+}

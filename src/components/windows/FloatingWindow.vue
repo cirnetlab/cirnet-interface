@@ -34,18 +34,36 @@ function activate() {
 }
 onMounted(activate)
 watch(() => props.window.activation, activate)
-onBeforeUnmount(() => {
-  end()
+function restoreOpener() {
   if (root.value?.contains(document.activeElement) && opener?.isConnected) {
     // A toolbar can be collapsed while its instrument window is still open.
     const target = !opener.closest('[inert]') && opener.getClientRects().length ? opener : opener.closest('.component-panel, .tools-panel')?.querySelector<HTMLButtonElement>('.toolbar-collapse-toggle')
     target?.focus()
   }
+}
+watch(() => props.window.open, open => {
+  if (!open) restoreOpener()
+}, { flush: 'sync' })
+onBeforeUnmount(() => {
+  end()
+  restoreOpener()
 })
 </script>
 <template>
   <section ref="root" class="floating-window" :class="{ 'property-manager': docked }" :id="docked ? 'property-manager' : undefined" role="dialog" :aria-labelledby="'window-title-' + window.kind" :style="docked ? { zIndex: window.z } : { left: window.x + 'px', top: window.y + 'px', width: window.width + 'px', height: window.height + 'px', zIndex: window.z }" @pointerdown="ui.focusWindow(window.kind)" @focusin="ui.focusWindow(window.kind)" @keydown="key">
-    <header ref="header" class="floating-header" tabindex="0" :aria-label="docked ? 'PropertyManager. Escape to close.' : windowDefinitions[window.kind].title + ' window. Drag or use arrow keys to move; Escape to close.'" @pointerdown="start" @pointermove="move" @pointerup="end" @pointercancel="end" @lostpointercapture="end"><span v-if="!docked" class="window-grip" aria-hidden="true">⠿</span><strong :id="'window-title-' + window.kind">{{ docked ? 'PropertyManager' : windowDefinitions[window.kind].title }}</strong><button :aria-label="'Close ' + windowDefinitions[window.kind].title" @click="ui.closeWindow(window.kind)"><WorkbenchIcon name="close" /></button></header>
+    <header ref="header" class="floating-header" tabindex="0"
+      :aria-label="docked ? 'PropertyManager. Escape to close.' : windowDefinitions[window.kind].title + ' window. Drag or use arrow keys to move; Escape to close.'"
+      @pointerdown="start" @pointermove="move" @pointerup="end" @pointercancel="end" @lostpointercapture="end">
+      <WorkbenchIcon v-if="docked" name="inspector" />
+      <span v-else class="window-grip" aria-hidden="true">⠿</span>
+      <strong :id="'window-title-' + window.kind">{{ docked ? 'PropertyManager' : windowDefinitions[window.kind].title }}</strong>
+      <button v-if="docked" type="button" :aria-label="ui.pinnedDocks.properties ? 'Unpin PropertyManager' : 'Pin PropertyManager'"
+        :title="ui.pinnedDocks.properties ? 'Unpin PropertyManager' : 'Pin PropertyManager'"
+        :aria-pressed="ui.pinnedDocks.properties" @click="ui.toggleDockPin('properties')">
+        <WorkbenchIcon :name="ui.pinnedDocks.properties ? 'pin' : 'unpin'" />
+      </button>
+      <button :aria-label="'Close ' + windowDefinitions[window.kind].title" @click="ui.closeWindow(window.kind)"><WorkbenchIcon name="close" /></button>
+    </header>
     <div class="floating-body"><slot /></div>
     <DockResizeHandle v-if="docked" dock="properties" label="Resize PropertyManager" controls="property-manager" />
   </section>

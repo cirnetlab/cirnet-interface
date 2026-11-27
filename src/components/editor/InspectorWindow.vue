@@ -19,6 +19,10 @@ const circuit = useCircuitStore(), station = useStationStore(), instrument = use
 const workspace = useWorkspaceStore()
 const experiment=useExperimentStore()
 const selected = computed(() => { const module = circuit.graph?.modules.find(item => item.id === workspace.selectedModuleId); return module ? moduleWorldPose(module, circuit.graph!.modules) : undefined })
+const selectedConnection = computed(() => {
+  const selection = workspace.selectedWire
+  return selection && circuit.graph?.connections.find(link => link.source === selection.source && link.destination === selection.destination)
+})
 const definition = computed(() => selected.value && getDefinition(selected.value.type))
 const part = computed(() => selected.value && getPartForModule(selected.value))
 const parameters = computed(() => definition.value?.parameters.filter(parameter => parameter.key !== 'capacitorType') ?? [])
@@ -53,7 +57,7 @@ function position(axis: 'x' | 'y' | 'z', event: Event) { if (selected.value) { c
 function rotation(event: Event) { if (selected.value) edit(() => circuit.rotateModule(selected.value!.id, Number((event.target as HTMLInputElement).value) - (selected.value!.rotation ?? 0))); syncText('rotation') }
 function rename(event: Event) { circuit.renameCurrent((event.target as HTMLInputElement).value); syncText('name') }
 function select(event: Event) { const value = (event.target as HTMLSelectElement).value; value === '' ? station.useSimulation() : station.selectStation(value) }
-function add() { edit(() => { workspace.armPlacement(componentAddType(addType.value)); ui.openWindow('component-info', { activate: false }) }) }
+function add() { edit(() => { ui.selectEditor('3d'); workspace.armPlacement(componentAddType(addType.value)); ui.openWindow('component-info', { activate: false }) }) }
 function property(key: string, value: unknown) {
   if (!selected.value) return
   const module = selected.value, patch = { [key]: value }
@@ -62,6 +66,11 @@ function property(key: string, value: unknown) {
 }
 </script>
 <template>
+  <section v-if="selectedConnection" class="inspector-section" aria-label="Selected connection">
+    <h2>Selected connection</h2>
+    <p><code>{{ selectedConnection.source }}</code> → <code>{{ selectedConnection.destination }}</code></p>
+    <button type="button" @click="edit(() => circuit.disconnectPorts(selectedConnection!.source, selectedConnection!.destination))">Disconnect selected link</button>
+  </section>
   <details open class="inspector-section"><summary><h2>Component editor</h2></summary>
     <p v-if="workspace.selectionCount > 1" role="status">{{ workspace.selection.moduleIds.length }} components and {{ workspace.selection.wires.length }} wires selected. Use Delete, Duplicate or Paste for the complete selection.</p>
     <label>Select component<select :value="workspace.selectedModuleId || ''" @change="workspace.selectModule(($event.target as HTMLSelectElement).value || null)"><option value="">None</option><option v-for="module in circuit.graph?.modules" :key="module.id" :value="module.id">{{ module.id }} · {{ module.type }}</option></select></label>

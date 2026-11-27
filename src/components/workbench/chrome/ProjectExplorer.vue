@@ -12,22 +12,29 @@ const circuit = useCircuitStore()
 const workspace = useWorkspaceStore()
 const ui = useUiStore()
 
-function openLibrary(group: string) {
-  ui.selectRibbonTab('component')
-  if (ui.activeRibbonGroup !== group) ui.toggleRibbon(group)
-}
-
 function closeExplorer() {
   ui.explorerVisible = false
   void nextTick(() => document.getElementById('toggle-project-explorer')?.focus())
 }
+function escapeExplorer(event: KeyboardEvent) {
+  if (ui.pinnedDocks.explorer || ui.activeRibbonGroup) return
+  event.preventDefault()
+  event.stopPropagation()
+  closeExplorer()
+}
 </script>
 
 <template>
-  <aside v-show="ui.explorerVisible && !ui.focusRestore" id="project-explorer"
-    class="project-explorer" aria-labelledby="project-explorer-title" data-workspace-text-input>
+  <aside v-show="ui.explorerOpen" id="project-explorer"
+    class="project-explorer" aria-labelledby="project-explorer-title" data-workspace-text-input
+    @keydown.esc="escapeExplorer">
     <header class="dock-heading"><WorkbenchIcon name="explorer" />
       <h2 id="project-explorer-title">Project Explorer</h2>
+      <button type="button" :aria-label="ui.pinnedDocks.explorer ? 'Unpin Project Explorer' : 'Pin Project Explorer'"
+        :title="ui.pinnedDocks.explorer ? 'Unpin Project Explorer' : 'Pin Project Explorer'"
+        :aria-pressed="ui.pinnedDocks.explorer" @click="ui.toggleDockPin('explorer')">
+        <WorkbenchIcon :name="ui.pinnedDocks.explorer ? 'pin' : 'unpin'" />
+      </button>
       <button type="button" aria-label="Close Project Explorer" title="Close Project Explorer"
         @click="closeExplorer"><WorkbenchIcon name="close" /></button>
     </header>
@@ -49,10 +56,25 @@ function closeExplorer() {
           <p v-else class="explorer-empty">Add a component from the Ribbon.</p>
         </details>
         <details>
+          <summary>Views</summary>
+          <ul class="explorer-components">
+            <li><button type="button" :aria-pressed="ui.activeEditor === '3d'" @click="ui.selectEditor('3d')"><WorkbenchIcon name="view-3d" /> 3D Simulation</button></li>
+            <li><button type="button" :aria-pressed="ui.activeEditor === 'schematic'" @click="ui.selectEditor('schematic')"><WorkbenchIcon name="schematic" /> Schematic</button></li>
+          </ul>
+        </details>
+        <details v-if="circuit.drafts.length > 1">
+          <summary>Session drafts</summary>
+          <ul class="explorer-components">
+            <li v-for="draft in circuit.drafts" :key="draft.id">
+              <button type="button" :aria-pressed="circuit.activeId === draft.id" @click="circuit.openDraft(draft.id)">{{ draft.name }}</button>
+            </li>
+          </ul>
+        </details>
+        <details>
           <summary>Libraries</summary>
           <ul class="explorer-components">
             <li v-for="group in ribbonGroups" :key="group.id">
-              <button type="button" @click="openLibrary(group.id)">{{ group.label }}</button>
+              <button type="button" @click="ui.openLibrary(group.id)">{{ group.label }}</button>
             </li>
           </ul>
         </details>

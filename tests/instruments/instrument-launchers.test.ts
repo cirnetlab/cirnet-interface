@@ -27,7 +27,8 @@ test('workspace toolbar keeps editing modes separate from the ordered instrument
     const tools = ['Select', 'Wire', 'Move', 'Rotate']
     const instruments = ['Power Supply', 'Probe', 'Scope', 'Function Generator']
     assert.deepEqual(labels(toolbar).filter(Boolean), tools)
-    assert.deepEqual(labels(view).slice(0, 4), instruments)
+    assert.deepEqual(labels(view).slice(0, 5), ['Projects and navigation', 'Circuit editing', 'Component library', 'Lab results', 'Lab execution'])
+    assert.deepEqual(labels(view).slice(5, 9), instruments)
     const launchers = instruments.map(name => view.find('button', 'aria-label', name))
     for (const launcher of launchers) { assert.ok(launcher); assert.equal(launcher.props['aria-pressed'], undefined) }
     const [supply, , , generator] = launchers

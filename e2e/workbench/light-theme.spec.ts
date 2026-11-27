@@ -97,7 +97,7 @@ test('Light Workbench panels and Focus Mode preserve camera, selection and the d
   await expect.poll(() => width(explorer)).toBe(leftWidth + 16)
   await expect.poll(() => width(properties)).toBe(rightWidth + 48)
   await capture('3d-resized-docks')
-  await page.getByRole('tab', { name: '3D Workbench', exact: true }).click()
+  await page.getByRole('tab', { name: '3D Simulation', exact: true }).click()
   await expect(canvas).toBeFocused()
   await expect(canvas).toHaveAttribute('data-light-scene', 'original')
   const after = await nativeShellEvidence(page)

@@ -14,4 +14,14 @@ import ExperimentHistoryWindow from '../lab/ExperimentHistoryWindow.vue'
 const ui = useUiStore()
 const bodies = { assignments:AssignmentWindow,history:ExperimentHistoryWindow,projects:ProjectManagerWindow,oscilloscope: OscilloscopeWindow, generator: GeneratorWindow, 'power-supply': PowerSupplyWindow, monitor: SignalMonitorWindow, inspector: InspectorWindow, 'hex-editor': HexEditorWindow }
 </script>
-<template><div class="floating-window-manager" aria-label="Workspace windows"><ComponentInfoWindow /><template v-for="window in ui.windows" :key="window.kind"><FloatingWindow v-if="window.open && window.kind !== 'component-info'" v-show="window.kind !== 'inspector' || !ui.focusRestore" :window="window" :docked="window.kind === 'inspector'"><component :is="bodies[window.kind]" /></FloatingWindow></template></div></template>
+<template>
+  <div class="floating-window-manager" aria-label="Workspace windows">
+    <ComponentInfoWindow />
+    <template v-for="window in ui.windows" :key="window.kind">
+      <FloatingWindow v-if="window.kind === 'inspector' || (window.open && window.kind !== 'component-info')"
+        :hidden="window.kind === 'inspector' && !ui.propertiesOpen" :window="window" :docked="window.kind === 'inspector'">
+        <component :is="bodies[window.kind]" />
+      </FloatingWindow>
+    </template>
+  </div>
+</template>

@@ -43,8 +43,8 @@ function choose(card: PaletteCard) {
   // The palette will disappear. Retain a stable keyboard return target first.
   root.value?.querySelector?.<HTMLButtonElement>(`[data-group="${ui.activeRibbonGroup}"]`)?.focus()
   if (item.window) ui.openWindow(item.window)
-  else if (item.type === 'JUMPER') workspace.setTool('wire')
-  else if (card.placeable) { workspace.armPlacement(item.type); ui.openWindow('component-info', { activate: false }) }
+  else if (item.type === 'JUMPER') { ui.selectEditor('3d'); workspace.setTool('wire') }
+  else if (card.placeable) { ui.selectEditor('3d'); workspace.armPlacement(item.type); ui.openWindow('component-info', { activate: false }) }
   else { workspace.preview(item.type); workspace.editError = item.name + ' has no placeable editor model yet.' }
   ui.activeRibbonGroup = null
 }
@@ -54,6 +54,7 @@ function drag(event: DragEvent, card: PaletteCard) {
   event.dataTransfer.setData('application/x-cirnet-component', item.type)
   event.dataTransfer.setData('application/x-netcircuit-component', item.type)
   event.dataTransfer.effectAllowed = 'copy'
+  ui.selectEditor('3d')
   workspace.armPlacement(item.type)
   ui.openWindow('component-info', { activate: false })
 }

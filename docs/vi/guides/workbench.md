@@ -13,7 +13,8 @@
 
 | Điều khiển | Cách dùng |
 | --- | --- |
-| Ribbon Component | Chọn linh kiện hoặc mô hình thiết bị. Với linh kiện linh hoạt được hỗ trợ, chọn chính xác cả hai lỗ. Tab Run mở điều khiển thực thi và giữ tài liệu hiện tại trên bàn làm việc. |
+| Ribbon Component | Chọn linh kiện hoặc mô hình thiết bị. Với linh kiện linh hoạt được hỗ trợ, chọn chính xác cả hai lỗ. Tab Simulate mở điều khiển thực thi và giữ tài liệu hiện tại trên bàn làm việc. |
+| Tab trình biên tập | Dùng 3D Simulation để sửa mạch. Dùng Schematic để xem liên kết đã khai báo và chọn linh kiện hoặc kết nối. Mỗi tab giữ thiết lập hiển thị khi chuyển tab. |
 | Ngăn công cụ | Thu gọn Components hoặc Tools để lộ canvas phía dưới. Dùng nút nổi ở mép để mở lại. Công cụ đã chọn, mức thu phóng và bản nháp vẫn hoạt động. |
 | Select | Nhấp mô hình hoặc dây để chọn. Ctrl/Meta+nhấp thêm hoặc bỏ khỏi vùng chọn. Dùng Marquee Select để chọn theo vùng, hoặc Inventory và Inspector để chọn bằng bàn phím. Kéo mô hình hoặc vùng trống để rê theo XZ trong chế độ Select. |
 | Move | Kéo mô hình đang hiển thị quá bốn pixel để xem trước vị trí mới và dây nối. Thả để xác nhận một lần dịch. Mô hình giữ nguyên độ cao và góc xoay. Escape hủy bản xem trước. |

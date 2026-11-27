@@ -8,7 +8,7 @@ import { fileCommand } from '../helpers/workbench-ui'
 
 const directory = getArtifactDirectory('ribbon-shell')
 const fileItems = ['New', 'Open Project', 'Save', 'Save As', 'Import', 'Export', 'History', 'Assignment']
-const tab = (page: Page, name: 'Component' | 'Run') => page.getByRole('tab', { name, exact: true })
+const tab = (page: Page, name: 'Component' | 'Simulate') => page.getByRole('tab', { name, exact: true })
 const file = (page: Page) => page.getByRole('button', { name: 'File', exact: true })
 const menu = (page: Page) => page.getByRole('menu', { name: 'File', exact: true })
 const message = (page: Page) => page.locator('.system-message-text:not(:empty)')
@@ -55,13 +55,13 @@ async function singleRow(page: Page) {
   await expect(message(page)).toHaveCSS('opacity', '1')
 }
 
-test('Header order, File menu keyboard focus and manual Component/Run tab activation', async ({ page }) => {
+test('Header order, File menu keyboard focus and manual Component/Simulate tab activation', async ({ page }) => {
   test.setTimeout(90_000)
   await start(page)
   await expect(tab(page, 'Component')).toHaveAttribute('aria-selected', 'true')
   await expect(file(page)).toHaveAttribute('aria-haspopup', 'menu')
   const header = page.locator('.app-titlebar')
-  const ordered = [header.locator('.brand'), header.getByRole('button', { name: 'Undo', exact: true }), header.getByRole('button', { name: 'Redo', exact: true }), file(page), tab(page, 'Component'), tab(page, 'Run'), header.locator('.project-title'), header.getByRole('button', { name: 'Open account', exact: true }), header.getByRole('button', { name: 'Open Inspector', exact: true })]
+  const ordered = [header.locator('.brand'), header.getByRole('button', { name: 'Undo', exact: true }), header.getByRole('button', { name: 'Redo', exact: true }), file(page), header.locator('.project-title'), header.getByRole('button', { name: 'Open account', exact: true }), header.getByRole('button', { name: 'Open Inspector', exact: true })]
   const boxes = await Promise.all(ordered.map(item => item.boundingBox()))
   for (let index = 1; index < boxes.length; index++) {
     expect(boxes[index]!.x).toBeGreaterThanOrEqual(boxes[index - 1]!.x)
@@ -79,10 +79,10 @@ test('Header order, File menu keyboard focus and manual Component/Run tab activa
   await page.keyboard.press('Space'); await expect(menu(page)).toBeVisible(); await page.keyboard.press('Tab'); await expect(menu(page)).toBeHidden()
   await file(page).click(); await tab(page, 'Component').click(); await expect(menu(page)).toBeHidden()
   await tab(page, 'Component').focus(); await page.keyboard.press('ArrowRight')
-  await expect(tab(page, 'Run')).toBeFocused(); await expect(tab(page, 'Component')).toHaveAttribute('aria-selected', 'true')
-  await page.keyboard.press('Enter'); await expect(tab(page, 'Run')).toHaveAttribute('aria-selected', 'true')
+  await expect(tab(page, 'Simulate')).toBeFocused(); await expect(tab(page, 'Component')).toHaveAttribute('aria-selected', 'true')
+  await page.keyboard.press('Enter'); await expect(tab(page, 'Simulate')).toHaveAttribute('aria-selected', 'true')
   await expect(page.locator('#workbench-panel-run')).toHaveAttribute('aria-labelledby', 'workbench-tab-run')
-  await file(page).click(); await expect(tab(page, 'Run')).toHaveAttribute('aria-selected', 'true'); await page.keyboard.press('Escape')
+  await file(page).click(); await expect(tab(page, 'Simulate')).toHaveAttribute('aria-selected', 'true'); await page.keyboard.press('Escape')
   await fileCommand(page, 'Open Project')
   const projects = page.getByRole('region', { name: 'Project Manager', exact: true })
   await expect(projects).toBeVisible()
@@ -107,17 +107,17 @@ test('native canvas identity, camera, graph, selection and undo survive tabs, Fi
   page.on('request', request => { if (request.method() === 'POST' && /\/api\/experiments(?:\/|$)/.test(new URL(request.url()).pathname)) mutations++ })
   page.on('websocket', () => sockets++)
   for (let index = 0; index < 8; index++) {
-    await tab(page, index % 2 ? 'Component' : 'Run').click()
+    await tab(page, index % 2 ? 'Component' : 'Simulate').click()
     await file(page).click(); await page.keyboard.press('Escape')
   }
   await screenshot(page, 'after-component')
-  await tab(page, 'Run').click()
+  await tab(page, 'Simulate').click()
   await expect(page.getByRole('toolbar', { name: 'Execution controls', exact: true }).getByRole('button', { name: 'Run', exact: true })).toBeVisible()
   for (const name of ['Pause', 'Step']) await expect(page.getByRole('button', { name, exact: true })).toBeDisabled()
   await page.locator('#execution-capability-help').focus(); await expect(page.locator('#execution-capability-help')).toBeFocused()
   await expect(page.locator('#execution-capability-help')).toContainText(/not support|unavailable|unsupported/i)
   await screenshot(page, 'after-run')
-  for (const name of ['Run', 'Component'] as const) {
+  for (const name of ['Simulate', 'Component'] as const) {
     await tab(page, name).click()
     await page.getByRole('button', { name: 'Collapse Ribbon', exact: true }).click()
     await expect(page.locator('.component-panel')).toHaveAttribute('data-drawer-occupied', 'false')
@@ -141,7 +141,7 @@ test('native canvas identity, camera, graph, selection and undo survive tabs, Fi
   await writeFile(resolve(directory, 'native-stability.json'), JSON.stringify({ before, after: await nativeShellEvidence(page), mutations, sockets, graph: saved }, null, 2))
 })
 
-test('Component groups, search, real drag placement and no ghost palette across Run', async ({ page }) => {
+test('Component groups, search, real drag placement and no ghost palette across Simulate', async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)
   const families = page.getByRole('toolbar', { name: 'Component families', exact: true })
@@ -155,11 +155,11 @@ test('Component groups, search, real drag placement and no ghost palette across 
   const canvas = workspaceCanvas(page), bounds = await canvas.boundingBox()
   await page.locator('.palette-items [data-component-type="SN74HC08N"]').dragTo(canvas, { targetPosition: { x: bounds!.width * .65, y: bounds!.height * .65 } })
   await expect.poll(async () => (await exportedNativeGraph(page)).modules.filter(module => module.type === 'SN74HC08N').length).toBeGreaterThan(0)
-  await tab(page, 'Run').click(); await expect(page.locator('#ribbon-palette')).toBeHidden(); await expect(search).toBeHidden()
+  await tab(page, 'Simulate').click(); await expect(page.locator('#ribbon-palette')).toBeHidden(); await expect(search).toBeHidden()
   await tab(page, 'Component').click(); await expect(page.locator('#ribbon-palette')).toBeHidden()
   await families.locator('[data-group="logic"]').click(); await expect(search).toBeVisible()
   await page.getByRole('button', { name: 'Collapse Ribbon', exact: true }).click(); await expect(page.locator('#ribbon-palette')).toBeHidden()
-  await tab(page, 'Run').click(); await expect(page.locator('#ribbon-palette')).toBeHidden()
+  await tab(page, 'Simulate').click(); await expect(page.locator('#ribbon-palette')).toBeHidden()
 })
 
 test('footer shows real import failure before export info, exposes full text and clears context hints', async ({ page }) => {
@@ -202,9 +202,9 @@ for (const dpr of [1, 2]) test(`responsive native Ribbon at DPR ${dpr}, reduced 
       expect(menuBounds!.x).toBeGreaterThanOrEqual(0); expect(menuBounds!.x + menuBounds!.width).toBeLessThanOrEqual(width)
       await page.keyboard.press('Escape')
       for (let index = 0; index < 5; index++) {
-        await tab(page, index % 2 ? 'Component' : 'Run').click()
+        await tab(page, index % 2 ? 'Component' : 'Simulate').click()
         await page.getByRole('button', { name: 'Collapse Ribbon', exact: true }).click()
-        await tab(page, index % 2 ? 'Component' : 'Run').click()
+        await tab(page, index % 2 ? 'Component' : 'Simulate').click()
       }
       await tab(page, 'Component').click()
       await expect(page.locator('.component-panel')).toHaveAttribute('data-drawer-occupied', 'true')
@@ -241,7 +241,7 @@ for (const cancel of [true, false]) test(`native pending physical preflight keep
     await held
     await route.fulfill({ response })
   })
-  await tab(page, 'Run').click()
+  await tab(page, 'Simulate').click()
   const controls = page.getByRole('toolbar', { name: 'Execution controls', exact: true })
   await expect(controls.getByRole('button', { name: 'Run', exact: true })).toBeEnabled()
   await controls.getByRole('button', { name: 'Run', exact: true }).click()
@@ -251,7 +251,7 @@ for (const cancel of [true, false]) test(`native pending physical preflight keep
   for (let index = 0; index < 2; index++) {
     await tab(page, 'Component').click()
     await page.getByRole('button', { name: 'Collapse Ribbon', exact: true }).click()
-    await tab(page, 'Run').click()
+    await tab(page, 'Simulate').click()
     await expect(controls.getByRole('button', { name: 'Cancel', exact: true })).toBeEnabled()
   }
   expect(previews).toBe(1); expect(creates).toBe(0); expect(runs).toBe(0)

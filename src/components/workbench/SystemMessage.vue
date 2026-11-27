@@ -1,23 +1,36 @@
 <script setup lang="ts">
-import { computed,nextTick,ref } from 'vue'
+import { computed,ref,watch } from 'vue'
 import { useWorkspaceMessageStore } from '../../stores/workbench/workspaceMessages'
 import { useUiStore } from '../../stores/workbench/ui'
 import WorkbenchIcon from './chrome/WorkbenchIcon.vue'
 const messages=useWorkspaceMessageStore(),ui=useUiStore()
-const current=computed(()=>messages.current),expanded=ref(false),details=ref<HTMLElement>(),toggle=ref<HTMLButtonElement>()
+const current=computed(()=>messages.current),details=ref<HTMLElement>(),toggle=ref<HTMLButtonElement>()
+let opener: HTMLElement | null = null
 const prefix=computed(()=>current.value?.level==='error'?'Error: ':current.value?.level==='warning'?'Notice: ':'')
-async function readDetails(){expanded.value=!expanded.value;if(expanded.value)await nextTick(()=>details.value?.focus())}
-function closeDetails(){expanded.value=false;toggle.value?.focus()}
+watch(() => ui.notificationsOpen, open => {
+  if (!open) return
+  opener = typeof document === 'undefined' ? null : document.activeElement as HTMLElement | null
+  details.value?.focus?.()
+}, { flush: 'post' })
+function readDetails() {
+  if (ui.notificationsOpen) closeDetails()
+  else ui.notificationsOpen = true
+}
+function closeDetails() {
+  ui.notificationsOpen = false
+  ;(opener?.isConnected ? opener : toggle.value)?.focus?.()
+  opener = null
+}
 function dismiss(){if(current.value)messages.dismiss(current.value.id)}
 </script>
 <template>
   <div class="system-message" data-workspace-text-input>
     <span class="system-message-text" role="status" aria-live="polite" aria-atomic="true" :title="current?.level==='error'?'':prefix+(current?.text??'Ready.')">{{ current?.level==='error'?'':prefix+(current?.text??'Ready.') }}</span>
     <span class="system-message-text" role="alert" aria-live="assertive" aria-atomic="true" :title="current?.level==='error'?prefix+current.text:''">{{ current?.level==='error'?prefix+current.text:'' }}</span>
-    <button ref="toggle" aria-label="Read full system message" :aria-expanded="expanded" aria-controls="system-message-details" title="Read full system message and recent messages" @click="readDetails"><WorkbenchIcon name="inspector" /></button>
+    <button ref="toggle" aria-label="Read full system message" :aria-expanded="ui.notificationsOpen" aria-controls="system-message-details" title="Read full system message and recent messages" @click="readDetails"><WorkbenchIcon name="inspector" /></button>
     <button v-if="current?.window" :aria-label="'Open '+current.window+' for system message'" title="Open related window" @click="ui.openWindow(current.window)"><WorkbenchIcon name="open" /></button>
     <button v-if="current" aria-label="Dismiss system message" title="Dismiss this message" @click="dismiss"><WorkbenchIcon name="close" /></button>
-    <section v-if="expanded" id="system-message-details" ref="details" class="system-message-details" tabindex="-1" aria-label="System message details" @keydown.esc.stop.prevent="closeDetails">
+    <section v-if="ui.notificationsOpen" id="system-message-details" ref="details" class="system-message-details" tabindex="-1" aria-label="System message details" @keydown.esc.stop.prevent="closeDetails">
       <header><strong>System messages</strong><button aria-label="Close system message details" @click="closeDetails"><WorkbenchIcon name="close" /></button></header>
       <p>{{ prefix }}{{ current?.text??'Ready.' }}</p>
       <ol aria-label="Recent system messages"><li v-for="message in [...messages.events].reverse()" :key="message.id">{{ message.level==='error'?'Error: ':message.level==='warning'?'Notice: ':'' }}{{ message.text }}</li></ol>

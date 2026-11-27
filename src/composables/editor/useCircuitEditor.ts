@@ -563,7 +563,9 @@ export function useCircuitEditor(canvas: Ref<HTMLCanvasElement | undefined>, man
       attempt(() => circuit.moveModule(id, snap(rawTarget, module.type, id, module.position?.y ?? 0)))
     }
   }
-  const escape = (event: KeyboardEvent) => { if (event.key === 'Escape' && !(event.target as HTMLElement | null)?.closest?.('[data-workspace-text-input]')) keydown(event) }
+  const escape = (event: KeyboardEvent) => {
+    if (ui.activeEditor === '3d' && event.key === 'Escape' && !(event.target as HTMLElement | null)?.closest?.('[data-workspace-text-input]')) keydown(event)
+  }
   const blur = () => releaseContact()
   onMounted(() => { document.addEventListener('keydown', escape, true); if (typeof window !== 'undefined') window.addEventListener('blur', blur); canvas.value?.addEventListener?.('webglcontextlost', blur) })
   onUnmounted(() => { document.removeEventListener('keydown', escape, true); if (typeof window !== 'undefined') window.removeEventListener('blur', blur); canvas.value?.removeEventListener?.('webglcontextlost', blur) })

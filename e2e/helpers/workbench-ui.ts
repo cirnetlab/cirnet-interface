@@ -9,7 +9,7 @@ export async function fileCommand(page: Page, name: FileCommand) {
 }
 
 export async function selectRun(page: Page) {
-  await page.getByRole('tab', { name: 'Run', exact: true }).click()
+  await page.getByRole('tab', { name: 'Simulate', exact: true }).click()
   return page.getByRole('toolbar', { name: 'Execution controls', exact: true })
 }
 

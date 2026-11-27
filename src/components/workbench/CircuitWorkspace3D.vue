@@ -37,7 +37,10 @@ useWorkspaceSceneMessages({
   placement:()=>workspace.placementType?editor.controlHint.value||'Preview follows pointer · X/Z/XZ/Rotate Y to adjust · Click to place · Right click or Esc to cancel':'',
   wire:()=>workspace.wireOptionsActive?editor.wireRouting.hint.value:'',
 })
-function visibility() { if (contextLost || document.hidden) editor.cancel(); manager?.suspend(contextLost || document.hidden) }
+function visibility() {
+  if (contextLost || document.hidden) editor.cancel()
+  manager?.suspend(contextLost || document.hidden || ui.activeEditor !== '3d')
+}
 function updateGizmoObstacles() {
   if (!obstaclesDirty) return
   const origin = host.value?.getBoundingClientRect(), stage = host.value?.parentElement
@@ -62,8 +65,8 @@ function updateGizmoObstacles() {
     const explorer = stage.querySelector('.project-explorer')?.getBoundingClientRect()
     const properties = stage.querySelector('.property-manager')?.getBoundingClientRect()
     const railLeft = layout.querySelector('.tools-panel[data-drawer-occupied=true]') ? ui.toolsOverlayWidth : 0
-    const left = explorer?.width ? Math.max(railLeft, explorer.right - origin.left) : railLeft
-    const right = properties?.width ? properties.left - origin.left : origin.width
+    const left = ui.pinnedDocks.explorer && explorer?.width ? Math.max(railLeft, explorer.right - origin.left) : railLeft
+    const right = ui.pinnedDocks.properties && properties?.width ? properties.left - origin.left : origin.width
     const viewBar = stage.querySelector('.workspace-view-bar')?.getBoundingClientRect()
     const ribbonTop = layout.querySelector('.component-panel[data-drawer-occupied=true]') ? ui.componentOverlayHeight : 0
     // Preserve a valid camera region when very little desktop space remains.
@@ -138,19 +141,23 @@ watch(() => workspace.fitRequest, () => navigate(controller => { controller.fitC
 watch(() => circuit.activeId, () => workspace.cancelZoomRequest(), { flush: 'sync' })
 watch(() => [circuit.physicalStates, circuit.physicalPreview?.pin_values] as const, ([states, pins]) => manager?.setSimulationStates(states, states ? pins : undefined), { deep: true })
 watch(() => workspace.showPins, value => manager?.setShowPins(value))
+watch(() => ui.activeEditor, () => { invalidateObstacles(); visibility() }, { flush: 'post' })
 // Component Info can change height on selection without changing window state.
 watch([() => ui.windows, () => circuit.graph?.modules.find((module) => module.id === workspace.selectedModuleId)?.type], invalidateObstacles, { deep: true, flush: 'post' })
 watch([
   () => ui.drawerInsets.left, () => ui.drawerInsets.top, () => ui.componentOverlayHeight,
   () => ui.toolsOverlayWidth, () => ui.explorerVisible, () => ui.focusRestore,
   () => ui.dockLayout('explorer').width, () => ui.dockLayout('properties').width,
+  () => ui.pinnedDocks.explorer, () => ui.pinnedDocks.properties,
 ], invalidateObstacles, { flush: 'post' })
 watch([() => workspace.tool, () => workspace.selectedWire, () => workspace.placementType, () => workspace.zoomAreaActive, () => workspace.marqueeActive, () => workspace.wireOptionsActive, () => editor.wireRouting.hint.value], invalidateObstacles, { flush: 'post' })
 onUnmounted(() => { navigationActive = false; workspace.cancelZoomRequest(); observer?.disconnect(); drawerObserver?.disconnect(); manager?.dispose(); canvas.value?.removeEventListener('webglcontextlost', lost); canvas.value?.removeEventListener('webglcontextrestored', restored); document.removeEventListener('visibilitychange', visibility) })
 </script>
 <template>
   <div ref="host" :class="['circuit-workspace', { 'is-dragging': editor.dragging.value || editor.wireRouting.editing.value, 'is-zoom-area': workspace.zoomAreaActive, 'is-marquee': workspace.marqueeActive, 'is-wiring': workspace.tool === 'wire' && !workspace.placementType, 'can-grab': editor.hoveredHandle.value || editor.hoveredControl.value || editor.wireRouting.editing.value || (['select', 'move'].includes(workspace.tool) && !workspace.placementType) }]" @dragover.prevent @drop="editor.drop">
-    <canvas ref="canvas" tabindex="0" :title="editor.controlHint.value" aria-label="Three-dimensional circuit workspace" aria-describedby="editor-help" @pointerdown.capture="editor.pointerDown" @pointermove="editor.pointerMove" @pointerup="editor.pointerUp" @pointercancel="editor.pointerCancel" @lostpointercapture="editor.lostPointerCapture" @keydown="editor.keydown" @dblclick="editor.doubleClick" @contextmenu.capture="editor.contextMenu" @pointerleave="editor.pointerLeave" />
+    <div class="workspace-3d-aperture">
+      <canvas ref="canvas" tabindex="0" :title="editor.controlHint.value" aria-label="Three-dimensional circuit workspace" aria-describedby="editor-help" @pointerdown.capture="editor.pointerDown" @pointermove="editor.pointerMove" @pointerup="editor.pointerUp" @pointercancel="editor.pointerCancel" @lostpointercapture="editor.lostPointerCapture" @keydown="editor.keydown" @dblclick="editor.doubleClick" @contextmenu.capture="editor.contextMenu" @pointerleave="editor.pointerLeave" />
+    </div>
     <WireContextMenu v-if="editor.selectionCommands.contextMenuState.value" :x="editor.selectionCommands.contextMenuState.value.x" :y="editor.selectionCommands.contextMenuState.value.y" :viewport-width="ui.viewport.width" :viewport-height="ui.viewport.height" :can-paste="editor.selectionCommands.canPaste.value" :can-edit-selection="workspace.selectionCount > 0" @action="wireMenuAction" @close="closeWireMenu" />
     <WireOptions v-if="workspace.wireOptionsActive && !editor.selectionCommands.duplicatePreviewState.value.active && !editor.selectionCommands.movePreviewState.value.active" :color="editor.wireRouting.color.value" :route-mode="editor.wireRouting.routeMode.value" :can-add="editor.wireRouting.canAdd.value" :can-remove="editor.wireRouting.canRemove.value" :hint="editor.wireRouting.hint.value" :layer="editor.wireRouting.layer.value" :can-stack="editor.wireRouting.canStack.value" :can-lower-stack="editor.wireRouting.canLowerStack.value" :can-raise-stack="editor.wireRouting.canRaiseStack.value" @color="editor.wireRouting.setColor" @mode="editor.wireRouting.setRouteMode" @add="editor.wireRouting.addBend" @remove="editor.wireRouting.removeSelectedBend" @route-key="editor.wireRouting.keydown" @stack="editor.wireRouting.setStackLayer" />
     <div v-if="editor.zoomAreaRect.value" class="zoom-area-rectangle" :style="{ left: editor.zoomAreaRect.value.left + 'px', top: editor.zoomAreaRect.value.top + 'px', width: editor.zoomAreaRect.value.width + 'px', height: editor.zoomAreaRect.value.height + 'px' }" aria-hidden="true" />

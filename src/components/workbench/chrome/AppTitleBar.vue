@@ -12,7 +12,8 @@ import { useProjectStore } from '../../../stores/documents/projects'
 import { useWorkspaceMessageStore } from '../../../stores/workbench/workspaceMessages'
 import FileMenu from './FileMenu.vue'
 import { executeFileCommand, type FileCommand, type FileMenuItem } from './fileCommands'
-import { editingTools, focusWorkbenchCanvas } from './workspaceCommands'
+import { editingTools, focusWorkbenchCanvas, tabIndexForKey } from './workspaceCommands'
+import { ribbonTabs, type RibbonTab } from '../../../config/workbenchChrome'
 const circuit = useCircuitStore()
 const ui = useUiStore()
 const workspace = useWorkspaceStore()
@@ -26,6 +27,8 @@ const commandDialog = ref<HTMLDialogElement>()
 const commandTrigger = ref<HTMLButtonElement>()
 const showCommands = ref(false)
 const commandQuery = ref('')
+const isFullscreen = ref(false)
+const supportsFullscreen = ref(false)
 type SearchCommand = Pick<FileMenuItem, 'label' | 'disabled' | 'shortcut' | 'restoreFocus'> & {
   id: string
   activate: () => void
@@ -37,14 +40,21 @@ const visibleCommands = computed(() => {
     { id: 'redo', label: 'Redo', shortcut: 'Ctrl+Shift+Z', disabled: !circuit.canRedo, activate: () => circuit.redo() },
     ...editingTools.map(tool => ({
       id: tool.id, label: tool.name + ' tool', disabled: false, restoreFocus: false,
-      activate: () => { workspace.setTool(tool.id); focusWorkbenchCanvas() },
+      activate: () => { ui.selectEditor('3d'); workspace.setTool(tool.id); void nextTick(focusWorkbenchCanvas) },
     })),
-    { id: 'fit', label: 'Fit entire circuit', disabled: !circuit.graph?.modules.length, activate: () => workspace.fitEntireCircuit() },
-    { id: 'explorer', label: 'Toggle Project Explorer', disabled: false, activate: toggleExplorer },
+    { id: 'fit', label: 'Fit entire circuit', disabled: !circuit.graph?.modules.length, activate: () => { ui.selectEditor('3d'); void nextTick(() => workspace.fitEntireCircuit()) } },
+    { id: 'explorer', label: 'Toggle Project Explorer', disabled: false, activate: () => ui.toggleExplorer() },
+    { id: '3d-view', label: 'Show 3D Simulation', disabled: false, activate: () => ui.selectEditor('3d') },
+    { id: 'schematic-view', label: 'Show Schematic', disabled: false, activate: () => ui.selectEditor('schematic') },
+    { id: 'notifications', label: 'Show Notifications', disabled: false, activate: () => { ui.notificationsOpen = true } },
     { id: 'inspector', label: 'Open PropertyManager', disabled: false, restoreFocus: false, activate: () => ui.openWindow('inspector') },
     { id: 'focus', label: ui.focusRestore ? 'Exit Focus Mode' : 'Enter Focus Mode', disabled: false, activate: () => ui.toggleWorkspaceFocus() },
     { id: 'ribbon', label: ui.componentToolbarCollapsed ? 'Expand Ribbon' : 'Collapse Ribbon', disabled: false, activate: () => ui.toggleComponentToolbar() },
   ]
+  entries.push(...ribbonTabs.map(tab => ({
+    id: 'ribbon-' + tab.id, label: 'Open ' + tab.label + ' Ribbon', disabled: false,
+    activate: () => ui.selectRibbonTab(tab.id),
+  })))
   const terms = commandQuery.value.trim().toLowerCase().split(/\s+/)
   return entries.filter(item => terms.every(term => item.label.toLowerCase().includes(term)))
 })
@@ -73,14 +83,6 @@ function runSearchCommand(item: SearchCommand) {
 function runFirstCommand() {
   const first = visibleCommands.value.find(item => !item.disabled)
   if (first) runSearchCommand(first)
-}
-function toggleExplorer() {
-  if (ui.focusRestore) {
-    ui.toggleWorkspaceFocus()
-    ui.explorerVisible = true
-    return
-  }
-  ui.explorerVisible = !ui.explorerVisible
 }
 let readVersion = 0, disposed = false
 let errorCommand: 'import' | 'export' | null = null
@@ -147,15 +149,27 @@ function fileCommand(id: FileCommand) {
   })
 }
 function saveServer() { fileCommand('save') }
-const focusedTab = ref<'component' | 'run'>(ui.activeRibbonTab)
+defineExpose({ fileItems, fileCommand })
+const focusedTab = ref<RibbonTab>(ui.activeRibbonTab)
 watch(() => ui.activeRibbonTab, tab => { focusedTab.value = tab })
-function selectTab(tab: 'component' | 'run') { focusedTab.value = tab; ui.selectRibbonTab(tab) }
+function selectTab(tab: RibbonTab) { focusedTab.value = tab; ui.selectRibbonTab(tab) }
 function tabKey(event: KeyboardEvent) {
-  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
-  event.preventDefault(); event.stopPropagation()
-  focusedTab.value = event.key === 'Home' ? 'component' : event.key === 'End' ? 'run' : focusedTab.value === 'component' ? 'run' : 'component'
+  const next = tabIndexForKey(event, ribbonTabs.findIndex(tab => tab.id === focusedTab.value), ribbonTabs.length)
+  if (next === null) return
+  event.preventDefault()
+  event.stopPropagation()
+  focusedTab.value = ribbonTabs[next].id
   const tablist = (event.currentTarget as HTMLElement).parentElement
   void nextTick(() => tablist?.querySelector<HTMLButtonElement>(`#workbench-tab-${focusedTab.value}`)?.focus())
+}
+function fullscreenChanged() { isFullscreen.value = !!document.fullscreenElement }
+async function toggleFullscreen() {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen()
+    else await document.documentElement.requestFullscreen()
+  } catch {
+    messages.publish('workspace', 'The browser could not change full screen mode.', { level: 'warning', scope: 'session' })
+  }
 }
 function shortcuts(event: KeyboardEvent) {
   if (!(event.ctrlKey || event.metaKey)) return
@@ -171,22 +185,32 @@ function shortcuts(event: KeyboardEvent) {
   if (key === 'z') { if (event.shiftKey ? circuit.canRedo : circuit.canUndo) event.shiftKey ? circuit.redo() : circuit.undo() }
   if (key === 'y' && circuit.canRedo) circuit.redo()
 }
-onMounted(() => window.addEventListener('keydown', shortcuts))
-onUnmounted(() => { disposed = true; readVersion++; window.removeEventListener('keydown', shortcuts) })
+onMounted(() => {
+  window.addEventListener('keydown', shortcuts)
+  if (typeof document === 'undefined' || !document.fullscreenEnabled || !document.documentElement?.requestFullscreen) return
+  supportsFullscreen.value = true
+  fullscreenChanged()
+  document.addEventListener('fullscreenchange', fullscreenChanged)
+})
+onUnmounted(() => {
+  disposed = true
+  readVersion++
+  window.removeEventListener('keydown', shortcuts)
+  if (supportsFullscreen.value) document.removeEventListener('fullscreenchange', fullscreenChanged)
+})
 </script>
 <template>
   <header class="app-titlebar">
     <div class="brand" aria-label="CIRNET LAB"><span class="brand-mark"><img :src="iconUrl('favicon')" alt="" width="38" height="38" /></span><strong><span class="brand-circuit">CIRNET</span> <span class="brand-remote">LAB</span></strong></div>
     <div class="header-command-strip">
       <div class="quick-actions" role="group" aria-label="Edit history">
+      <button class="quick-file-action" aria-label="New circuit" title="New circuit (Ctrl+N)" @click="fileCommand('new')"><WorkbenchIcon name="new" /></button>
+      <button class="quick-file-action" aria-label="Browse project files" title="Open project (Ctrl+O)" @click="fileCommand('open')"><WorkbenchIcon name="open" /></button>
+      <button class="quick-file-action" aria-label="Save current circuit" title="Save (Ctrl+S)" :disabled="fileItems.find(item => item.id === 'save')?.disabled" @click="fileCommand('save')"><WorkbenchIcon name="save" /></button>
       <button aria-label="Undo" title="Undo (Ctrl+Z)" :disabled="!circuit.canUndo" @click="circuit.undo()"><WorkbenchIcon name="undo" /></button>
       <button aria-label="Redo" title="Redo (Ctrl+Shift+Z)" :disabled="!circuit.canRedo" @click="circuit.redo()"><WorkbenchIcon name="redo" /></button>
       </div>
       <FileMenu :items="fileItems" :dismiss-key="ui.activeRibbonTab" @command="fileCommand" />
-      <div class="ribbon-tabs" role="tablist" aria-label="Workbench ribbon" data-workspace-text-input>
-        <button id="workbench-tab-component" role="tab" :aria-selected="ui.activeRibbonTab === 'component'" aria-controls="workbench-panel-component" :tabindex="focusedTab === 'component' ? 0 : -1" @focus="focusedTab = 'component'" @click="selectTab('component')" @keydown="tabKey">Component</button>
-        <button id="workbench-tab-run" role="tab" :aria-selected="ui.activeRibbonTab === 'run'" aria-controls="workbench-panel-run" :tabindex="focusedTab === 'run' ? 0 : -1" @focus="focusedTab = 'run'" @click="selectTab('run')" @keydown="tabKey">Run</button>
-      </div>
     </div>
     <div class="project-title" :title="circuit.current?.name || 'No circuit'"><span class="dirty-dot" v-if="projects.saveState.dirty" aria-label="Unsaved changes" /><span class="project-name">{{ circuit.current?.name || 'No circuit open' }}</span><small>{{ projects.saveState.binding ? 'SERVER · '+projects.saveState.phase : 'LOCAL DRAFT' }}</small></div>
     <button ref="commandTrigger" type="button" class="command-trigger" :aria-expanded="showCommands"
@@ -211,13 +235,27 @@ onUnmounted(() => { disposed = true; readVersion++; window.removeEventListener('
       </div>
     </dialog>
     <AccountMenu />
+    <button type="button" class="header-icon-button" aria-label="Notifications" title="Notifications"
+      :aria-expanded="ui.notificationsOpen" aria-controls="system-message-details"
+      @click="ui.notificationsOpen = !ui.notificationsOpen"><WorkbenchIcon name="notification" /></button>
     <button type="button" id="toggle-project-explorer" class="header-icon-button" aria-label="Project Explorer"
-      :aria-pressed="ui.explorerVisible && !ui.focusRestore" aria-controls="project-explorer"
-      title="Toggle Project Explorer" @click="toggleExplorer"><WorkbenchIcon name="explorer" /></button>
+      :aria-pressed="ui.explorerOpen" aria-controls="project-explorer" data-dock-trigger="explorer"
+      title="Toggle Project Explorer" @click="ui.toggleExplorer()"><WorkbenchIcon name="explorer" /></button>
     <button type="button" class="header-icon-button" aria-label="Focus Mode"
       :aria-pressed="!!ui.focusRestore" :title="ui.focusRestore ? 'Exit Focus Mode' : 'Focus Mode'"
       @click="ui.toggleWorkspaceFocus()"><WorkbenchIcon name="reset" /></button>
-    <button class="inspector-toggle" title="Open Inspector" aria-label="Open Inspector" @click="ui.openWindow('inspector')"><WorkbenchIcon name="inspector" /><span>Inspector</span></button>
+    <button v-if="supportsFullscreen" type="button" class="header-icon-button fullscreen-toggle"
+      :aria-label="isFullscreen ? 'Exit full screen' : 'Full screen'" :title="isFullscreen ? 'Exit full screen' : 'Full screen'"
+      @click="toggleFullscreen"><WorkbenchIcon :name="isFullscreen ? 'restore-window' : 'full-window'" /></button>
+    <button class="inspector-toggle" title="Open Inspector" aria-label="Open Inspector"
+      aria-controls="property-manager" :aria-expanded="ui.propertiesOpen" data-dock-trigger="properties"
+      @click="ui.openWindow('inspector')"><WorkbenchIcon name="inspector" /><span>Inspector</span></button>
     <input ref="fileInput" class="visually-hidden" type="file" accept=".json,application/json" aria-label="Open circuit file" @change="openFile" />
   </header>
+  <div class="ribbon-tabs" role="tablist" aria-label="Workbench ribbon" data-workspace-text-input>
+    <button v-for="tab in ribbonTabs" :id="'workbench-tab-' + tab.id" :key="tab.id" type="button" role="tab"
+      :aria-selected="ui.activeRibbonTab === tab.id" :aria-controls="'workbench-panel-' + tab.id"
+      :tabindex="focusedTab === tab.id ? 0 : -1" @focus="focusedTab = tab.id"
+      @click="selectTab(tab.id)" @keydown="tabKey">{{ tab.label }}</button>
+  </div>
 </template>

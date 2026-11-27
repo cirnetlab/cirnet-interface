@@ -66,19 +66,25 @@ mạch. Segoe UI cục bộ hỗ trợ tiếng Việt. Số đo và ô nhập d�
 rộng khi hữu ích. Lệnh chung và lệnh kỹ thuật dùng nét SVG chung trong
 `WorkbenchIcon`. Hình thư viện và thiết bị giữ manifest và nguồn gốc hiện có.
 
-Project Explorer chọn linh kiện trong graph và mở thư viện hoặc lịch sử
-thí nghiệm hiện có. Nút Inspector mở PropertyManager bên phải. Các mục có thể thu gọn và thao tác
-sửa vẫn dùng lệnh tài liệu hiện có. Nút trên header hiện lại từng panel.
-Focus Mode tạm ẩn các panel, thanh thiết bị và Ribbon, rồi khôi phục trạng thái
-hiển thị trước đó. Kéo mép trong của mỗi panel hoặc chuyển tiêu điểm vào mép và
-dùng phím mũi tên. Nhấp đúp vào mép để đặt lại chiều rộng. Tab 3D Workbench
-đưa tiêu điểm về canvas. Thanh công cụ bên dưới vẫn hỗ trợ chỉnh sửa trong
-Focus Mode. Canvas giữ nguyên và lệnh Fit dùng vùng thao tác không bị che.
-Ctrl+Q tìm các lệnh File, chỉnh sửa và bố cục.
+Title Bar có lối tắt File, thông báo, Focus Mode và chế độ toàn màn hình nếu
+trình duyệt hỗ trợ. Ribbon nhóm các lệnh trong File, View, Component, Simulate,
+Library, Window và Help. Activity Bar mở điều hướng dự án, chỉnh sửa mạch,
+thư viện, kết quả và điều khiển Lab.
 
-Bảy concept CIRNET LAB định hướng bố cục. Trình chỉnh sửa hiện tại cung cấp
-Workbench 3D. Chỉnh sửa schematic cần mô hình sản phẩm và bề mặt kết xuất.
-Mạch và số đo trong concept là tham chiếu hình ảnh.
+Project Explorer hiển thị linh kiện trong đồ thị, các chế độ xem và bản nháp
+trong phiên. PropertyManager sửa đối tượng đang chọn qua lệnh đồ thị hiện có.
+Mỗi panel nhớ trạng thái ghim và chiều rộng trong phiên. Panel được ghim chiếm
+một phần bố cục. Panel bỏ ghim phủ lên vùng làm việc và đóng khi nhấp bên
+ngoài hoặc nhấn Escape. Kéo mép trong, dùng phím mũi tên hoặc nhấp đúp để
+đặt lại chiều rộng. Focus Mode ẩn các panel, Activity Bar và Ribbon, rồi
+khôi phục cách hiển thị trước đó.
+
+Các tab trình biên tập dùng chung đồ thị và đối tượng đang chọn. 3D Simulation
+giữ canvas, camera và cảnh khi chuyển sang Schematic. Bộ dựng hình tạm dừng
+vẽ cho đến khi quay lại 3D Simulation. Schematic hiển thị các liên kết đã khai
+báo trong đồ thị, hỗ trợ chọn đối tượng, thu phóng và cuộn độc lập. Chỉnh sửa
+sơ đồ và khai triển kết nối chân vật lý hoặc breadboard nằm ngoài chế độ này.
+Ctrl+Q tìm lệnh File, chỉnh sửa, Ribbon và bố cục.
 
 ### Biểu tượng Workbench
 

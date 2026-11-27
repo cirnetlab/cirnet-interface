@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { ConnectionState } from '../../services/websocket/client'
 import { windowDefinitions, type WindowKind, type WorkspaceWindow } from '../../types/windows'
+import type { RibbonTab, WorkspaceEditor } from '../../config/workbenchChrome'
 
 export type WorkspaceDock = 'explorer' | 'properties'
 
@@ -22,10 +23,28 @@ function bound(window: WorkspaceWindow, width: number, height: number, insets: {
 }
 
 export const useUiStore = defineStore('ui', {
-  state: () => ({ activeRibbonTab: 'component' as 'component' | 'run', activeRibbonGroup: null as string | null, componentToolbarCollapsed: false, toolsSidebarCollapsed: false, explorerVisible: true, focusRestore: null as { ribbon: boolean; tools: boolean } | null, dockWidths: { explorer: null, properties: null } as Record<WorkspaceDock, number | null>, workbenchSize: { width: 900, height: 600 }, windows: [] as WorkspaceWindow[], viewport: { width: 900, height: 500 }, connectionState: 'idle' as ConnectionState }),
+  state: () => ({
+    activeRibbonTab: 'component' as RibbonTab,
+    activeRibbonGroup: null as string | null,
+    activeEditor: '3d' as WorkspaceEditor,
+    schematicZoom: 100,
+    componentToolbarCollapsed: false,
+    toolsSidebarCollapsed: false,
+    explorerVisible: true,
+    notificationsOpen: false,
+    focusRestore: null as { ribbon: boolean; tools: boolean } | null,
+    dockWidths: { explorer: null, properties: null } as Record<WorkspaceDock, number | null>,
+    pinnedDocks: { explorer: true, properties: true } as Record<WorkspaceDock, boolean>,
+    workbenchSize: { width: 900, height: 600 },
+    windows: [] as WorkspaceWindow[],
+    viewport: { width: 900, height: 500 },
+    connectionState: 'idle' as ConnectionState,
+  }),
   getters: {
     componentOverlayHeight: () => 96,
     toolsOverlayWidth: (state) => state.workbenchSize.width <= 560 ? 54 : 66,
+    explorerOpen: state => state.explorerVisible && !state.focusRestore,
+    propertiesOpen: state => !state.focusRestore && state.windows.some(window => window.kind === 'inspector' && window.open),
     dockLayout: (state) => (dock: WorkspaceDock) => {
       const limits = dockLimits(dock, state.workbenchSize.width)
       const width = state.dockWidths[dock] ?? limits.width
@@ -36,6 +55,29 @@ export const useUiStore = defineStore('ui', {
     },
   },
   actions: {
+    toggleExplorer() {
+      if (this.focusRestore) {
+        this.toggleWorkspaceFocus()
+        this.explorerVisible = true
+      } else this.explorerVisible = !this.explorerVisible
+    },
+    toggleProperties() {
+      if (this.propertiesOpen) this.closeWindow('inspector')
+      else this.openWindow('inspector')
+    },
+    toggleDockPin(dock: WorkspaceDock) {
+      this.pinnedDocks[dock] = !this.pinnedDocks[dock]
+    },
+    selectEditor(editor: WorkspaceEditor) {
+      this.activeEditor = editor
+    },
+    setSchematicZoom(value: number) {
+      if (Number.isFinite(value)) this.schematicZoom = Math.max(50, Math.min(200, value))
+    },
+    openLibrary(group: string) {
+      this.selectRibbonTab('component')
+      this.activeRibbonGroup = group
+    },
     setDockWidth(dock: WorkspaceDock, width: number | null) {
       if (width === null) { this.dockWidths[dock] = null; return }
       if (!Number.isFinite(width)) return
@@ -55,7 +97,7 @@ export const useUiStore = defineStore('ui', {
         this.activeRibbonGroup = null
       }
     },
-    selectRibbonTab(tab: 'component' | 'run') {
+    selectRibbonTab(tab: RibbonTab) {
       if (this.focusRestore) this.toggleWorkspaceFocus()
       if(this.activeRibbonTab!==tab)this.activeRibbonGroup=null
       this.activeRibbonTab=tab
