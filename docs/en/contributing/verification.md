@@ -49,3 +49,5 @@ The launcher checks the served metadata before running. The full browser suite a
 ## Local development storage
 
 With `CIRNET_LOCAL_STORAGE_ROOT` set, use the verified Contracts DEV allocator supporting this setting. Select the reviewed source module via `CIRNET_ARTIFACT_PATHS_MODULE` when the installed DEV archive predates it. Unit bundles, runtime fixtures and direct production builds use an external session. Keep `CIRNET_ARTIFACTS_SESSION` for related runs. Candidate packaging keeps dist in the external source snapshot. Dependency inputs remain under node_modules and .artifacts.
+
+Allocate one approved session in the calling shell before running `npm run build` and `npm run preview`. Keep `CIRNET_ARTIFACTS_SESSION` and select the reviewed Contracts DEV module with `CIRNET_ARTIFACT_PATHS_MODULE`. Preview requires the existing `dist/index.html` in that session. A missing session or incomplete build fails without allocation.

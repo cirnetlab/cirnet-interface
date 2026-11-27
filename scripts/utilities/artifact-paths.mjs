@@ -27,6 +27,13 @@ export function getArtifactDirectory(subdirectory='',options={}) {
  }
  return result
 }
+export function getExistingArtifactDirectory(subdirectory='',options={}) {
+ synchronizeEnvironment()
+ if(typeof allocator.getExistingArtifactDirectory!=='function') {
+  throw Error('Select a verified Contracts DEV allocator with existing artifact lookup support.')
+ }
+ return allocator.getExistingArtifactDirectory(subdirectory,{...options,context:context(options.context)})
+}
 export function validateArtifactDirectory(directory,options={}) {synchronizeEnvironment();return allocator.validateArtifactDirectory(directory,{...options,context:context(options.context)})}
 export function cleanupArtifactSession(directory,options={}) {synchronizeEnvironment();return allocator.cleanupArtifactSession(directory,{...options,context:context(options.context)})}
 export function runArtifactCli(args=process.argv.slice(2)) {

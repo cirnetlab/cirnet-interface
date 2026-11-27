@@ -49,3 +49,5 @@ Trình chạy kiểm tra metadata được phục vụ trước khi chạy. Bộ
 ## Lưu trữ phát triển cục bộ
 
 Khi đặt `CIRNET_LOCAL_STORAGE_ROOT`, dùng bộ cấp phát Contracts DEV đã xác minh có hỗ trợ cấu hình này. Chọn mô-đun nguồn đã review qua `CIRNET_ARTIFACT_PATHS_MODULE` nếu gói DEV đã cài cũ hơn. Bundle test, fixture runtime và build production trực tiếp dùng phiên ngoài repo. Giữ `CIRNET_ARTIFACTS_SESSION` cho các lần chạy liên quan. Gói candidate giữ dist trong snapshot nguồn bên ngoài. Đầu vào phụ thuộc vẫn ở node_modules và .artifacts.
+
+Cấp phát một phiên đã duyệt trong shell gọi lệnh trước khi chạy `npm run build` và `npm run preview`. Giữ `CIRNET_ARTIFACTS_SESSION` và chọn mô-đun Contracts DEV đã review qua `CIRNET_ARTIFACT_PATHS_MODULE`. Preview yêu cầu `dist/index.html` đã có trong phiên. Thiếu phiên hoặc build chưa hoàn tất sẽ báo lỗi mà không cấp phát.
