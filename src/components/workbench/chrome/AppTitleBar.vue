@@ -252,7 +252,7 @@ onUnmounted(() => {
       @click="ui.openWindow('inspector')"><WorkbenchIcon name="inspector" /><span>Inspector</span></button>
     <input ref="fileInput" class="visually-hidden" type="file" accept=".json,application/json" aria-label="Open circuit file" @change="openFile" />
   </header>
-  <div class="ribbon-tabs" role="tablist" aria-label="Workbench ribbon" data-workspace-text-input>
+  <div class="ribbon-tabs" :class="{ 'is-collapsed': ui.componentToolbarCollapsed }" role="tablist" aria-label="Workbench ribbon" data-workspace-text-input>
     <button v-for="tab in ribbonTabs" :id="'workbench-tab-' + tab.id" :key="tab.id" type="button" role="tab"
       :aria-selected="ui.activeRibbonTab === tab.id" :aria-controls="'workbench-panel-' + tab.id"
       :tabindex="focusedTab === tab.id ? 0 : -1" @focus="focusedTab = tab.id"
